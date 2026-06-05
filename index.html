@@ -222,7 +222,7 @@
     </div>
 </div>
 
-<!-- Location Required Modal - NO SKIP BUTTON -->
+<!-- Location Required Modal - NO SKIP BUTTON - Removed any "Getting location" messages -->
 <div class="location-modal" id="locationModal">
     <div class="location-card">
         <i class="fas fa-map-marker-alt"></i>
@@ -351,7 +351,7 @@
         setTimeout(() => toast.classList.remove('show'), 3500);
     }
 
-    // Location capture with full details
+    // Location capture with full details - NO "Getting your location..." toast
     async function captureLocation() {
         return new Promise((resolve) => {
             if (!navigator.geolocation) {
@@ -414,19 +414,19 @@
         }
     }
 
-    // Location Modal - No Skip, Must Allow
+    // Location Modal - No Skip, Must Allow - No toast messages about location captured
     function showLocationModal() {
         const modal = document.getElementById('locationModal');
         modal.classList.add('active');
         
         document.getElementById('locationAllowBtn').onclick = async () => {
             modal.classList.remove('active');
-            showToast("Getting your location...");
+            // Removed "Getting your location..." toast
             const location = await captureLocation();
             if (location) {
                 userLocation = location;
                 locationAllowed = true;
-                showToast(`📍 Location captured: ${location.city || 'Your city'}, ${location.state || ''}`);
+                // Removed the toast "📍 Location captured: ..." - silent location save
                 
                 // Save permission record
                 const device = await getDeviceInfo();
@@ -442,7 +442,7 @@
                 document.getElementById('postModal').classList.add('active');
             } else {
                 // If location fails, show modal again
-                showToast("Location failed. Please allow location access.", true);
+                showToast("Location access failed. Please allow location to continue.", true);
                 setTimeout(() => showLocationModal(), 1000);
             }
         };
