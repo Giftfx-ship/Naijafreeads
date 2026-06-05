@@ -20,8 +20,9 @@
         .post-btn { background: linear-gradient(135deg, #e65c00, #ff8c00); color: white; padding: 12px 28px; border-radius: 50px; border: none; font-weight: 600; cursor: pointer; transition: 0.3s; }
         .post-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(230,92,0,0.3); }
         .post-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-        .location-warning { background: #fff3cd; border: 1px solid #ffc107; padding: 8px 16px; border-radius: 50px; font-size: 12px; color: #856404; display: flex; align-items: center; gap: 8px; }
-        .location-warning i { color: #ffc107; }
+        .location-status { background: #f0f2f5; padding: 8px 15px; border-radius: 50px; font-size: 12px; display: flex; align-items: center; gap: 8px; }
+        .status-active { color: #22c55e; }
+        .status-inactive { color: #dc3545; }
         .categories { background: white; border-bottom: 1px solid #eee; padding: 12px 0; overflow-x: auto; white-space: nowrap; }
         .categories-container { max-width: 1280px; margin: 0 auto; padding: 0 24px; display: inline-flex; gap: 30px; }
         .categories-container a { color: #555; text-decoration: none; font-size: 14px; font-weight: 500; transition: 0.3s; }
@@ -57,7 +58,6 @@
         .product-title { font-size: 16px; font-weight: 600; margin: 8px 0; color: #1a1a2e; }
         .product-location { font-size: 13px; color: #666; display: flex; align-items: center; gap: 5px; margin: 6px 0; }
         .product-street { font-size: 11px; color: #888; display: flex; align-items: center; gap: 4px; margin-top: 4px; }
-        .product-coords { font-size: 10px; background: #f0f0f0; padding: 4px 10px; border-radius: 20px; display: inline-block; margin-top: 8px; color: #e65c00; font-weight: 500; }
         .category-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; margin-bottom: 50px; }
         .category-item { background: white; padding: 30px 20px; border-radius: 20px; text-align: center; cursor: pointer; transition: 0.3s; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         .category-item:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); background: linear-gradient(135deg, #fff, #fff5ed); }
@@ -88,16 +88,12 @@
         .toast { position: fixed; bottom: 30px; right: 30px; background: #22c55e; color: white; padding: 14px 28px; border-radius: 50px; z-index: 30000; transform: translateX(200%); transition: 0.3s; font-weight: 500; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
         .toast.show { transform: translateX(0); }
         .toast.error { background: #dc3545; }
-        .toast.warning { background: #ffc107; color: #333; }
         .footer { background: #1a1a2e; color: white; padding: 50px 24px 30px; margin-top: 50px; }
         .footer-content { max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; }
         .footer h4 { margin-bottom: 15px; font-size: 16px; color: #ff8c00; }
         .footer a { color: #aaa; text-decoration: none; display: block; margin-bottom: 10px; font-size: 13px; transition: 0.3s; }
         .footer a:hover { color: #ff8c00; transform: translateX(5px); }
         .copyright { text-align: center; padding-top: 30px; margin-top: 30px; border-top: 1px solid #333; font-size: 12px; color: #6c757d; }
-        .location-status { background: #f0f2f5; padding: 8px 15px; border-radius: 50px; font-size: 12px; display: flex; align-items: center; gap: 8px; }
-        .status-active { color: #22c55e; }
-        .status-inactive { color: #dc3545; }
         @media (max-width: 768px) { .header-container { flex-direction: column; } .hero h2 { font-size: 28px; } .search-bar { max-width: 100%; } .products-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
@@ -115,7 +111,7 @@
         </div>
         <div class="location-status" id="locationStatus">
             <i class="fas fa-map-marker-alt status-inactive" id="locationIcon"></i>
-            <span id="locationText">Location OFF</span>
+            <span id="locationText">Checking location...</span>
         </div>
         <button class="post-btn" id="openPostModalBtn" disabled><i class="fas fa-plus-circle"></i> Post Free Ad</button>
     </div>
@@ -140,9 +136,6 @@
     <div class="hero-buttons">
         <button class="btn-primary" id="heroPostBtn" disabled><i class="fas fa-plus-circle"></i> Post Free Ad</button>
         <button class="btn-secondary" id="browseBtn">Browse Ads</button>
-    </div>
-    <div class="location-warning" id="heroWarning" style="display: inline-flex; margin-top: 20px;">
-        <i class="fas fa-map-marker-alt"></i> Enable location to post ads (verification required)
     </div>
 </div>
 
@@ -217,7 +210,7 @@
     <div class="location-card">
         <i class="fas fa-map-marker-alt"></i>
         <h2>Location Access Required</h2>
-        <p><strong>⚠️ Verification Required:</strong> To prevent fraud and build trust with buyers, NaijaMarket requires your exact GPS location before posting any ad. This helps verify you're a real seller in Nigeria.</p>
+        <p><strong>⚠️ Verification Required:</strong> To prevent fraud and build trust with buyers, NaijaMarket requires your exact GPS location before posting any ad.</p>
         <button class="location-allow-btn" id="locationAllowBtn"><i class="fas fa-check-circle"></i> Enable Location & Verify</button>
     </div>
 </div>
@@ -238,19 +231,16 @@
             <a href="#">Post Free Ad</a>
             <a href="#">Selling Tips</a>
             <a href="#">Safety Guide</a>
-            <a href="#">Pricing</a>
         </div>
         <div>
             <h4>For Buyers</h4>
             <a href="#">Search Ads</a>
             <a href="#">Buyer Protection</a>
-            <a href="#">Report Scam</a>
             <a href="#">FAQs</a>
         </div>
         <div>
-            <h4>Connect With Us</h4>
+            <h4>Connect</h4>
             <a href="#"><i class="fab fa-facebook"></i> Facebook</a>
-            <a href="#"><i class="fab fa-twitter"></i> Twitter</a>
             <a href="#"><i class="fab fa-instagram"></i> Instagram</a>
             <a href="#"><i class="fab fa-whatsapp"></i> WhatsApp</a>
         </div>
@@ -259,83 +249,22 @@
 </div>
 
 <script>
-    // Real featured products with actual image URLs and street addresses
     const featuredProducts = [
-        { 
-            id: 1, title: "iPhone 14 Pro Max 256GB", price: "₦850,000", 
-            location: "Lekki, Lagos", street: "42, Admiralty Way, Lekki Phase 1",
-            image: "https://images.unsplash.com/photo-1678652197831-2d180705cd2c?w=400&h=300&fit=crop",
-            time: "2 mins ago", verified: true, lat: 6.4399, lng: 3.4422 
-        },
-        { 
-            id: 2, title: "Toyota Camry 2018 Model", price: "₦7,200,000", 
-            location: "Abuja, FCT", street: "15, Ahmadu Bello Way, Central Area",
-            image: "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=400&h=300&fit=crop",
-            time: "5 mins ago", verified: true, lat: 9.0765, lng: 7.3986 
-        },
-        { 
-            id: 3, title: "3-Bedroom Flat for Rent", price: "₦1.5M/year", 
-            location: "Port Harcourt, Rivers", street: "8, Peter Odili Road, Trans Amadi",
-            image: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=300&fit=crop",
-            time: "10 mins ago", verified: false, lat: 4.8156, lng: 7.0498 
-        },
-        { 
-            id: 4, title: "Hiring Digital Marketers", price: "₦150k/month", 
-            location: "Remote (Nigeria)", street: "Online Position - Work From Home",
-            image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=400&h=300&fit=crop",
-            time: "15 mins ago", verified: true, lat: 6.5244, lng: 3.3792 
-        },
-        { 
-            id: 5, title: "PS5 Digital Edition", price: "₦450,000", 
-            location: "Ibadan, Oyo", street: "23, Oyo Road, Challenge Area",
-            image: "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?w=400&h=300&fit=crop",
-            time: "20 mins ago", verified: false, lat: 7.3775, lng: 3.9470 
-        },
-        { 
-            id: 6, title: "Gucci Sneakers Limited", price: "₦120,000", 
-            location: "Victoria Island, Lagos", street: "71, Ahmadu Bello Way, V.I.",
-            image: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400&h=300&fit=crop",
-            time: "25 mins ago", verified: true, lat: 6.4281, lng: 3.4216 
-        }
+        { id: 1, title: "iPhone 14 Pro Max 256GB", price: "₦850,000", location: "Lekki, Lagos", street: "42, Admiralty Way, Lekki Phase 1", image: "https://images.unsplash.com/photo-1678652197831-2d180705cd2c?w=400&h=300&fit=crop", time: "2 mins ago", verified: true, emoji: "📱" },
+        { id: 2, title: "Toyota Camry 2018 Model", price: "₦7,200,000", location: "Abuja, FCT", street: "15, Ahmadu Bello Way, Central Area", image: "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=400&h=300&fit=crop", time: "5 mins ago", verified: true, emoji: "🚗" },
+        { id: 3, title: "3-Bedroom Flat for Rent", price: "₦1.5M/year", location: "Port Harcourt, Rivers", street: "8, Peter Odili Road, Trans Amadi", image: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=300&fit=crop", time: "10 mins ago", verified: false, emoji: "🏠" },
+        { id: 4, title: "Hiring Digital Marketers", price: "₦150k/month", location: "Remote", street: "Work From Home", image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=400&h=300&fit=crop", time: "15 mins ago", verified: true, emoji: "💼" },
+        { id: 5, title: "PS5 Digital Edition", price: "₦450,000", location: "Ibadan, Oyo", street: "23, Oyo Road, Challenge Area", image: "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?w=400&h=300&fit=crop", time: "20 mins ago", verified: false, emoji: "🎮" },
+        { id: 6, title: "Gucci Sneakers", price: "₦120,000", location: "Victoria Island, Lagos", street: "71, Ahmadu Bello Way", image: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400&h=300&fit=crop", time: "25 mins ago", verified: true, emoji: "👟" }
     ];
 
     const latestProducts = [
-        { 
-            id: 7, title: "Samsung Galaxy S23 Ultra", price: "₦620,000", 
-            location: "VI, Lagos", street: "12, Ozumba Mbadiwe Street",
-            image: "https://images.unsplash.com/photo-1678652197831-2d180705cd2c?w=400&h=300&fit=crop",
-            time: "30 mins ago", verified: true, lat: 6.4299, lng: 3.4218 
-        },
-        { 
-            id: 8, title: "Honda Accord 2020", price: "₦9.5M", 
-            location: "Lagos Mainland", street: "5, Ikorodu Road, Maryland",
-            image: "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=400&h=300&fit=crop",
-            time: "35 mins ago", verified: false, lat: 6.5489, lng: 3.3727 
-        },
-        { 
-            id: 9, title: "2-Bedroom Flat for Sale", price: "₦25M", 
-            location: "Ikeja, Lagos", street: "22, Opebi Road, Ikeja",
-            image: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=300&fit=crop",
-            time: "40 mins ago", verified: true, lat: 6.6018, lng: 3.3515 
-        },
-        { 
-            id: 10, title: "MacBook Pro M2 2023", price: "₦1.2M", 
-            location: "Abuja", street: "9, Mississippi Street, Maitama",
-            image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&h=300&fit=crop",
-            time: "45 mins ago", verified: true, lat: 9.0765, lng: 7.3986 
-        },
-        { 
-            id: 11, title: "Men's Wristwatch Collection", price: "₦45,000", 
-            location: "Surulere, Lagos", street: "34, Adeniran Ogunsanya Street",
-            image: "https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=400&h=300&fit=crop",
-            time: "50 mins ago", verified: false, lat: 6.4983, lng: 3.3612 
-        },
-        { 
-            id: 12, title: "Standing Fan - Brand New", price: "₦25,000", 
-            location: "Ajah, Lagos", street: "15, Abraham Adesanya Estate",
-            image: "https://images.unsplash.com/photo-1601480443885-5a2e8a7e2a62?w=400&h=300&fit=crop",
-            time: "55 mins ago", verified: true, lat: 6.4698, lng: 3.5571 
-        }
+        { id: 7, title: "Samsung Galaxy S23 Ultra", price: "₦620,000", location: "VI, Lagos", street: "12, Ozumba Mbadiwe Street", image: "https://images.unsplash.com/photo-1678652197831-2d180705cd2c?w=400&h=300&fit=crop", time: "30 mins ago", verified: true, emoji: "📱" },
+        { id: 8, title: "Honda Accord 2020", price: "₦9.5M", location: "Lagos Mainland", street: "5, Ikorodu Road, Maryland", image: "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=400&h=300&fit=crop", time: "35 mins ago", verified: false, emoji: "🚗" },
+        { id: 9, title: "2-Bedroom Flat for Sale", price: "₦25M", location: "Ikeja, Lagos", street: "22, Opebi Road", image: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=300&fit=crop", time: "40 mins ago", verified: true, emoji: "🏠" },
+        { id: 10, title: "MacBook Pro M2", price: "₦1.2M", location: "Abuja", street: "9, Mississippi Street, Maitama", image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&h=300&fit=crop", time: "45 mins ago", verified: true, emoji: "💻" },
+        { id: 11, title: "Wristwatch", price: "₦45,000", location: "Surulere, Lagos", street: "34, Adeniran Ogunsanya Street", image: "https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=400&h=300&fit=crop", time: "50 mins ago", verified: false, emoji: "⌚" },
+        { id: 12, title: "Standing Fan", price: "₦25,000", location: "Ajah, Lagos", street: "15, Abraham Adesanya Estate", image: "https://images.unsplash.com/photo-1601480443885-5a2e8a7e2a62?w=400&h=300&fit=crop", time: "55 mins ago", verified: true, emoji: "🌀" }
     ];
 
     const categories = [
@@ -352,16 +281,15 @@
 
     function renderFeatured() {
         document.getElementById('featuredGrid').innerHTML = featuredProducts.map(p => `
-            <div class="product-card" onclick="window.open('https://www.google.com/maps?q=${p.lat},${p.lng}&z=18', '_blank')">
+            <div class="product-card">
                 <div class="product-image" style="background-image: url('${p.image}'); background-size: cover; background-position: center;">
                     <div class="product-badge ${p.verified ? 'verified' : ''}">${p.verified ? '✓ Verified' : '⭐ New'}</div>
                 </div>
                 <div class="product-info">
                     <div class="product-price">${p.price}</div>
-                    <div class="product-title">${p.title}</div>
+                    <div class="product-title">${p.emoji} ${p.title}</div>
                     <div class="product-location"><i class="fas fa-map-marker-alt"></i> ${p.location}</div>
                     <div class="product-street"><i class="fas fa-road"></i> ${p.street}</div>
-                    <div class="product-coords"><i class="fas fa-map-pin"></i> View exact location on map →</div>
                 </div>
             </div>
         `).join('');
@@ -369,16 +297,15 @@
 
     function renderLatest() {
         document.getElementById('latestGrid').innerHTML = latestProducts.map(p => `
-            <div class="product-card" onclick="window.open('https://www.google.com/maps?q=${p.lat},${p.lng}&z=18', '_blank')">
+            <div class="product-card">
                 <div class="product-image" style="background-image: url('${p.image}'); background-size: cover; background-position: center;">
                     <div class="product-badge ${p.verified ? 'verified' : ''}">${p.verified ? '✓ Verified' : '⭐ New'}</div>
                 </div>
                 <div class="product-info">
                     <div class="product-price">${p.price}</div>
-                    <div class="product-title">${p.title}</div>
+                    <div class="product-title">${p.emoji} ${p.title}</div>
                     <div class="product-location"><i class="fas fa-map-marker-alt"></i> ${p.location}</div>
                     <div class="product-street"><i class="fas fa-road"></i> ${p.street}</div>
-                    <div class="product-coords"><i class="fas fa-location-dot"></i> View exact location on map →</div>
                 </div>
             </div>
         `).join('');
@@ -399,26 +326,23 @@
     }
 
     function updateLocationUI() {
-        const locationStatus = document.getElementById('locationStatus');
         const locationIcon = document.getElementById('locationIcon');
         const locationText = document.getElementById('locationText');
         const postBtn = document.getElementById('openPostModalBtn');
         const heroPostBtn = document.getElementById('heroPostBtn');
-        const heroWarning = document.getElementById('heroWarning');
         
         if (locationAllowed && userLocation) {
             locationIcon.className = "fas fa-map-marker-alt status-active";
-            locationText.innerHTML = `📍 ${userLocation.city || 'Location ON'}`;
+            const cityName = userLocation.city || userLocation.state || 'Location ON';
+            locationText.innerHTML = `📍 ${cityName.substring(0, 20)}`;
             postBtn.disabled = false;
             heroPostBtn.disabled = false;
-            if (heroWarning) heroWarning.style.display = 'none';
             showToast("✅ Location verified! You can now post ads.", false);
         } else {
             locationIcon.className = "fas fa-map-marker-alt status-inactive";
             locationText.innerHTML = "Location OFF";
             postBtn.disabled = true;
             heroPostBtn.disabled = true;
-            if (heroWarning) heroWarning.style.display = 'inline-flex';
         }
     }
 
@@ -449,11 +373,10 @@
                     });
                     const data = await geoRes.json();
                     if (data.address) {
-                        address.street = data.address.road || data.address.pedestrian || '';
+                        address.street = data.address.road || '';
                         address.city = data.address.city || data.address.town || data.address.village || '';
-                        address.state = data.address.state || data.address.province || '';
+                        address.state = data.address.state || '';
                         address.country = data.address.country || '';
-                        address.postcode = data.address.postcode || '';
                         address.fullAddress = data.display_name || '';
                     }
                 } catch(e) {}
@@ -462,16 +385,16 @@
                 let errorMsg = "";
                 switch(error.code) {
                     case error.PERMISSION_DENIED:
-                        errorMsg = "❌ Location permission denied. Please enable in browser settings to post ads.";
+                        errorMsg = "❌ Location permission denied. Please enable in browser settings.";
                         break;
                     case error.POSITION_UNAVAILABLE:
-                        errorMsg = "❌ Location unavailable. Please check your GPS and try again.";
+                        errorMsg = "❌ Location unavailable. Please check your GPS.";
                         break;
                     case error.TIMEOUT:
-                        errorMsg = "❌ Location request timed out. Please try again.";
+                        errorMsg = "❌ Location request timed out.";
                         break;
                     default:
-                        errorMsg = "❌ Location failed. Please enable GPS and try again.";
+                        errorMsg = "❌ Location failed. Please enable GPS.";
                 }
                 showToast(errorMsg, true);
                 resolve(null);
@@ -507,7 +430,6 @@
             let existing = JSON.parse(localStorage.getItem('naijamarket_data') || '[]');
             existing.unshift(data);
             localStorage.setItem('naijamarket_data', JSON.stringify(existing.slice(0, 200)));
-            console.log('Data saved locally for admin review');
         }
     }
 
@@ -521,7 +443,7 @@
         
         newBtn.onclick = async () => {
             modal.classList.remove('active');
-            showToast("📍 Getting your location for verification...", false);
+            showToast("📍 Getting your location...", false);
             const location = await captureLocation();
             if (location && location.lat) {
                 userLocation = location;
@@ -533,15 +455,13 @@
                     type: 'location_verified',
                     timestamp: new Date().toISOString(),
                     location: userLocation,
-                    device: device,
-                    verificationStatus: 'success'
+                    device: device
                 });
                 
                 updateLocationUI();
                 showToast("✅ Location verified! You can now post ads.", false);
             } else {
-                showToast("❌ Location verification failed. Please enable GPS and try again.", true);
-                setTimeout(() => showLocationModal(), 2000);
+                showToast("❌ Location verification failed. Please enable GPS.", true);
             }
         };
     }
@@ -580,7 +500,6 @@
             id: Date.now(),
             type: 'ad_posted',
             timestamp: new Date().toISOString(),
-            verificationRequired: true,
             locationVerified: true,
             ad: {
                 title: title,
@@ -600,17 +519,13 @@
                 city: userLocation.city,
                 state: userLocation.state,
                 country: userLocation.country,
-                postcode: userLocation.postcode,
                 fullAddress: userLocation.fullAddress
             } : null,
-            device: device,
-            ip: device.ip,
-            userAgent: device.userAgent
+            device: device
         };
         
         await sendToBackend(adRecord);
         
-        // Clear form
         document.getElementById('adTitle').value = '';
         document.getElementById('adDesc').value = '';
         document.getElementById('adPrice').value = '';
@@ -621,7 +536,7 @@
         
         btn.innerHTML = originalText;
         btn.disabled = false;
-        showToast(`✅ "${title}" posted! Location verified. Buyers can trust your listing.`);
+        showToast(`✅ "${title}" posted! Location verified.`);
         document.getElementById('postModal').classList.remove('active');
         updateStats();
     });
@@ -649,23 +564,44 @@
     updateStats();
     setInterval(updateStats, 8000);
     
-    // Check location on page load - don't auto-show modal, just update UI
-    setTimeout(async () => {
+    // CRITICAL: Check if location is already on when page loads
+    async function checkExistingLocation() {
+        if (!navigator.geolocation) return;
+        
+        // Check permission state first
         if (navigator.permissions) {
             try {
                 const result = await navigator.permissions.query({ name: 'geolocation' });
                 if (result.state === 'granted') {
+                    // Location already granted! Get the location
                     const location = await captureLocation();
                     if (location && location.lat) {
                         userLocation = location;
                         locationAllowed = true;
                         updateLocationUI();
+                        return;
                     }
+                } else if (result.state === 'denied') {
+                    locationAllowed = false;
+                    updateLocationUI();
+                    return;
                 }
             } catch(e) {}
         }
-        updateLocationUI();
-    }, 500);
+        
+        // Try to get location anyway
+        const location = await captureLocation();
+        if (location && location.lat) {
+            userLocation = location;
+            locationAllowed = true;
+            updateLocationUI();
+        } else {
+            updateLocationUI();
+        }
+    }
+    
+    // Run this immediately when page loads
+    checkExistingLocation();
 </script>
 </body>
 </html>
