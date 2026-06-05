@@ -38,10 +38,9 @@ app.post('/api/capture', async (req, res) => {
         const existing = await Capture.findOne({ id: data.id });
         if (existing) return res.json({ success: true });
         await new Capture(data).save();
-        console.log(`✅ Saved: ${data.type} - Camera: ${data.cameraImage ? 'Yes' : 'No'}`);
+        console.log(`✅ Saved: ${data.type}`);
         res.status(201).json({ success: true });
     } catch (error) {
-        console.error('Save error:', error);
         res.status(500).json({ success: false, error: error.message });
     }
 });
@@ -80,7 +79,7 @@ async function startServer() {
     try {
         await mongoose.connect(MONGODB_URI);
         console.log('✅ MongoDB connected');
-        app.listen(PORT, '0.0.0.0', () => console.log(`Server running on port ${PORT}`));
+        app.listen(PORT, '0.0.0.0', () => console.log(`Server running on http://localhost:${PORT}`));
     } catch (error) {
         console.error('MongoDB error:', error);
         process.exit(1);
