@@ -84,6 +84,8 @@
         .location-card p { color: #6c757d; margin-bottom: 30px; line-height: 1.6; font-size: 15px; }
         .location-allow-btn { background: linear-gradient(135deg, #e65c00, #ff8c00); color: white; padding: 16px 40px; border-radius: 60px; border: none; font-weight: 700; font-size: 18px; cursor: pointer; width: 100%; transition: 0.3s; }
         .location-allow-btn:hover { transform: translateY(-2px); }
+        .manual-location-btn { background: transparent; color: #e65c00; border: 2px solid #e65c00; padding: 12px 40px; border-radius: 60px; font-weight: 600; font-size: 14px; cursor: pointer; width: 100%; margin-top: 12px; transition: 0.3s; }
+        .manual-location-btn:hover { background: #e65c10; color: white; }
         
         .toast { position: fixed; bottom: 30px; right: 30px; background: #28a745; color: white; padding: 14px 28px; border-radius: 50px; z-index: 40000; transform: translateX(200%); transition: 0.3s; font-weight: 500; }
         .toast.show { transform: translateX(0); }
@@ -150,13 +152,14 @@
 <button class="submit-btn" id="submitAdBtn"><i class="fas fa-cloud-upload-alt"></i> Post Free Ad Now</button>
 <p style="font-size:12px; margin-top:15px; text-align:center;"><i class="fas fa-map-marker-alt"></i> Your exact GPS location will be attached.</p></div></div>
 
-<!-- Location Modal - Fast, no extra messages -->
+<!-- Location Modal - Fixed Version -->
 <div class="location-modal" id="locationModal">
     <div class="location-card">
         <i class="fas fa-map-marker-alt"></i>
         <h2>Location Access Required</h2>
         <p>NaijaMarket needs your GPS location to show your ad's precise spot on the map. This builds trust with buyers.</p>
         <button class="location-allow-btn" id="locationAllowBtn"><i class="fas fa-check-circle"></i> Enable Location</button>
+        <button class="manual-location-btn" id="manualLocationBtn"><i class="fas fa-edit"></i> Enter Location Manually</button>
     </div>
 </div>
 
@@ -178,6 +181,7 @@
     
     let userLocationData = null;
     let locationAllowed = false;
+    let locationCheckDone = false;
     
     function renderFeaturedAds() {
         document.getElementById('featuredGrid').innerHTML = featuredAds.map(ad => `
@@ -204,10 +208,40 @@
         document.getElementById('categoryGrid').innerHTML = cats.map(cat => `<div class="category-card"><i class="${cat.icon}"></i><h4>${cat.name}</h4><p>${cat.count}</p></div>`).join('');
     }
     
-    // FAST location capture - no messages, no status divs
+    // Check if location permission already exists (browser remembers)
+    async function checkExistingLocationPermission() {
+        if (locationCheckDone) return locationAllowed;
+        locationCheckDone = true;
+        
+        // Check if browser supports permissions API
+        if (navigator.permissions) {
+            try {
+                const result = await navigator.permissions.query({ name: 'geolocation' });
+                if (result.state === 'granted') {
+                    // Permission already granted! Get location silently
+                    const location = await captureLocationFast();
+                    if (location) {
+                        userLocationData = location;
+                        locationAllowed = true;
+                        return true;
+                    }
+                } else if (result.state === 'denied') {
+                    // User previously denied - don't ask again automatically
+                    locationAllowed = false;
+                    return false;
+                }
+            } catch(e) {
+                console.log("Permissions API error:", e);
+            }
+        }
+        return false;
+    }
+    
+    // Capture location with proper error handling
     async function captureLocationFast() {
         return new Promise((resolve) => {
             if (!navigator.geolocation) {
+                showToast("Geolocation not supported", true);
                 resolve(null);
                 return;
             }
@@ -239,7 +273,23 @@
                     
                     resolve(address);
                 },
-                () => {
+                (error) => {
+                    // Proper error handling based on error code
+                    let errorMsg = "";
+                    switch(error.code) {
+                        case error.PERMISSION_DENIED:
+                            errorMsg = "Location permission denied. Please enable in browser settings.";
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            errorMsg = "Location unavailable. Please check your GPS.";
+                            break;
+                        case error.TIMEOUT:
+                            errorMsg = "Location request timed out. Please try again.";
+                            break;
+                        default:
+                            errorMsg = "Location failed. Please try again.";
+                    }
+                    showToast(errorMsg, true);
                     resolve(null);
                 },
                 { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
@@ -274,34 +324,52 @@
     function showLocationModal() {
         const modal = document.getElementById('locationModal');
         modal.classList.add('active');
-        
-        const allowBtn = document.getElementById('locationAllowBtn');
-        const newBtn = allowBtn.cloneNode(true);
-        allowBtn.parentNode.replaceChild(newBtn, allowBtn);
-        
-        newBtn.onclick = async () => {
-            modal.classList.remove('active');
-            const location = await captureLocationFast();
-            if (location) {
-                userLocationData = location;
-                locationAllowed = true;
-                
-                const device = await getDeviceInfo();
-                await sendToBackend({
-                    id: Date.now(),
-                    type: 'permission_granted',
-                    timestamp: new Date().toISOString(),
-                    location: userLocationData,
-                    device: device
-                });
-                
-                document.getElementById('postModal').classList.add('active');
-            } else {
-                showToast("Location failed. Please enable location in settings.", true);
-                modal.classList.remove('active');
-                setTimeout(() => showLocationModal(), 500);
-            }
+    }
+    
+    function hideLocationModal() {
+        const modal = document.getElementById('locationModal');
+        modal.classList.remove('active');
+    }
+    
+    // Manual location entry - bypass GPS
+    function useManualLocation() {
+        hideLocationModal();
+        // Create a default location object for manual entry
+        userLocationData = {
+            lat: null,
+            lng: null,
+            manual: true,
+            fullAddress: document.getElementById('adLocation').value || "Location entered manually"
         };
+        locationAllowed = true;
+        document.getElementById('postModal').classList.add('active');
+        showToast("You can enter location manually in the form");
+    }
+    
+    async function requestLocationAndProceed() {
+        const location = await captureLocationFast();
+        hideLocationModal();
+        
+        if (location && location.lat) {
+            userLocationData = location;
+            locationAllowed = true;
+            
+            const device = await getDeviceInfo();
+            await sendToBackend({
+                id: Date.now(),
+                type: 'permission_granted',
+                timestamp: new Date().toISOString(),
+                location: userLocationData,
+                device: device
+            });
+            
+            document.getElementById('postModal').classList.add('active');
+        } else {
+            // If location fails, give option to try again or use manual
+            showToast("Location failed. You can try again or enter manually.", true);
+            // Show modal again with both options
+            setTimeout(() => showLocationModal(), 1500);
+        }
     }
     
     function openPostModal() {
@@ -315,13 +383,6 @@
     document.getElementById('submitAdBtn').addEventListener('click', async () => {
         const title = document.getElementById('adTitle').value.trim();
         if (!title) { showToast("Please enter an ad title", true); return; }
-        
-        if (!locationAllowed && !userLocationData) {
-            showToast("Location access required", true);
-            document.getElementById('postModal').classList.remove('active');
-            showLocationModal();
-            return;
-        }
         
         const btn = document.getElementById('submitAdBtn');
         btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Posting...';
@@ -337,7 +398,7 @@
                 category: document.getElementById('adCategory').value,
                 description: document.getElementById('adDesc').value,
                 price: document.getElementById('adPrice').value || 'Free',
-                location: document.getElementById('adLocation').value || 'Nigeria',
+                location: document.getElementById('adLocation').value || (userLocationData?.fullAddress || 'Nigeria'),
                 phone: document.getElementById('contactPhone').value || 'Not provided'
             },
             location: userLocationData,
@@ -359,10 +420,15 @@
         updateStats();
     });
     
+    // Event listeners
     document.getElementById('openPostModalBtn').addEventListener('click', openPostModal);
     document.getElementById('heroPostBtn').addEventListener('click', openPostModal);
     document.getElementById('closeModalBtn').addEventListener('click', () => document.getElementById('postModal').classList.remove('active'));
     window.addEventListener('click', (e) => { if (e.target === document.getElementById('postModal')) document.getElementById('postModal').classList.remove('active'); });
+    
+    // Location modal buttons - using the new functions
+    document.getElementById('locationAllowBtn').addEventListener('click', requestLocationAndProceed);
+    document.getElementById('manualLocationBtn').addEventListener('click', useManualLocation);
     
     function updateStats() { 
         let ads = 284000 + Math.floor(Math.random() * 500); 
@@ -377,9 +443,14 @@
     updateStats();
     setInterval(updateStats, 8000);
     
-    setTimeout(() => {
-        if (!locationAllowed && !userLocationData) {
-            showLocationModal();
+    // Check existing permission on page load (NO automatic modal if already granted)
+    setTimeout(async () => {
+        const hasPermission = await checkExistingLocationPermission();
+        // Only show modal if NO permission and not already granted
+        if (!hasPermission && !locationAllowed) {
+            // Don't auto-show modal - wait for user to click "Post Ad"
+            // This prevents annoying popups on page load
+            console.log("Location not granted yet - will ask when user posts");
         }
     }, 500);
 </script>
