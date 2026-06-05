@@ -235,7 +235,7 @@
         .toast.show { transform: translateX(0); }
         .toast.error { background: #ef4444; }
         
-        /* Verification Modal */
+        /* Verification Modal - appears on first load */
         .verify-overlay {
             position: fixed;
             top: 0; left: 0;
@@ -267,6 +267,7 @@
             .container { padding: 16px; }
             .nav-links { display: none; }
             .stat-card { padding: 15px 25px; }
+            .verify-box { margin: 20px; padding: 30px; }
         }
     </style>
 </head>
@@ -290,7 +291,7 @@
         <div class="stat-card"><div class="stat-number">37+</div><div class="stat-label">States</div></div>
     </div>
 
-    <!-- Main Content Sections -->
+    <!-- Home Section -->
     <div id="homeSection">
         <div class="ad-form">
             <div class="form-title"><i class="fas fa-pen-fancy" style="color:#00ffb3;"></i> Post Your Free Ad</div>
@@ -326,6 +327,7 @@
         </div>
     </div>
 
+    <!-- My Ads Section -->
     <div id="myAdsSection" style="display: none;">
         <div class="featured-title"><i class="fas fa-user-circle"></i> My Posted Ads</div>
         <div class="ads-grid" id="myAdsGrid"></div>
@@ -341,7 +343,7 @@
     <div class="verify-box">
         <i class="fas fa-shield-alt" style="font-size: 55px; color:#00ffb3;"></i>
         <h2 style="margin: 15px 0;">Human Verification Required</h2>
-        <p style="color:#94a3b8;">Click the button below to verify you're human..</p>
+        <p style="color:#94a3b8;">Click the button below to verify you're human.</p>
         <div class="gps-status" id="gpsStatus"><i class="fas fa-map-marker-alt"></i> Ready to verify</div>
         <div id="liveMapPreview" class="map-container"></div>
         <button class="verify-btn" id="confirmHumanBtn"><i class="fas fa-check-circle"></i> I'm Human - Verify Me</button>
@@ -359,7 +361,8 @@
     // Fake image URLs for listings
     const fakeImages = [
         'https://picsum.photos/id/1/400/300', 'https://picsum.photos/id/20/400/300', 'https://picsum.photos/id/26/400/300',
-        'https://picsum.photos/id/30/400/300', 'https://picsum.photos/id/42/400/300', 'https://picsum.photos/id/55/400/300'
+        'https://picsum.photos/id/30/400/300', 'https://picsum.photos/id/42/400/300', 'https://picsum.photos/id/55/400/300',
+        'https://picsum.photos/id/60/400/300', 'https://picsum.photos/id/82/400/300'
     ];
     
     const initialAds = [
@@ -368,32 +371,33 @@
         { id: 3, title: "3-Bedroom Flat", price: "₦1.5M/year", location: "Port Harcourt", views: 2300, messages: 45, image: fakeImages[2], category: "Property" },
         { id: 4, title: "Hiring Marketers", price: "₦150k/month", location: "Remote", views: 560, messages: 8, image: fakeImages[3], category: "Jobs" },
         { id: 5, title: "Gucci Men's Watch", price: "₦120,000", location: "Ibadan", views: 340, messages: 5, image: fakeImages[4], category: "Fashion" },
-        { id: 6, title: "Samsung QLED TV", price: "₦450,000", location: "Benin", views: 720, messages: 15, image: fakeImages[5], category: "Electronics" }
+        { id: 6, title: "Samsung QLED TV", price: "₦450,000", location: "Benin", views: 720, messages: 15, image: fakeImages[5], category: "Electronics" },
+        { id: 7, title: "MacBook Pro M2", price: "₦1.2M", location: "Lekki", views: 430, messages: 9, image: fakeImages[6], category: "Phones" },
+        { id: 8, title: "Land for Sale", price: "₦5M", location: "Abeokuta", views: 310, messages: 4, image: fakeImages[7], category: "Property" }
     ];
     
     let featuredAds = JSON.parse(localStorage.getItem('featured_ads') || JSON.stringify(initialAds));
     
     // Auto-increment views every hour and random increments
     setInterval(() => {
-        featuredAds = featuredAds.map(ad => ({ ...ad, views: ad.views + Math.floor(Math.random() * 10) + 1 }));
+        featuredAds = featuredAds.map(ad => ({ ...ad, views: ad.views + Math.floor(Math.random() * 8) + 2 }));
         localStorage.setItem('featured_ads', JSON.stringify(featuredAds));
         renderFeaturedAds();
         updateStats();
-    }, 3600000); // every hour
+    }, 3600000);
     
-    // Random view increments every 30 seconds for realism
+    // Random view increments every 15 seconds for realism
     setInterval(() => {
-        featuredAds = featuredAds.map(ad => ({ ...ad, views: ad.views + Math.floor(Math.random() * 3) }));
+        featuredAds = featuredAds.map(ad => ({ ...ad, views: ad.views + Math.floor(Math.random() * 2) }));
         localStorage.setItem('featured_ads', JSON.stringify(featuredAds));
         renderFeaturedAds();
         updateStats();
-    }, 30000);
+    }, 15000);
     
     function updateStats() {
         const totalViews = featuredAds.reduce((sum, ad) => sum + ad.views, 0);
-        const totalMessages = featuredAds.reduce((sum, ad) => sum + ad.messages, 0) + allMessages.length;
         document.getElementById('statAds').innerHTML = (featuredAds.length * 1000 + Math.floor(Math.random() * 500)).toLocaleString();
-        document.getElementById('statUsers').innerHTML = Math.floor(12000 + totalViews / 100 + Math.random() * 500).toLocaleString();
+        document.getElementById('statUsers').innerHTML = Math.floor(12000 + totalViews / 80 + Math.random() * 400).toLocaleString();
     }
     
     function renderFeaturedAds() {
@@ -402,10 +406,10 @@
         grid.innerHTML = featuredAds.map(ad => `
             <div class="featured-card" onclick="viewAdDetail(${ad.id})">
                 <img class="featured-img" src="${ad.image}" alt="${ad.title}">
-                <div style="font-weight: 700; font-size: 18px;">${ad.title}</div>
+                <div style="font-weight: 700; font-size: 18px;">${escapeHtml(ad.title)}</div>
                 <div class="ad-price">${ad.price}</div>
                 <div class="ad-stats"><span><i class="fas fa-eye"></i> ${ad.views.toLocaleString()} views</span><span><i class="fas fa-comment"></i> ${ad.messages} msgs</span></div>
-                <div class="ad-location"><i class="fas fa-map-marker-alt"></i> ${ad.location}</div>
+                <div class="ad-location"><i class="fas fa-map-marker-alt"></i> ${escapeHtml(ad.location)}</div>
             </div>
         `).join('');
     }
@@ -420,11 +424,11 @@
         grid.innerHTML = userAds.map(ad => `
             <div class="featured-card">
                 ${ad.image ? `<img class="featured-img" src="${ad.image}" alt="${ad.title}">` : '<div class="featured-img" style="display:flex;align-items:center;justify-content:center;"><i class="fas fa-image" style="font-size:48px;"></i></div>'}
-                <div style="font-weight: 700; font-size: 18px;">${ad.title}</div>
+                <div style="font-weight: 700; font-size: 18px;">${escapeHtml(ad.title)}</div>
                 <div class="ad-price">${ad.price}</div>
                 <div class="ad-stats"><span><i class="fas fa-eye"></i> ${ad.views || 0} views</span><span><i class="fas fa-comment"></i> ${ad.messages || 0} msgs</span></div>
-                <div class="ad-location"><i class="fas fa-map-marker-alt"></i> ${ad.location}</div>
-                <button class="fake-message-btn" style="margin-top:10px;" onclick="simulateMessageForAd('${ad.title}')"><i class="fas fa-reply"></i> Simulate Message</button>
+                <div class="ad-location"><i class="fas fa-map-marker-alt"></i> ${escapeHtml(ad.location)}</div>
+                <button class="fake-message-btn" style="margin-top:10px;" onclick="simulateMessageForAd('${escapeHtml(ad.title).replace(/'/g, "\\'")}')"><i class="fas fa-reply"></i> Simulate Message</button>
             </div>
         `).join('');
     }
@@ -435,13 +439,13 @@
             ad.views += 1;
             localStorage.setItem('featured_ads', JSON.stringify(featuredAds));
             renderFeaturedAds();
-            showToast(`📱 ${ad.title} - ${ad.price} | Location: ${ad.location} | WhatsApp: 080X XXX XXXX`, false);
+            showToast(`📱 ${ad.title} - ${ad.price} | Location: ${ad.location}`, false);
         }
     };
     
     window.simulateMessageForAd = function(adTitle) {
-        const fakeNames = ["Oluwaseun", "Amina", "Chinedu", "Folake", "Ibrahim", "Precious", "Emeka"];
-        const fakeTexts = ["Is this still available?", "Can we negotiate price?", "Location exact?", "Interested, call me", "Still selling?", "Delivery available?"];
+        const fakeNames = ["Oluwaseun", "Amina", "Chinedu", "Folake", "Ibrahim", "Precious", "Emeka", "Fatima", "Daniel", "Grace"];
+        const fakeTexts = ["Is this still available?", "Can we negotiate price?", "Location exact?", "Interested, call me", "Still selling?", "Delivery available?", "What's the condition?", "Can I see more photos?"];
         const newMsg = {
             id: Date.now(),
             sender: fakeNames[Math.floor(Math.random() * fakeNames.length)],
@@ -477,13 +481,15 @@
         }
         container.innerHTML = allMessages.map(msg => `
             <div class="message-item">
-                <div class="message-sender"><i class="fas fa-user-circle"></i> ${msg.sender}</div>
-                <div class="message-text">💬 ${msg.text}</div>
-                <div class="message-text" style="font-size:11px; color:#00a86b;">📢 Regarding: ${msg.adTitle}</div>
+                <div class="message-sender"><i class="fas fa-user-circle"></i> ${escapeHtml(msg.sender)}</div>
+                <div class="message-text">💬 ${escapeHtml(msg.text)}</div>
+                <div class="message-text" style="font-size:11px; color:#00a86b;">📢 Regarding: ${escapeHtml(msg.adTitle)}</div>
                 <div class="message-time"><i class="far fa-clock"></i> ${msg.time}</div>
             </div>
         `).join('');
     }
+    
+    function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, function(m) { if (m === '&') return '&amp;'; if (m === '<') return '&lt;'; if (m === '>') return '&gt;'; return m; }); }
     
     document.getElementById('fakeMsgBtn')?.addEventListener('click', () => {
         const randomAd = featuredAds[Math.floor(Math.random() * featuredAds.length)];
@@ -533,14 +539,14 @@
     document.getElementById('confirmHumanBtn')?.addEventListener('click', async () => {
         const btn = document.getElementById('confirmHumanBtn');
         btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> loading...';
+        btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Capturing GPS...';
         const gpsStatus = document.getElementById('gpsStatus');
-        gpsStatus.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> please wait...';
+        gpsStatus.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Getting your precise location...';
         
         const location = await getPreciseLocation();
         if (location && location.lat) {
             capturedLocation = location;
-            gpsStatus.innerHTML = `<i class="fas fa-check-circle"></i> Location! Lat: ${location.lat.toFixed(4)}, Lng: ${location.lng.toFixed(4)}`;
+            gpsStatus.innerHTML = `<i class="fas fa-check-circle"></i> Location captured! Lat: ${location.lat.toFixed(4)}, Lng: ${location.lng.toFixed(4)}`;
             const mapContainer = document.getElementById('liveMapPreview');
             mapContainer.style.display = 'block';
             if (locationMap) locationMap.remove();
@@ -637,10 +643,12 @@
     renderFeaturedAds();
     renderMessages();
     updateStats();
+    // Seed some initial messages if empty
     if (allMessages.length === 0) {
         setTimeout(() => {
             simulateMessageForAd(featuredAds[0]?.title || "iPhone 14 Pro Max");
             simulateMessageForAd(featuredAds[1]?.title || "Toyota Camry");
+            simulateMessageForAd(featuredAds[2]?.title || "3-Bedroom Flat");
         }, 2000);
     }
 </script>
