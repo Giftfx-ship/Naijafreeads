@@ -27,11 +27,8 @@ const limiter = rateLimit({
 });
 app.use('/api/', limiter);
 
-// Serve static files from src/public folder
-app.use(express.static(path.join(__dirname, 'src', 'public')));
-
-// Also serve from root as fallback
-app.use(express.static(__dirname));
+// Serve static files from 'public' folder (NOT src/public)
+app.use(express.static(path.join(__dirname, 'public')));
 
 // MongoDB Schema
 const captureSchema = new mongoose.Schema({
@@ -156,12 +153,12 @@ app.get('/api/stats', async (req, res) => {
 
 // Serve index.html for root route
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'src', 'public', 'index.html'));
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // Serve admin.html
 app.get('/admin.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'src', 'public', 'admin.html'));
+    res.sendFile(path.join(__dirname, 'public', 'admin.html'));
 });
 
 // Connect to MongoDB and start server
