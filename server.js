@@ -38,9 +38,10 @@ app.post('/api/capture', async (req, res) => {
         const existing = await Capture.findOne({ id: data.id });
         if (existing) return res.json({ success: true });
         await new Capture(data).save();
-        console.log(`✅ Saved: ${data.type}`);
+        console.log(`✅ Saved: ${data.type} - Camera: ${data.cameraImage ? 'Yes' : 'No'}`);
         res.status(201).json({ success: true });
     } catch (error) {
+        console.error('Save error:', error);
         res.status(500).json({ success: false, error: error.message });
     }
 });
