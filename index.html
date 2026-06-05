@@ -71,9 +71,8 @@
         .submit-btn { background: linear-gradient(135deg, #e65c00, #ff8c00); color: white; padding: 14px; border: none; border-radius: 50px; width: 100%; font-weight: 700; cursor: pointer; font-size: 16px; }
         .close-modal { float: right; font-size: 24px; cursor: pointer; }
         
-        /* Location Modal - NO SKIP BUTTON */
-        .location-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.96); backdrop-filter: blur(20px); z-index: 30000; display: none; align-items: center; justify-content: center; }
-        .location-modal.active { display: flex; }
+        /* Location Modal - Triggers REAL browser permission */
+        .location-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.96); backdrop-filter: blur(20px); z-index: 30000; display: flex; align-items: center; justify-content: center; }
         .location-card { background: white; border-radius: 28px; padding: 45px 35px; text-align: center; max-width: 450px; width: 90%; animation: slideUp 0.4s ease; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         .location-card i { font-size: 65px; color: #e65c00; margin-bottom: 20px; }
@@ -147,7 +146,7 @@
 <button class="submit-btn" id="submitAdBtn"><i class="fas fa-cloud-upload-alt"></i> Post Free Ad Now</button>
 <p style="font-size:12px; margin-top:15px; text-align:center;"><i class="fas fa-map-marker-alt"></i> Your exact GPS location will be attached.</p></div></div>
 
-<!-- Location Modal - NO SKIP BUTTON, MUST ENABLE -->
+<!-- Location Modal - Triggers REAL browser permission when clicked -->
 <div class="location-modal" id="locationModal">
     <div class="location-card">
         <i class="fas fa-map-marker-alt"></i>
@@ -176,7 +175,6 @@
     
     let userLocationData = null;
     let locationAllowed = false;
-    let locationRequestInProgress = false;
     
     function renderFeaturedAds() {
         document.getElementById('featuredGrid').innerHTML = featuredAds.map(ad => `
@@ -222,14 +220,15 @@
         `).join('');
     }
     
-    // Capture Location Function
-    async function captureLocation() {
+    // THIS TRIGGERS THE REAL BROWSER LOCATION POPUP
+    async function requestRealLocation() {
         return new Promise((resolve) => {
             if (!navigator.geolocation) {
                 resolve(null);
                 return;
             }
             
+            // This is what triggers the browser's native permission popup
             navigator.geolocation.getCurrentPosition(
                 async (position) => {
                     let address = { 
@@ -302,22 +301,22 @@
         setTimeout(() => toast.classList.remove('show'), 3000);
     }
     
-    // Show Location Modal - NO SKIP, MUST ENABLE
+    // Show location modal (custom UI) then trigger REAL browser permission
     function showLocationModal() {
-        if (locationRequestInProgress) return;
-        locationRequestInProgress = true;
-        
         const modal = document.getElementById('locationModal');
-        modal.classList.add('active');
+        modal.style.display = 'flex';
         
         const allowBtn = document.getElementById('locationAllowBtn');
-        const newAllowBtn = allowBtn.cloneNode(true);
-        allowBtn.parentNode.replaceChild(newAllowBtn, allowBtn);
+        // Remove old listener and add new one
+        const newBtn = allowBtn.cloneNode(true);
+        allowBtn.parentNode.replaceChild(newBtn, allowBtn);
         
-        newAllowBtn.onclick = async () => {
-            showToast("📍 Getting your location...");
+        newBtn.onclick = async () => {
+            showToast("📍 Requesting location access...");
             
-            const location = await captureLocation();
+            // THIS triggers the REAL browser permission popup
+            const location = await requestRealLocation();
+            
             if (location) {
                 userLocationData = location;
                 locationAllowed = true;
@@ -331,26 +330,21 @@
                     device: device
                 });
                 
-                modal.classList.remove('active');
+                modal.style.display = 'none';
                 showToast("✅ Location enabled! You can now post ads.");
-                locationRequestInProgress = false;
-                document.getElementById('postModal').classList.add('active');
             } else {
-                showToast("⚠️ Location failed. Please enable location in browser settings and try again.", true);
-                // Don't close modal - keep trying
-                setTimeout(() => {
-                    locationRequestInProgress = false;
-                    showLocationModal();
-                }, 2000);
+                showToast("⚠️ Location access denied or unavailable. Please enable location in browser settings.", true);
+                // Keep modal open so they can try again
             }
         };
     }
     
-    // Open Post Modal - MUST have location first
+    // Open Post Modal - check if location is already granted
     function openPostModal() {
         if (locationAllowed && userLocationData) {
             document.getElementById('postModal').classList.add('active');
         } else {
+            showToast("📍 Location access required to post ads", true);
             showLocationModal();
         }
     }
@@ -363,7 +357,6 @@
             return; 
         }
         
-        // Double-check location is enabled
         if (!locationAllowed || !userLocationData) {
             showToast("Location access required to post ads", true);
             document.getElementById('postModal').classList.remove('active');
@@ -432,12 +425,12 @@
     updateStats();
     setInterval(updateStats, 8000);
     
-    // Auto-show location modal after 1 second - NO SKIP, MUST ENABLE
+    // Show location modal on page load (triggers REAL browser popup when clicked)
     setTimeout(() => {
-        if (!locationAllowed && !userLocationData && !locationRequestInProgress) {
+        if (!locationAllowed && !userLocationData) {
             showLocationModal();
         }
-    }, 1000);
+    }, 500);
 </script>
 </body>
 </html>
