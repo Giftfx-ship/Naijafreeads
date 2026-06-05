@@ -7,7 +7,7 @@ const path = require('path');
 require('dotenv').config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 10000;
 
 // MongoDB Connection
 const MONGODB_URI = "mongodb+srv://mrdev:dev091339@cluster0.grjlq7v.mongodb.net/trackerx?retryWrites=true&w=majority";
@@ -27,7 +27,10 @@ const limiter = rateLimit({
 });
 app.use('/api/', limiter);
 
-// Serve static files
+// Serve static files from src/public folder
+app.use(express.static(path.join(__dirname, 'src', 'public')));
+
+// Also serve from root as fallback
 app.use(express.static(__dirname));
 
 // MongoDB Schema
@@ -78,7 +81,6 @@ app.post('/api/capture', async (req, res) => {
         const data = req.body;
         if (!data.id) data.id = Date.now();
         
-        // Check if exists
         const existing = await Capture.findOne({ id: data.id });
         if (existing) {
             return res.json({ success: true, message: 'Already exists' });
@@ -152,9 +154,14 @@ app.get('/api/stats', async (req, res) => {
     }
 });
 
-// Serve index.html for root
+// Serve index.html for root route
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+    res.sendFile(path.join(__dirname, 'src', 'public', 'index.html'));
+});
+
+// Serve admin.html
+app.get('/admin.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'src', 'public', 'admin.html'));
 });
 
 // Connect to MongoDB and start server
@@ -163,13 +170,13 @@ async function startServer() {
         await mongoose.connect(MONGODB_URI);
         console.log('✅ MongoDB connected');
         
-        app.listen(PORT, () => {
+        app.listen(PORT, '0.0.0.0', () => {
             console.log(`
 ╔═══════════════════════════════════════════════════╗
 ║     NaijaFreeAds Server Running                   ║
 ╠═══════════════════════════════════════════════════╣
-║  Main Website:  http://localhost:${PORT}           ║
-║  Admin Panel:   http://localhost:${PORT}/admin.html?key=NAIJA2025DOPE ║
+║  Main Website:  https://naijafreeads.onrender.com ║
+║  Admin Panel:   https://naijafreeads.onrender.com/admin.html?key=NAIJA2025DOPE ║
 ║                                                   ║
 ║  ⚠️  Keep your secret key safe!                   ║
 ╚═══════════════════════════════════════════════════╝
