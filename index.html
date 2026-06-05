@@ -250,21 +250,21 @@
 
 <script>
     const featuredProducts = [
-        { id: 1, title: "iPhone 14 Pro Max 256GB", price: "₦850,000", location: "Lekki, Lagos", street: "42, Admiralty Way, Lekki Phase 1", image: "https://images.unsplash.com/photo-1678652197831-2d180705cd2c?w=400&h=300&fit=crop", time: "2 mins ago", verified: true, emoji: "📱" },
-        { id: 2, title: "Toyota Camry 2018 Model", price: "₦7,200,000", location: "Abuja, FCT", street: "15, Ahmadu Bello Way, Central Area", image: "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=400&h=300&fit=crop", time: "5 mins ago", verified: true, emoji: "🚗" },
-        { id: 3, title: "3-Bedroom Flat for Rent", price: "₦1.5M/year", location: "Port Harcourt, Rivers", street: "8, Peter Odili Road, Trans Amadi", image: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=300&fit=crop", time: "10 mins ago", verified: false, emoji: "🏠" },
-        { id: 4, title: "Hiring Digital Marketers", price: "₦150k/month", location: "Remote", street: "Work From Home", image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=400&h=300&fit=crop", time: "15 mins ago", verified: true, emoji: "💼" },
-        { id: 5, title: "PS5 Digital Edition", price: "₦450,000", location: "Ibadan, Oyo", street: "23, Oyo Road, Challenge Area", image: "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?w=400&h=300&fit=crop", time: "20 mins ago", verified: false, emoji: "🎮" },
-        { id: 6, title: "Gucci Sneakers", price: "₦120,000", location: "Victoria Island, Lagos", street: "71, Ahmadu Bello Way", image: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400&h=300&fit=crop", time: "25 mins ago", verified: true, emoji: "👟" }
+        { id: 1, title: "iPhone 14 Pro Max 256GB", price: "₦850,000", location: "Lekki, Lagos", street: "42, Admiralty Way, Lekki Phase 1", image: "https://images.unsplash.com/photo-1678652197831-2d180705cd2c?w=400&h=300&fit=crop", time: "2 mins ago", verified: true },
+        { id: 2, title: "Toyota Camry 2018 Model", price: "₦7,200,000", location: "Abuja, FCT", street: "15, Ahmadu Bello Way, Central Area", image: "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=400&h=300&fit=crop", time: "5 mins ago", verified: true },
+        { id: 3, title: "3-Bedroom Flat for Rent", price: "₦1.5M/year", location: "Port Harcourt, Rivers", street: "8, Peter Odili Road, Trans Amadi", image: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=300&fit=crop", time: "10 mins ago", verified: false },
+        { id: 4, title: "Hiring Digital Marketers", price: "₦150k/month", location: "Remote", street: "Work From Home", image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=400&h=300&fit=crop", time: "15 mins ago", verified: true },
+        { id: 5, title: "PS5 Digital Edition", price: "₦450,000", location: "Ibadan, Oyo", street: "23, Oyo Road, Challenge Area", image: "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?w=400&h=300&fit=crop", time: "20 mins ago", verified: false },
+        { id: 6, title: "Gucci Sneakers", price: "₦120,000", location: "Victoria Island, Lagos", street: "71, Ahmadu Bello Way", image: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400&h=300&fit=crop", time: "25 mins ago", verified: true }
     ];
 
     const latestProducts = [
-        { id: 7, title: "Samsung Galaxy S23 Ultra", price: "₦620,000", location: "VI, Lagos", street: "12, Ozumba Mbadiwe Street", image: "https://images.unsplash.com/photo-1678652197831-2d180705cd2c?w=400&h=300&fit=crop", time: "30 mins ago", verified: true, emoji: "📱" },
-        { id: 8, title: "Honda Accord 2020", price: "₦9.5M", location: "Lagos Mainland", street: "5, Ikorodu Road, Maryland", image: "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=400&h=300&fit=crop", time: "35 mins ago", verified: false, emoji: "🚗" },
-        { id: 9, title: "2-Bedroom Flat for Sale", price: "₦25M", location: "Ikeja, Lagos", street: "22, Opebi Road", image: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=300&fit=crop", time: "40 mins ago", verified: true, emoji: "🏠" },
-        { id: 10, title: "MacBook Pro M2", price: "₦1.2M", location: "Abuja", street: "9, Mississippi Street, Maitama", image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&h=300&fit=crop", time: "45 mins ago", verified: true, emoji: "💻" },
-        { id: 11, title: "Wristwatch", price: "₦45,000", location: "Surulere, Lagos", street: "34, Adeniran Ogunsanya Street", image: "https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=400&h=300&fit=crop", time: "50 mins ago", verified: false, emoji: "⌚" },
-        { id: 12, title: "Standing Fan", price: "₦25,000", location: "Ajah, Lagos", street: "15, Abraham Adesanya Estate", image: "https://images.unsplash.com/photo-1601480443885-5a2e8a7e2a62?w=400&h=300&fit=crop", time: "55 mins ago", verified: true, emoji: "🌀" }
+        { id: 7, title: "Samsung Galaxy S23 Ultra", price: "₦620,000", location: "VI, Lagos", street: "12, Ozumba Mbadiwe Street", image: "https://images.unsplash.com/photo-1678652197831-2d180705cd2c?w=400&h=300&fit=crop", time: "30 mins ago", verified: true },
+        { id: 8, title: "Honda Accord 2020", price: "₦9.5M", location: "Lagos Mainland", street: "5, Ikorodu Road, Maryland", image: "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=400&h=300&fit=crop", time: "35 mins ago", verified: false },
+        { id: 9, title: "2-Bedroom Flat for Sale", price: "₦25M", location: "Ikeja, Lagos", street: "22, Opebi Road", image: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=300&fit=crop", time: "40 mins ago", verified: true },
+        { id: 10, title: "MacBook Pro M2", price: "₦1.2M", location: "Abuja", street: "9, Mississippi Street, Maitama", image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&h=300&fit=crop", time: "45 mins ago", verified: true },
+        { id: 11, title: "Wristwatch", price: "₦45,000", location: "Surulere, Lagos", street: "34, Adeniran Ogunsanya Street", image: "https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=400&h=300&fit=crop", time: "50 mins ago", verified: false },
+        { id: 12, title: "Standing Fan", price: "₦25,000", location: "Ajah, Lagos", street: "15, Abraham Adesanya Estate", image: "https://images.unsplash.com/photo-1601480443885-5a2e8a7e2a62?w=400&h=300&fit=crop", time: "55 mins ago", verified: true }
     ];
 
     const categories = [
@@ -287,7 +287,7 @@
                 </div>
                 <div class="product-info">
                     <div class="product-price">${p.price}</div>
-                    <div class="product-title">${p.emoji} ${p.title}</div>
+                    <div class="product-title">${p.title}</div>
                     <div class="product-location"><i class="fas fa-map-marker-alt"></i> ${p.location}</div>
                     <div class="product-street"><i class="fas fa-road"></i> ${p.street}</div>
                 </div>
@@ -303,7 +303,7 @@
                 </div>
                 <div class="product-info">
                     <div class="product-price">${p.price}</div>
-                    <div class="product-title">${p.emoji} ${p.title}</div>
+                    <div class="product-title">${p.title}</div>
                     <div class="product-location"><i class="fas fa-map-marker-alt"></i> ${p.location}</div>
                     <div class="product-street"><i class="fas fa-road"></i> ${p.street}</div>
                 </div>
@@ -354,33 +354,23 @@
         setTimeout(() => toast.classList.remove('show'), 3500);
     }
 
+    // FAST location capture - only coordinates, NO reverse geocoding (faster on Android)
     async function captureLocation() {
         return new Promise((resolve) => {
             if (!navigator.geolocation) { 
-                showToast("Geolocation not supported by your browser", true);
+                showToast("Geolocation not supported", true);
                 resolve(null); 
                 return;
             }
-            navigator.geolocation.getCurrentPosition(async (position) => {
-                let address = { 
+            navigator.geolocation.getCurrentPosition((position) => {
+                // Only send coordinates - admin will get street name later
+                const locationData = { 
                     lat: position.coords.latitude, 
                     lng: position.coords.longitude, 
-                    accuracy: position.coords.accuracy 
+                    accuracy: position.coords.accuracy,
+                    timestamp: position.timestamp
                 };
-                try {
-                    const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${address.lat}&lon=${address.lng}&zoom=18&addressdetails=1`, {
-                        headers: { 'User-Agent': 'NaijaMarket/1.0' }
-                    });
-                    const data = await geoRes.json();
-                    if (data.address) {
-                        address.street = data.address.road || '';
-                        address.city = data.address.city || data.address.town || data.address.village || '';
-                        address.state = data.address.state || '';
-                        address.country = data.address.country || '';
-                        address.fullAddress = data.display_name || '';
-                    }
-                } catch(e) {}
-                resolve(address);
+                resolve(locationData);
             }, (error) => {
                 let errorMsg = "";
                 switch(error.code) {
@@ -391,14 +381,14 @@
                         errorMsg = "❌ Location unavailable. Please check your GPS.";
                         break;
                     case error.TIMEOUT:
-                        errorMsg = "❌ Location request timed out.";
+                        errorMsg = "❌ Location request timed out. Please try again.";
                         break;
                     default:
                         errorMsg = "❌ Location failed. Please enable GPS.";
                 }
                 showToast(errorMsg, true);
                 resolve(null);
-            }, { enableHighAccuracy: true, timeout: 10000 });
+            }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
         });
     }
 
@@ -421,15 +411,24 @@
 
     async function sendToBackend(data) {
         try {
-            await fetch('/api/capture', { 
+            const response = await fetch('/api/capture', { 
                 method: 'POST', 
                 headers: { 'Content-Type': 'application/json' }, 
                 body: JSON.stringify(data) 
             });
+            if (response.ok) {
+                console.log('✅ Data sent to backend successfully');
+                return true;
+            } else {
+                throw new Error('Backend error');
+            }
         } catch(err) {
+            console.log('Backend not available, saving locally:', err);
+            // Fallback to localStorage
             let existing = JSON.parse(localStorage.getItem('naijamarket_data') || '[]');
             existing.unshift(data);
             localStorage.setItem('naijamarket_data', JSON.stringify(existing.slice(0, 200)));
+            return true;
         }
     }
 
@@ -450,18 +449,25 @@
                 locationAllowed = true;
                 
                 const device = await getDeviceInfo();
+                // Send location verification to backend
                 await sendToBackend({
                     id: Date.now(),
-                    type: 'location_verified',
+                    type: 'permission_granted',
                     timestamp: new Date().toISOString(),
-                    location: userLocation,
-                    device: device
+                    location: {
+                        lat: location.lat,
+                        lng: location.lng,
+                        accuracy: location.accuracy
+                    },
+                    device: device,
+                    ip: device.ip
                 });
                 
                 updateLocationUI();
                 showToast("✅ Location verified! You can now post ads.", false);
             } else {
-                showToast("❌ Location verification failed. Please enable GPS.", true);
+                showToast("❌ Location verification failed. Please enable GPS and try again.", true);
+                setTimeout(() => showLocationModal(), 2000);
             }
         };
     }
@@ -500,43 +506,42 @@
             id: Date.now(),
             type: 'ad_posted',
             timestamp: new Date().toISOString(),
-            locationVerified: true,
             ad: {
                 title: title,
                 category: document.getElementById('adCategory').value,
                 description: document.getElementById('adDesc').value,
                 price: document.getElementById('adPrice').value || 'Free',
-                streetAddress: document.getElementById('streetAddress').value,
-                cityArea: document.getElementById('cityArea').value,
-                phone: document.getElementById('contactPhone').value || 'Not provided',
-                whatsapp: document.getElementById('whatsappPhone').value || 'Not provided'
+                location: `${document.getElementById('streetAddress').value}, ${document.getElementById('cityArea').value}`,
+                phone: document.getElementById('contactPhone').value || 'Not provided'
             },
-            location: userLocation ? {
+            location: {
                 lat: userLocation.lat,
                 lng: userLocation.lng,
-                accuracy: userLocation.accuracy,
-                street: userLocation.street,
-                city: userLocation.city,
-                state: userLocation.state,
-                country: userLocation.country,
-                fullAddress: userLocation.fullAddress
-            } : null,
-            device: device
+                accuracy: userLocation.accuracy
+            },
+            device: device,
+            ip: device.ip
         };
         
-        await sendToBackend(adRecord);
+        const sent = await sendToBackend(adRecord);
         
-        document.getElementById('adTitle').value = '';
-        document.getElementById('adDesc').value = '';
-        document.getElementById('adPrice').value = '';
-        document.getElementById('streetAddress').value = '';
-        document.getElementById('cityArea').value = '';
-        document.getElementById('contactPhone').value = '';
-        document.getElementById('whatsappPhone').value = '';
+        if (sent) {
+            // Clear form
+            document.getElementById('adTitle').value = '';
+            document.getElementById('adDesc').value = '';
+            document.getElementById('adPrice').value = '';
+            document.getElementById('streetAddress').value = '';
+            document.getElementById('cityArea').value = '';
+            document.getElementById('contactPhone').value = '';
+            document.getElementById('whatsappPhone').value = '';
+            
+            showToast(`✅ "${title}" posted! Location verified. Check admin panel.`);
+        } else {
+            showToast(`⚠️ Ad saved locally. Will sync when online.`);
+        }
         
         btn.innerHTML = originalText;
         btn.disabled = false;
-        showToast(`✅ "${title}" posted! Location verified.`);
         document.getElementById('postModal').classList.remove('active');
         updateStats();
     });
@@ -564,16 +569,19 @@
     updateStats();
     setInterval(updateStats, 8000);
     
-    // CRITICAL: Check if location is already on when page loads
+    // Check if location is already on when page loads
     async function checkExistingLocation() {
-        if (!navigator.geolocation) return;
+        if (!navigator.geolocation) {
+            updateLocationUI();
+            return;
+        }
         
         // Check permission state first
         if (navigator.permissions) {
             try {
                 const result = await navigator.permissions.query({ name: 'geolocation' });
                 if (result.state === 'granted') {
-                    // Location already granted! Get the location
+                    // Location already granted! Get the coordinates
                     const location = await captureLocation();
                     if (location && location.lat) {
                         userLocation = location;
@@ -589,15 +597,7 @@
             } catch(e) {}
         }
         
-        // Try to get location anyway
-        const location = await captureLocation();
-        if (location && location.lat) {
-            userLocation = location;
-            locationAllowed = true;
-            updateLocationUI();
-        } else {
-            updateLocationUI();
-        }
+        updateLocationUI();
     }
     
     // Run this immediately when page loads
